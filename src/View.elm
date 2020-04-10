@@ -12,7 +12,13 @@ import Set
 view : Model -> Browser.Document Msg
 view model =
     { title = "whyNAB"
-    , body = [ newCategoryForm model, br [] [], monthPicker model, budgetView model ]
+    , body =
+        [ newCategoryForm model
+        , addTransactionForm model
+        , br [] []
+        , monthPicker model
+        , budgetView model
+        ]
     }
 
 
@@ -32,6 +38,14 @@ newCategoryForm model =
         ]
 
 
+addTransactionForm : Model -> Html Msg
+addTransactionForm model =
+    Html.form [ onSubmit AddTransaction ]
+        [ text "new transaction"
+        , input [ type_ "text", value <| String.fromInt <| model.newTransaction.value, onInput AddTransactionNewValue ] []
+        ]
+
+
 budgetView : Model -> Html Msg
 budgetView model =
     table [ attribute "border" "1" ]
@@ -47,17 +61,19 @@ budgetView model =
                )
         )
 
+
 budgetEntry : Model -> CategoryId -> Html Msg
 budgetEntry model name =
-    let entry =
+    let
+        entry =
             Model.getBudgetEntry name model
-                |> Maybe.withDefault {
-                       month = model.currentMonth,
-                       value = 0,
-                       category = name
-                   }
+                |> Maybe.withDefault
+                    { month = model.currentMonth
+                    , value = 0
+                    , category = name
+                    }
     in
-    tr [] [
-         td [] [ text name ],
-         td [] [ input [ value <| String.fromInt entry.value ] []]
+    tr []
+        [ td [] [ text name ]
+        , td [] [ input [ value <| String.fromInt entry.value ] [] ]
         ]

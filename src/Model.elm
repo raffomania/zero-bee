@@ -1,9 +1,9 @@
 module Model exposing (..)
 
+import Date
 import Dict exposing (Dict)
 import Set exposing (Set)
 import Time
-import Date
 
 
 type alias Model =
@@ -12,6 +12,7 @@ type alias Model =
     , currentMonth : MonthOfYear
     , budgetEntries : Dict MonthIndex (Dict CategoryId BudgetEntry)
     , newCategory : String
+    , newTransaction : Transaction
     }
 
 
@@ -23,17 +24,19 @@ type alias Money =
     Int
 
 
-type alias MonthIndex = String
+type alias MonthIndex =
+    String
 
-type alias MonthOfYear = {
-        month : Time.Month,
-            year : Int
+
+type alias MonthOfYear =
+    { month : Time.Month
+    , year : Int
     }
 
 
 type alias Transaction =
     { value : Money
-    , time : Time.Posix
+    , date : Date.Date
     , category : CategoryId
     }
 
@@ -47,10 +50,10 @@ type alias BudgetEntry =
 
 getMonthIndex : MonthOfYear -> MonthIndex
 getMonthIndex monthYear =
-    String.concat [
-      (String.fromInt <| monthYear.year),
-          "-",
-      (String.fromInt <| Date.monthToNumber <| monthYear.month)
+    String.concat
+        [ String.fromInt <| monthYear.year
+        , "-"
+        , String.fromInt <| Date.monthToNumber <| monthYear.month
         ]
 
 
