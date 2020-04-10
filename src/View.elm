@@ -26,16 +26,17 @@ newCategoryForm model =
 budgetView : Model -> Html Msg
 budgetView model =
     table []
-         (tr [] [
-              th [] [text "category"],
-              th [] [text "budgeted"],
-              th [] [text "activity"],
-              th [] [text "available"]
-             ]
-        :: (model.categories
-            |> Set.toList
-            |> List.map budgetEntry
-        ))
+        (tr []
+            [ th [] [ text "category" ]
+            , th [] [ text "budgeted" ]
+            , th [] [ text "activity" ]
+            , th [] [ text "available" ]
+            ]
+            :: (model.categories
+                    |> Set.toList
+                    |> List.map budgetEntry
+               )
+        )
 
 
 budgetEntry name =

@@ -30,8 +30,8 @@ type alias Transaction =
 
 
 type alias BudgetEntry =
-    { month : Time.Month,
-          year : Int
+    { month : Time.Month
+    , year : Int
     , value : Money
     , category : CategoryId
     }
