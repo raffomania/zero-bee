@@ -8,7 +8,11 @@ import Time
 update msg model =
     case msg of
         NewTime time ->
-            ( { model | currentMonth = Just <| Time.toMonth Time.utc time }, Cmd.none )
+            let
+                monthOfYear =
+                    { month = Time.toMonth Time.utc time, year = Time.toYear Time.utc time }
+            in
+            ( { model | currentMonth = monthOfYear }, Cmd.none )
 
         NewCategoryText text ->
             ( { model | newCategory = text }, Cmd.none )

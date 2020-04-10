@@ -18,7 +18,12 @@ main =
 
 init : {} -> ( Model, Cmd Msg )
 init flags =
-    ( { transactions = [], categories = Set.empty, currentMonth = Nothing, budgetEntries = Dict.empty, newCategory = "" }
+    ( { transactions = []
+      , categories = Set.empty
+      , currentMonth = { month = Time.Jan, year = 0 }
+      , budgetEntries = Dict.empty
+      , newCategory = ""
+      }
     , Task.perform NewTime Time.now
     )
 
