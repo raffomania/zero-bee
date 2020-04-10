@@ -1,5 +1,6 @@
 module Update exposing (update)
 
+import Date
 import Model exposing (Model)
 import Msg exposing (..)
 import Set
@@ -7,7 +8,7 @@ import Time
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update msg ({ newTransaction } as model) =
     case msg of
         NewTime time ->
             let
@@ -28,18 +29,46 @@ update msg model =
             )
 
         AddTransaction ->
-            ( { model
-                | transactions = model.newTransaction :: model.transactions
-              }
-            , Cmd.none
-            )
+            case model.newTransaction.date of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just date ->
+                    let
+                        transaction =
+                            model.newTransaction
+
+                        updatedTransaction =
+                            { date = date
+                            , value = transaction.value
+                            , category = transaction.category
+                            }
+                    in
+                    ( { model
+                        | transactions = updatedTransaction :: model.transactions
+                        , newTransaction = { newTransaction | value = 0 }
+                      }
+                    , Cmd.none
+                    )
 
         AddTransactionNewValue value ->
             let
-                transaction =
-                    model.newTransaction
-
-                updatedTransaction =
-                    { transaction | value = Maybe.withDefault transaction.value <| String.toInt value }
+                newValue =
+                    Maybe.withDefault newTransaction.value <| String.toInt value
             in
-            ( { model | newTransaction = updatedTransaction }, Cmd.none )
+            ( { model | newTransaction = { newTransaction | value = newValue } }, Cmd.none )
+
+        AddTransactionNewCategory value ->
+            ( { model | newTransaction = { newTransaction | category = value } }, Cmd.none )
+
+        AddTransactionNewDate value ->
+            let
+                newModel =
+                    case Date.fromIsoString value of
+                        Ok date ->
+                            { model | newTransaction = { newTransaction | date = Just date } }
+
+                        Err _ ->
+                            model
+            in
+            ( newModel, Cmd.none )

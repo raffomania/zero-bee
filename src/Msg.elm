@@ -9,3 +9,5 @@ type Msg
     | AddCategory
     | AddTransaction
     | AddTransactionNewValue String
+    | AddTransactionNewCategory String
+    | AddTransactionNewDate String

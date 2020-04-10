@@ -27,7 +27,7 @@ init flags =
       , newTransaction =
             { category = ""
             , value = 0
-            , date = Date.fromPosix Time.utc (Time.millisToPosix 0)
+            , date = Nothing
             }
       }
     , Task.perform NewTime Time.now
