@@ -4,6 +4,7 @@ import Browser
 import Date
 import Dict exposing (Dict)
 import Element exposing (Element, column, el, row, text)
+import Element.Font as Font
 import Element.Input as Input
 import Html.Events
 import Json.Decode as Decode
@@ -39,14 +40,21 @@ monthPicker model =
 
 toBeBudgeted : Model -> Element Msg
 toBeBudgeted model =
-    let budgetEntries = Dict.get (Model.getMonthIndex model.currentMonth) model.budgetEntries |> Maybe.withDefault Dict.empty
-        alreadyBudgeted = Dict.foldl (\_ e acc -> e.value + acc) 0 budgetEntries
-        availableCash = model.transactions
-                        |> List.filter (Model.isTransactionInMonth model.currentMonth)
-                        |> List.map .value
-                        |> List.sum
+    let
+        budgetEntries =
+            Dict.get (Model.getMonthIndex model.currentMonth) model.budgetEntries |> Maybe.withDefault Dict.empty
+
+        alreadyBudgeted =
+            Dict.foldl (\_ e acc -> e.value + acc) 0 budgetEntries
+
+        availableCash =
+            model.transactions
+                |> List.filter (Model.isTransactionInMonth model.currentMonth)
+                |> List.map .value
+                |> List.sum
     in
-        text <| "To be budgeted: " ++ (String.fromInt <| availableCash - alreadyBudgeted)
+    text <| "To be budgeted: " ++ (String.fromInt <| availableCash - alreadyBudgeted)
+
 
 addTransactionForm : Model -> Element Msg
 addTransactionForm model =
@@ -78,8 +86,8 @@ addTransactionForm model =
 
 
 transactionList model =
-    Element.table []
-        { data = model.transactions |> List.filter (\t -> (Model.dateToMonth t.date) == model.currentMonth)
+    Element.table [ Element.spacing 10 ]
+        { data = model.transactions |> List.filter (\t -> Model.dateToMonth t.date == model.currentMonth)
         , columns =
             [ { header = text "date"
               , width = Element.fill
@@ -91,7 +99,7 @@ transactionList model =
               }
             , { header = text "category"
               , width = Element.fill
-              , view = \t -> text <| String.fromInt t.value
+              , view = \t -> el [ Font.alignRight ] <| text <| String.fromInt t.value
               }
             ]
         }
@@ -107,7 +115,7 @@ type alias BudgetRow =
 
 budgetView : Model -> Element Msg
 budgetView model =
-    Element.table []
+    Element.table [ Element.spacing 10 ]
         { data = budgetRows model
         , columns =
             [ { header = text "category"
@@ -118,7 +126,7 @@ budgetView model =
               , width = Element.fill
               , view =
                     \r ->
-                        Input.text []
+                        Input.text [ Font.alignRight ]
                             { text = String.fromInt r.budgeted
                             , placeholder = Nothing
                             , label = Input.labelHidden "budgeted"
@@ -127,11 +135,11 @@ budgetView model =
               }
             , { header = text "activity"
               , width = Element.fill
-              , view = \r -> text <| String.fromInt r.activity
+              , view = \r -> el [ Font.alignRight ] <| text <| String.fromInt r.activity
               }
             , { header = text "available"
               , width = Element.fill
-              , view = \r -> text <| String.fromInt r.available
+              , view = \r -> el [ Font.alignRight ] <| text <| String.fromInt r.available
               }
             ]
         }
@@ -140,7 +148,7 @@ budgetView model =
 budgetRows : Model -> List BudgetRow
 budgetRows model =
     model.transactions
-        |> List.filter (\t -> model.currentMonth == (Model.dateToMonth t.date))
+        |> List.filter (\t -> model.currentMonth == Model.dateToMonth t.date)
         |> List.foldl (updateBudgetRowDict model) Dict.empty
         |> Dict.values
 
@@ -159,7 +167,14 @@ updateBudgetRowDict model transaction rows =
             budget =
                 budgetEntry model transaction.category
         in
-        Dict.insert transaction.category { category = transaction.category, budgeted = budget, activity = transaction.value, available = budget + transaction.value } rows
+        Dict.insert
+            transaction.category
+            { category = transaction.category
+            , budgeted = budget
+            , activity = transaction.value
+            , available = budget + transaction.value
+            }
+            rows
 
 
 budgetEntry : Model -> CategoryId -> Money
