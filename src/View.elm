@@ -67,7 +67,7 @@ addTransactionForm model =
 
 transactionList model =
     Element.table []
-        { data = model.transactions
+        { data = model.transactions |> List.filter (\t -> (Model.dateToMonth t.date) == model.currentMonth)
         , columns =
             [ { header = text "date"
               , width = Element.fill
@@ -128,6 +128,7 @@ budgetView model =
 budgetRows : Model -> List BudgetRow
 budgetRows model =
     model.transactions
+        |> List.filter (\t -> model.currentMonth == (Model.dateToMonth t.date))
         |> List.foldl (updateBudgetRowDict model) Dict.empty
         |> Dict.values
 

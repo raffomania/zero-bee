@@ -64,3 +64,11 @@ getBudgetEntry category month model =
     model.budgetEntries
         |> Dict.get (getMonthIndex month)
         |> Maybe.andThen (Dict.get category)
+
+
+dateToMonth : Date.Date -> MonthOfYear
+dateToMonth date =
+    {
+        month = Date.month date,
+        year = Date.year date
+    }
