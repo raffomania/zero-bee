@@ -21,35 +21,32 @@ update msg ({ newTransaction } as model) =
             let
                 maybeDate =
                     Date.fromIsoString model.newTransaction.date
+                maybeValue =
+                    String.toInt model.newTransaction.value
             in
-            case maybeDate of
-                Err _ ->
-                    ( model, Cmd.none )
-
-                Ok date ->
+            case (maybeDate, maybeValue) of
+                (Ok date, Just value) ->
                     let
                         transaction =
                             model.newTransaction
 
                         updatedTransaction =
                             { date = date
-                            , value = transaction.value
+                            , value = value
                             , category = transaction.category
                             }
                     in
                     ( { model
                         | transactions = updatedTransaction :: model.transactions
-                        , newTransaction = { newTransaction | value = 0 }
+                        , newTransaction = { newTransaction | value = "" }
                       }
                     , Cmd.none
                     )
+                _ ->
+                    ( model, Cmd.none )
 
         AddTransactionNewValue value ->
-            let
-                newValue =
-                    Maybe.withDefault newTransaction.value <| String.toInt value
-            in
-            ( { model | newTransaction = { newTransaction | value = newValue } }, Cmd.none )
+            ( { model | newTransaction = { newTransaction | value = value } }, Cmd.none )
 
         AddTransactionNewCategory value ->
             ( { model | newTransaction = { newTransaction | category = value } }, Cmd.none )

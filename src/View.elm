@@ -47,7 +47,7 @@ addTransactionForm model =
         , Input.text []
             { placeholder = Nothing
             , label = Input.labelAbove [] <| text "value"
-            , text = String.fromInt <| model.newTransaction.value
+            , text = model.newTransaction.value
             , onChange = AddTransactionNewValue
             }
         , Input.text []

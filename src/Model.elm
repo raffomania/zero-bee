@@ -11,7 +11,7 @@ type alias Model =
     , currentMonth : MonthOfYear
     , budgetEntries : Dict MonthIndex (Dict CategoryId BudgetEntry)
     , newTransaction :
-        { value : Money
+        { value : String
         , date : String
         , category : CategoryId
         }
