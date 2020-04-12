@@ -1,6 +1,7 @@
 module Msg exposing (..)
 
 import Time
+import Model
 
 
 type Msg
@@ -9,3 +10,4 @@ type Msg
     | AddTransactionNewValue String
     | AddTransactionNewCategory String
     | AddTransactionNewDate String
+    | ChangeBudgetEntry Model.MonthOfYear Model.CategoryId String

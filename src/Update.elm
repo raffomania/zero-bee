@@ -1,10 +1,12 @@
 module Update exposing (update)
 
 import Date
+import Dict
 import Model exposing (Model)
 import Msg exposing (..)
 import Set
 import Time
+import Util exposing (dictUpsert)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -21,11 +23,12 @@ update msg ({ newTransaction } as model) =
             let
                 maybeDate =
                     Date.fromIsoString model.newTransaction.date
+
                 maybeValue =
                     String.toInt model.newTransaction.value
             in
-            case (maybeDate, maybeValue) of
-                (Ok date, Just value) ->
+            case ( maybeDate, maybeValue ) of
+                ( Ok date, Just value ) ->
                     let
                         transaction =
                             model.newTransaction
@@ -42,6 +45,7 @@ update msg ({ newTransaction } as model) =
                       }
                     , Cmd.none
                     )
+
                 _ ->
                     ( model, Cmd.none )
 
@@ -53,3 +57,34 @@ update msg ({ newTransaction } as model) =
 
         AddTransactionNewDate value ->
             ( { model | newTransaction = { newTransaction | date = value } }, Cmd.none )
+
+        ChangeBudgetEntry month category value ->
+            let
+                newValue =
+                    value |> String.toInt |> Maybe.withDefault 0
+
+                monthIndex =
+                    Model.getMonthIndex month
+
+                defaultEntry =
+                    { month = month, value = newValue, category = category }
+
+                updateMonth =
+                    \monthDict ->
+                        dictUpsert
+                            category
+                            (Maybe.map (\e -> { e | value = newValue }))
+                            defaultEntry
+                            monthDict
+
+                months =
+                    dictUpsert
+                        monthIndex
+                        (Maybe.map updateMonth)
+                        (Dict.singleton category defaultEntry)
+                        model.budgetEntries
+
+                updatedModel =
+                    { model | budgetEntries = months }
+            in
+            ( updatedModel, Cmd.none )

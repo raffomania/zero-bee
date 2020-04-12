@@ -16,7 +16,7 @@ view model =
     { title = "whyNAB"
     , body =
         [ Element.layout [ Element.padding 20 ]
-            (column [ Element.spacing 10 ]
+            (column [ Element.spacing 20 ]
                 [ addTransactionForm model
                 , monthPicker model
                 , transactionList model
@@ -104,7 +104,14 @@ budgetView model =
               }
             , { header = text "budgeted"
               , width = Element.fill
-              , view = \r -> text <| String.fromInt r.budgeted
+              , view =
+                    \r ->
+                        Input.text []
+                            { text = String.fromInt r.budgeted
+                            , placeholder = Nothing
+                            , label = Input.labelHidden "budgeted"
+                            , onChange = ChangeBudgetEntry model.currentMonth r.category
+                            }
               }
             , { header = text "activity"
               , width = Element.fill
