@@ -1,0 +1,24 @@
+{
+  "devDependencies": {
+    "elm-hot": "^1.1.4",
+    "node-elm-compiler": "^5.0.4"
+  },
+  "name": "whynab",
+  "version": "0.1.0",
+  "description": "why not a budget",
+  "main": "src/index.js",
+  "dependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/raffomania/whynab.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/raffomania/whynab/issues"
+  },
+  "homepage": "https://gitlab.com/raffomania/whynab#readme"
+}
