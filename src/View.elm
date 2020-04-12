@@ -139,7 +139,7 @@ updateBudgetRowDict model transaction rows =
             budget =
                 budgetEntry model transaction.category
         in
-        Dict.insert transaction.category { category = transaction.category, budgeted = budget, activity = 0, available = budget } rows
+        Dict.insert transaction.category { category = transaction.category, budgeted = budget, activity = transaction.value, available = budget + transaction.value } rows
 
 
 budgetEntry : Model -> CategoryId -> Money
