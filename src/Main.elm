@@ -13,8 +13,12 @@ import View exposing (view)
 
 
 main =
-    Browser.document
-        { init = init, view = view, update = update, subscriptions = subscriptions }
+    Browser.element
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
 
 
 init : {} -> ( Model, Cmd Msg )

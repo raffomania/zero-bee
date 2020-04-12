@@ -6,27 +6,24 @@ import Dict exposing (Dict)
 import Element exposing (Element, column, el, row, text)
 import Element.Font as Font
 import Element.Input as Input
+import Html
 import Html.Events
 import Json.Decode as Decode
 import Model exposing (..)
 import Msg exposing (..)
 
 
-view : Model -> Browser.Document Msg
+view : Model -> Html.Html Msg
 view model =
-    { title = "whyNAB"
-    , body =
-        [ Element.layout [ Element.padding 20 ]
-            (column [ Element.spacing 20 ]
-                [ addTransactionForm model
-                , monthPicker model
-                , transactionList model
-                , toBeBudgeted model
-                , budgetView model
-                ]
-            )
-        ]
-    }
+    Element.layout [ Element.padding 20 ]
+        (column [ Element.spacing 20 ]
+            [ addTransactionForm model
+            , monthPicker model
+            , transactionList model
+            , toBeBudgeted model
+            , budgetView model
+            ]
+        )
 
 
 monthPicker : Model -> Element Msg

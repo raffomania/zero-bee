@@ -7,7 +7,10 @@
   "version": "0.1.0",
   "description": "why not a budget",
   "main": "src/index.js",
-  "dependencies": {},
+  "dependencies": {
+    "remotestorage-widget": "^1.5.1",
+    "remotestoragejs": "^1.2.3"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
