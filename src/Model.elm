@@ -72,3 +72,7 @@ dateToMonth date =
         month = Date.month date,
         year = Date.year date
     }
+
+
+isTransactionInMonth month transaction =
+   month == (dateToMonth transaction.date)

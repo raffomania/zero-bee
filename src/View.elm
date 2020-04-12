@@ -20,6 +20,7 @@ view model =
                 [ addTransactionForm model
                 , monthPicker model
                 , transactionList model
+                , toBeBudgeted model
                 , budgetView model
                 ]
             )
@@ -35,6 +36,17 @@ monthPicker model =
     in
     text label
 
+
+toBeBudgeted : Model -> Element Msg
+toBeBudgeted model =
+    let budgetEntries = Dict.get (Model.getMonthIndex model.currentMonth) model.budgetEntries |> Maybe.withDefault Dict.empty
+        alreadyBudgeted = Dict.foldl (\_ e acc -> e.value + acc) 0 budgetEntries
+        availableCash = model.transactions
+                        |> List.filter (Model.isTransactionInMonth model.currentMonth)
+                        |> List.map .value
+                        |> List.sum
+    in
+        text <| "To be budgeted: " ++ (String.fromInt <| availableCash - alreadyBudgeted)
 
 addTransactionForm : Model -> Element Msg
 addTransactionForm model =
