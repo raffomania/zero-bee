@@ -17,23 +17,16 @@ update msg ({ newTransaction } as model) =
             in
             ( { model | currentMonth = monthOfYear }, Cmd.none )
 
-        NewCategoryText text ->
-            ( { model | newCategory = text }, Cmd.none )
-
-        AddCategory ->
-            ( { model
-                | categories = Set.insert model.newCategory model.categories
-                , newCategory = ""
-              }
-            , Cmd.none
-            )
-
         AddTransaction ->
-            case model.newTransaction.date of
-                Nothing ->
+            let
+                maybeDate =
+                    Date.fromIsoString model.newTransaction.date
+            in
+            case maybeDate of
+                Err _ ->
                     ( model, Cmd.none )
 
-                Just date ->
+                Ok date ->
                     let
                         transaction =
                             model.newTransaction
@@ -62,13 +55,4 @@ update msg ({ newTransaction } as model) =
             ( { model | newTransaction = { newTransaction | category = value } }, Cmd.none )
 
         AddTransactionNewDate value ->
-            let
-                newModel =
-                    case Date.fromIsoString value of
-                        Ok date ->
-                            { model | newTransaction = { newTransaction | date = Just date } }
-
-                        Err _ ->
-                            model
-            in
-            ( newModel, Cmd.none )
+            ( { model | newTransaction = { newTransaction | date = value } }, Cmd.none )

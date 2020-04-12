@@ -2,29 +2,32 @@ module View exposing (view)
 
 import Browser
 import Date
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onInput, onSubmit)
+import Dict exposing (Dict)
+import Element exposing (Element, column, el, row, text)
+import Element.Input as Input
+import Html.Events
+import Json.Decode as Decode
 import Model exposing (..)
 import Msg exposing (..)
-import Set
 
 
 view : Model -> Browser.Document Msg
 view model =
     { title = "whyNAB"
     , body =
-        [ newCategoryForm model
-        , addTransactionForm model
-        , transactionList model
-        , br [] []
-        , monthPicker model
-        , budgetView model
+        [ Element.layout [ Element.padding 20 ]
+            (column [ Element.spacing 10 ]
+                [ addTransactionForm model
+                , monthPicker model
+                , transactionList model
+                , budgetView model
+                ]
+            )
         ]
     }
 
 
-monthPicker : Model -> Html Msg
+monthPicker : Model -> Element Msg
 monthPicker model =
     let
         label =
@@ -33,83 +36,138 @@ monthPicker model =
     text label
 
 
-newCategoryForm : Model -> Html Msg
-newCategoryForm model =
-    Html.form [ onSubmit AddCategory ]
-        [ input [ type_ "text", placeholder "new category", value model.newCategory, onInput NewCategoryText ] []
-        ]
-
-
-addTransactionForm : Model -> Html Msg
+addTransactionForm : Model -> Element Msg
 addTransactionForm model =
-    Html.form [ onSubmit AddTransaction ]
-        [ text "new transaction"
-        , br [] []
-        , input [ type_ "text", value <| String.fromInt <| model.newTransaction.value, onInput AddTransactionNewValue ] []
-        , categorySelect model.categories model.newTransaction.category
-        , input [ type_ "text", onInput AddTransactionNewDate ] []
-        , text ("date: " ++ (Debug.toString <| Maybe.map Date.toIsoString model.newTransaction.date))
-        , button [ type_ "submit" ] [ text "submit" ]
+    let
+        currentDate =
+            Debug.toString <| Result.map Date.toIsoString <| Date.fromIsoString model.newTransaction.date
+    in
+    row [ onEnter AddTransaction, Element.spacing 10 ]
+        [ text "New transaction"
+        , Input.text []
+            { placeholder = Nothing
+            , label = Input.labelAbove [] <| text "value"
+            , text = String.fromInt <| model.newTransaction.value
+            , onChange = AddTransactionNewValue
+            }
+        , Input.text []
+            { placeholder = Nothing
+            , label = Input.labelAbove [] <| text "category"
+            , text = model.newTransaction.category
+            , onChange = AddTransactionNewCategory
+            }
+        , Input.text []
+            { placeholder = Nothing
+            , label = Input.labelAbove [] <| text ("date: " ++ currentDate)
+            , text = model.newTransaction.date
+            , onChange = AddTransactionNewDate
+            }
         ]
-
-
-categorySelect categories selected =
-    select [ placeholder "category", value <| selected, onInput AddTransactionNewCategory ]
-        (Set.toList categories
-            |> List.map (text >> List.singleton >> option [])
-        )
 
 
 transactionList model =
-    table []
-        (tr [] [
-             th [] [text "date"],
-             th [] [text "category"],
-             th [] [text "value"]
+    Element.table []
+        { data = model.transactions
+        , columns =
+            [ { header = text "date"
+              , width = Element.fill
+              , view = \t -> text <| Date.toIsoString t.date
+              }
+            , { header = text "category"
+              , width = Element.fill
+              , view = \t -> text <| t.category
+              }
+            , { header = text "category"
+              , width = Element.fill
+              , view = \t -> text <| String.fromInt t.value
+              }
             ]
-        ::
-        (model.transactions
-            |> List.map
-                (\t ->
-                    tr []
-                        [ td [] [ text <| Date.toIsoString t.date ]
-                        , td [] [ text <| t.category ]
-                        , td [] [ text <| String.fromInt t.value ]
-                        ]
-                )
-        ))
+        }
 
 
-budgetView : Model -> Html Msg
+type alias BudgetRow =
+    { category : String
+    , budgeted : Money
+    , activity : Money
+    , available : Money
+    }
+
+
+budgetView : Model -> Element Msg
 budgetView model =
-    table [ attribute "border" "1" ]
-        (tr []
-            [ th [] [ text "category" ]
-            , th [] [ text "budgeted" ]
-            , th [] [ text "activity" ]
-            , th [] [ text "available" ]
+    Element.table []
+        { data = budgetRows model
+        , columns =
+            [ { header = text "category"
+              , width = Element.fill
+              , view = \r -> text r.category
+              }
+            , { header = text "budgeted"
+              , width = Element.fill
+              , view = \r -> text <| String.fromInt r.budgeted
+              }
+            , { header = text "activity"
+              , width = Element.fill
+              , view = \r -> text <| String.fromInt r.activity
+              }
+            , { header = text "available"
+              , width = Element.fill
+              , view = \r -> text <| String.fromInt r.available
+              }
             ]
-            :: (model.categories
-                    |> Set.toList
-                    |> List.map (budgetEntry model)
-               )
-        )
+        }
 
 
-budgetEntry : Model -> CategoryId -> Html Msg
+budgetRows : Model -> List BudgetRow
+budgetRows model =
+    model.transactions
+        |> List.foldl (updateBudgetRowDict model) Dict.empty
+        |> Dict.values
+
+
+updateBudgetRowDict : Model -> Transaction -> Dict CategoryId BudgetRow -> Dict CategoryId BudgetRow
+updateBudgetRowDict model transaction rows =
+    if Dict.member transaction.category rows then
+        let
+            updateRow =
+                \r -> { r | activity = r.activity + transaction.value, available = r.available + transaction.value }
+        in
+        Dict.update transaction.category (Maybe.map updateRow) rows
+
+    else
+        let
+            budget =
+                budgetEntry model transaction.category
+        in
+        Dict.insert transaction.category { category = transaction.category, budgeted = budget, activity = 0, available = budget } rows
+
+
+budgetEntry : Model -> CategoryId -> Money
 budgetEntry model name =
     let
         entry =
-            Model.getBudgetEntry name model
+            Model.getBudgetEntry name model.currentMonth model
                 |> Maybe.withDefault
                     { month = model.currentMonth
                     , value = 0
                     , category = name
                     }
     in
-    tr []
-        [ td [] [ text name ]
-        , td [] [ input [ value <| String.fromInt entry.value ] [] ]
-        , td [] [ text "0" ]
-        , td [] [ text (String.fromInt entry.value) ]
-        ]
+    entry.value
+
+
+onEnter : msg -> Element.Attribute msg
+onEnter msg =
+    Element.htmlAttribute
+        (Html.Events.on "keyup"
+            (Decode.field "key" Decode.string
+                |> Decode.andThen
+                    (\key ->
+                        if key == "Enter" then
+                            Decode.succeed msg
+
+                        else
+                            Decode.fail "Not the enter key"
+                    )
+            )
+        )

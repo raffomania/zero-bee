@@ -8,13 +8,11 @@ import Time
 
 type alias Model =
     { transactions : List Transaction
-    , categories : Set CategoryId
     , currentMonth : MonthOfYear
     , budgetEntries : Dict MonthIndex (Dict CategoryId BudgetEntry)
-    , newCategory : String
     , newTransaction :
         { value : Money
-        , date : Maybe Date.Date
+        , date : String
         , category : CategoryId
         }
     }
@@ -61,8 +59,8 @@ getMonthIndex monthYear =
         ]
 
 
-getBudgetEntry : CategoryId -> Model -> Maybe BudgetEntry
-getBudgetEntry category model =
+getBudgetEntry : CategoryId -> MonthOfYear -> Model -> Maybe BudgetEntry
+getBudgetEntry category month model =
     model.budgetEntries
-        |> Dict.get (getMonthIndex model.currentMonth)
+        |> Dict.get (getMonthIndex month)
         |> Maybe.andThen (Dict.get category)
