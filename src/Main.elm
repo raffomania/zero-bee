@@ -6,6 +6,7 @@ import Dict
 import Model exposing (Model)
 import Msg exposing (..)
 import Set
+import Storage
 import Task
 import Time
 import Update exposing (update)
@@ -36,5 +37,6 @@ init flags =
     )
 
 
+subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Storage.modelUpdated UpdateFromStorage

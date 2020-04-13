@@ -5,6 +5,7 @@ import Dict
 import Model exposing (Model)
 import Msg exposing (..)
 import Set
+import Storage
 import Time
 import Util exposing (dictUpsert)
 
@@ -88,3 +89,11 @@ update msg ({ newTransaction } as model) =
                     { model | budgetEntries = months }
             in
             ( updatedModel, Cmd.none )
+
+        UpdateFromStorage value ->
+            case Storage.decodeModel value of
+                Ok newModel ->
+                    ( { model | transactions = newModel.transactions, budgetEntries = newModel.budgetEntries }, Cmd.none )
+
+                _ ->
+                    Debug.todo "decoding failed"

@@ -7,14 +7,22 @@ remoteStorage.access.claim('whynab', 'rw');
 remoteStorage.caching.enable('/whynab/');
 
 window.addEventListener('DOMContentLoaded', () => {
-    Elm.Main.init({
-        node: document.getElementById('elm')
-    });
-
     const widget = new Widget(remoteStorage);
     widget.attach('remotestorage');
 
     remoteStorage.on('ready', () => {
-        console.log('ready');
+        const client = remoteStorage.scope('/whynab/');
+        let app = Elm.Main.init({
+            node: document.getElementById('elm'),
+        });
+
+        app.ports.storeModel.subscribe((data) => {
+            client.storeFile('application/json', 'db.json', JSON.stringify(data));
+        });
+
+        client.on('change', (event) => {
+            console.log(event);
+            // todo send data to elm
+        });
     });
 });

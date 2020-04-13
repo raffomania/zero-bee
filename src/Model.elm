@@ -68,11 +68,10 @@ getBudgetEntry category month model =
 
 dateToMonth : Date.Date -> MonthOfYear
 dateToMonth date =
-    {
-        month = Date.month date,
-        year = Date.year date
+    { month = Date.month date
+    , year = Date.year date
     }
 
 
 isTransactionInMonth month transaction =
-   month == (dateToMonth transaction.date)
+    month == dateToMonth transaction.date

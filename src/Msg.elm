@@ -1,7 +1,8 @@
 module Msg exposing (..)
 
-import Time
+import Json.Decode
 import Model
+import Time
 
 
 type Msg
@@ -11,3 +12,4 @@ type Msg
     | AddTransactionNewCategory String
     | AddTransactionNewDate String
     | ChangeBudgetEntry Model.MonthOfYear Model.CategoryId String
+    | UpdateFromStorage Json.Decode.Value
