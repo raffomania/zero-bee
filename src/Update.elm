@@ -101,18 +101,52 @@ update msg ({ newTransaction } as model) =
 
                 _ ->
                     Debug.todo "decoding failed"
+
         ChangeTransactionValue transaction value ->
             case Money.parse value of
                 Just moneyValue ->
-                  let updateTransaction t =
-                          if t == transaction then
-                              {t | value = moneyValue}
-                          else
-                              t
-                      updatedModel =
-                          {model | transactions = List.map updateTransaction model.transactions }
-                  in
-                      (updatedModel, Storage.storeModel updatedModel)
-                _ ->
-                    (model, Cmd.none)
+                    let
+                        updateTransaction t =
+                            if t == transaction then
+                                { t | value = moneyValue }
 
+                            else
+                                t
+
+                        updatedModel =
+                            { model | transactions = List.map updateTransaction model.transactions }
+                    in
+                    ( updatedModel, Storage.storeModel updatedModel )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        NextMonth ->
+            let
+                current =
+                    model.currentMonth
+
+                updatedMonth =
+                    case current.month of
+                        Time.Dec ->
+                            { month = Time.Jan, year = current.year + 1 }
+
+                        _ ->
+                            { current | month = Date.numberToMonth <| Date.monthToNumber current.month + 1 }
+            in
+            ( { model | currentMonth = updatedMonth }, Cmd.none )
+
+        PreviousMonth ->
+            let
+                current =
+                    model.currentMonth
+
+                updatedMonth =
+                    case current.month of
+                        Time.Jan ->
+                            { month = Time.Dec, year = current.year - 1 }
+
+                        _ ->
+                            { current | month = Date.numberToMonth <| Date.monthToNumber current.month - 1 }
+            in
+            ( { model | currentMonth = updatedMonth }, Cmd.none )

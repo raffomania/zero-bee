@@ -14,3 +14,5 @@ type Msg
     | ChangeTransactionValue Model.Transaction String
     | ChangeBudgetEntry Model.MonthOfYear Model.CategoryId String
     | UpdateFromStorage Json.Decode.Value
+    | NextMonth
+    | PreviousMonth

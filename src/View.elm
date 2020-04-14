@@ -33,7 +33,17 @@ monthPicker model =
         label =
             Debug.toString model.currentMonth.month ++ " " ++ String.fromInt model.currentMonth.year
     in
-    text label
+    row [ Element.spacing 10]
+        [ Input.button [Element.width <| Element.px 30, Font.center]
+            { onPress = Just PreviousMonth
+            , label = text "<"
+            }
+        , el [Element.width <| Element.px 100, Font.center] (text label)
+        , Input.button [Element.width <| Element.px 30, Font.center]
+            { onPress = Just NextMonth
+            , label = text ">"
+            }
+        ]
 
 
 toBeBudgeted : Model -> Element Msg
@@ -106,7 +116,7 @@ transactionList model =
               , width = Element.fill
               , view =
                     \t ->
-                        Input.text [alignInput "right"]
+                        Input.text [ alignInput "right" ]
                             { placeholder = Nothing
                             , label = Input.labelHidden "value"
                             , text = String.fromInt t.value
@@ -218,6 +228,7 @@ onEnter msg =
                     )
             )
         )
+
 
 alignInput val =
     Element.htmlAttribute (Html.Attributes.style "text-align" val)
