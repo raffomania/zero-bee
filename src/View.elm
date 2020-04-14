@@ -33,13 +33,13 @@ monthPicker model =
         label =
             Debug.toString model.currentMonth.month ++ " " ++ String.fromInt model.currentMonth.year
     in
-    row [ Element.spacing 10]
-        [ Input.button [Element.width <| Element.px 30, Font.center]
+    row [ Element.spacing 10 ]
+        [ Input.button [ Element.width <| Element.px 30, Font.center ]
             { onPress = Just PreviousMonth
             , label = text "<"
             }
-        , el [Element.width <| Element.px 100, Font.center] (text label)
-        , Input.button [Element.width <| Element.px 30, Font.center]
+        , el [ Element.width <| Element.px 100, Font.center ] (text label)
+        , Input.button [ Element.width <| Element.px 30, Font.center ]
             { onPress = Just NextMonth
             , label = text ">"
             }
@@ -121,6 +121,15 @@ transactionList model =
                             , label = Input.labelHidden "value"
                             , text = String.fromInt t.value
                             , onChange = ChangeTransactionValue t
+                            }
+              }
+            , { header = Element.none
+              , width = Element.px 40
+              , view =
+                    \t ->
+                        Input.button [ Element.height Element.fill, Font.center ]
+                            { onPress = Just <| RemoveTransaction t
+                            , label = text "x"
                             }
               }
             ]

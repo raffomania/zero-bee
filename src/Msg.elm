@@ -16,3 +16,4 @@ type Msg
     | UpdateFromStorage Json.Decode.Value
     | NextMonth
     | PreviousMonth
+    | RemoveTransaction Model.Transaction

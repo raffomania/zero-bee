@@ -150,3 +150,14 @@ update msg ({ newTransaction } as model) =
                             { current | month = Date.numberToMonth <| Date.monthToNumber current.month - 1 }
             in
             ( { model | currentMonth = updatedMonth }, Cmd.none )
+
+        RemoveTransaction transaction ->
+            let
+                updatedTransactions =
+                    model.transactions
+                        |> List.filter ((/=) transaction)
+
+                updatedModel =
+                    { model | transactions = updatedTransactions }
+            in
+            (updatedModel, Storage.storeModel updatedModel)
