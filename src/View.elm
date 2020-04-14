@@ -101,9 +101,16 @@ transactionList model =
               , width = Element.fill
               , view = \t -> text <| t.category
               }
-            , { header = text "category"
+            , { header = text "value"
               , width = Element.fill
-              , view = \t -> el [ Font.alignRight ] <| text <| String.fromInt t.value
+              , view =
+                    \t ->
+                        Input.text []
+                            { placeholder = Nothing
+                            , label = Input.labelHidden "value"
+                            , text = String.fromInt t.value
+                            , onChange = ChangeTransactionValue t
+                            }
               }
             ]
         }

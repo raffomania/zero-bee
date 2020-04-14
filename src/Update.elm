@@ -3,6 +3,7 @@ module Update exposing (update)
 import Date
 import Dict
 import Model exposing (Model)
+import Money
 import Msg exposing (..)
 import Set
 import Storage
@@ -100,3 +101,18 @@ update msg ({ newTransaction } as model) =
 
                 _ ->
                     Debug.todo "decoding failed"
+        ChangeTransactionValue transaction value ->
+            case Money.parse value of
+                Just moneyValue ->
+                  let updateTransaction t =
+                          if t == transaction then
+                              {t | value = moneyValue}
+                          else
+                              t
+                      updatedModel =
+                          {model | transactions = List.map updateTransaction model.transactions }
+                  in
+                      (updatedModel, Storage.storeModel updatedModel)
+                _ ->
+                    (model, Cmd.none)
+
