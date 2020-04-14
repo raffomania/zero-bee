@@ -1,4 +1,4 @@
-port module Storage exposing (..)
+port module Storage exposing (decodeModel, modelUpdated, storeModel)
 
 import Date exposing (Date)
 import Debug
@@ -15,10 +15,53 @@ type alias StoredModel =
     }
 
 
-port storeModel : E.Value -> Cmd msg
+port sendModel : E.Value -> Cmd msg
 
 
 port modelUpdated : (E.Value -> msg) -> Sub msg
+
+
+storeModel : Model -> Cmd msg
+storeModel model =
+    model
+        |> encodeModel
+        |> sendModel
+
+
+encodeModel : Model -> E.Value
+encodeModel model =
+    E.object
+        [ ( "transactions", E.list encodeTransaction model.transactions )
+        , ( "budgetEntries", E.dict identity encodeBudgetDict model.budgetEntries )
+        ]
+
+
+encodeTransaction transaction =
+    E.object
+        [ ( "value", E.int transaction.value )
+        , ( "date", encodeDate transaction.date )
+        , ( "category", E.string transaction.category )
+        ]
+
+
+encodeDate : Date.Date -> E.Value
+encodeDate date =
+    date
+        |> Date.toIsoString
+        |> E.string
+
+
+encodeBudgetDict dict =
+    E.dict identity encodeBudgetEntry dict
+
+
+encodeBudgetEntry : BudgetEntry -> E.Value
+encodeBudgetEntry entry =
+    E.object
+        [ ( "month", E.object [ ( "month", E.int <| Date.monthToNumber entry.month.month ), ( "year", E.int entry.month.year ) ] )
+        , ( "value", E.int entry.value)
+        , ( "category", E.string entry.category)
+        ]
 
 
 decodeModel : D.Value -> Result D.Error StoredModel
@@ -43,9 +86,19 @@ transactionDecoder =
 
 dateDecoder : D.Decoder Date
 dateDecoder =
-    D.int
-        |> D.map Time.millisToPosix
-        |> D.map (Date.fromPosix Time.utc)
+    D.string
+        |> D.map Date.fromIsoString
+        |> D.andThen resultDecoder
+
+
+resultDecoder : Result String val -> D.Decoder val
+resultDecoder res =
+    case res of
+        Ok val ->
+            D.succeed val
+
+        Err desc ->
+            D.fail desc
 
 
 budgetMonthDecoder : D.Decoder (Dict CategoryId BudgetEntry)

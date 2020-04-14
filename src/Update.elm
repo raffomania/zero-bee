@@ -39,12 +39,15 @@ update msg ({ newTransaction } as model) =
                             , value = value
                             , category = transaction.category
                             }
+
+                        updatedModel =
+                            { model
+                                | transactions = updatedTransaction :: model.transactions
+                                , newTransaction = { newTransaction | value = "" }
+                            }
                     in
-                    ( { model
-                        | transactions = updatedTransaction :: model.transactions
-                        , newTransaction = { newTransaction | value = "" }
-                      }
-                    , Cmd.none
+                    ( updatedModel
+                    , Storage.storeModel updatedModel
                     )
 
                 _ ->
@@ -88,7 +91,7 @@ update msg ({ newTransaction } as model) =
                 updatedModel =
                     { model | budgetEntries = months }
             in
-            ( updatedModel, Cmd.none )
+            ( updatedModel, Storage.storeModel updatedModel )
 
         UpdateFromStorage value ->
             case Storage.decodeModel value of

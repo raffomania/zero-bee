@@ -16,13 +16,16 @@ window.addEventListener('DOMContentLoaded', () => {
             node: document.getElementById('elm'),
         });
 
-        app.ports.storeModel.subscribe((data) => {
+        app.ports.sendModel.subscribe((data) => {
+            console.log('store', data);
             client.storeFile('application/json', 'db.json', JSON.stringify(data));
         });
 
         client.on('change', (event) => {
-            console.log(event);
-            // todo send data to elm
+            if (event.origin === 'conflict') {
+                console.error('conflict', event);
+            }
+            app.ports.modelUpdated.send(event.newValue);
         });
     });
 });
