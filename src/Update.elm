@@ -160,4 +160,19 @@ update msg ({ newTransaction } as model) =
                 updatedModel =
                     { model | transactions = updatedTransactions }
             in
-            (updatedModel, Storage.storeModel updatedModel)
+            ( updatedModel, Storage.storeModel updatedModel )
+
+        RemoveBudgetEntry month category ->
+            let
+                updateMonth =
+                    Maybe.map (Dict.remove category)
+
+                updatedEntries =
+                    Dict.update (Model.getMonthIndex month)
+                        updateMonth
+                        model.budgetEntries
+
+                updatedModel =
+                    { model | budgetEntries = updatedEntries }
+            in
+            ( updatedModel, Storage.storeModel updatedModel )

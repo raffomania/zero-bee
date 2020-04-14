@@ -151,8 +151,8 @@ budgetView model =
         { data = budgetRows model
         , columns =
             [ { header = text "category"
-              , width = Element.fill
-              , view = \r -> text r.category
+              , width = Element.fillPortion 2
+              , view = \r -> el [Element.centerY] <| text r.category
               }
             , { header = text "budgeted"
               , width = Element.fill
@@ -167,11 +167,23 @@ budgetView model =
               }
             , { header = text "activity"
               , width = Element.fill
-              , view = \r -> el [ Font.alignRight ] <| text <| Money.format r.activity
+              , view = \r -> el [ Font.alignRight, Element.centerY ] <| text <| Money.format r.activity
               }
             , { header = text "available"
               , width = Element.fill
-              , view = \r -> el [ Font.alignRight ] <| text <| Money.format r.available
+              , view = \r -> el [ Font.alignRight, Element.centerY ] <| text <| Money.format r.available
+              }
+            , { header = text "remove"
+              , width = Element.px 50
+              , view =
+                    \r ->
+                        if r.activity /= 0 then
+                            Element.none
+                        else
+                          Input.button [Font.center, Element.height Element.fill]
+                              { onPress = Just <| RemoveBudgetEntry model.currentMonth r.category
+                              , label = text "x"
+                              }
               }
             ]
         }

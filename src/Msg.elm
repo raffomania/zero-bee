@@ -17,3 +17,4 @@ type Msg
     | NextMonth
     | PreviousMonth
     | RemoveTransaction Model.Transaction
+    | RemoveBudgetEntry Model.MonthOfYear Model.CategoryId
