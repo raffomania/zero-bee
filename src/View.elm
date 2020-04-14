@@ -63,11 +63,11 @@ toBeBudgeted model =
                 |> List.sum
     in
     row []
-        [ text <| String.fromInt availableCash
+        [ text <| Money.format availableCash
         , text " funds -"
-        , text <| String.fromInt alreadyBudgeted
+        , text <| Money.format alreadyBudgeted
         , text " budgeted = "
-        , text <| (String.fromInt <| availableCash - alreadyBudgeted)
+        , text <| (Money.format <| availableCash - alreadyBudgeted)
         , text " to be budgeted"
         ]
 
@@ -234,7 +234,7 @@ budgetRowFromEntry entry =
     { category = entry.category
     , budgeted = entry.value
     , activity = 0
-    , available = 0
+    , available = entry.value
     }
 
 
