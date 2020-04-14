@@ -11,6 +11,7 @@ import Html.Attributes
 import Html.Events
 import Json.Decode as Decode
 import Model exposing (..)
+import Money
 import Msg exposing (..)
 
 
@@ -166,11 +167,11 @@ budgetView model =
               }
             , { header = text "activity"
               , width = Element.fill
-              , view = \r -> el [ Font.alignRight ] <| text <| String.fromInt r.activity
+              , view = \r -> el [ Font.alignRight ] <| text <| Money.format r.activity
               }
             , { header = text "available"
               , width = Element.fill
-              , view = \r -> el [ Font.alignRight ] <| text <| String.fromInt r.available
+              , view = \r -> el [ Font.alignRight ] <| text <| Money.format r.available
               }
             ]
         }
