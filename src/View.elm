@@ -50,7 +50,14 @@ toBeBudgeted model =
                 |> List.map .value
                 |> List.sum
     in
-    text <| "To be budgeted: " ++ (String.fromInt <| availableCash - alreadyBudgeted)
+    row []
+        [ text <| String.fromInt availableCash
+        , text " funds -"
+        , text <| String.fromInt alreadyBudgeted
+        , text " budgeted = "
+        , text <| (String.fromInt <| availableCash - alreadyBudgeted)
+        , text " to be budgeted"
+        ]
 
 
 addTransactionForm : Model -> Element Msg

@@ -17,7 +17,6 @@ window.addEventListener('DOMContentLoaded', () => {
         });
 
         app.ports.sendModel.subscribe((data) => {
-            console.log('store', data);
             client.storeFile('application/json', 'db.json', JSON.stringify(data));
         });
 
