@@ -169,9 +169,17 @@ budgetView model =
 
 budgetRows : Model -> List BudgetRow
 budgetRows model =
+    let
+        rowsFromBudget =
+            model.budgetEntries
+                |> Dict.get (getMonthIndex model.currentMonth)
+                |> Maybe.withDefault Dict.empty
+                |> Dict.filter (\_ e -> e.month == model.currentMonth)
+                |> Dict.map (\_ e -> budgetRowFromEntry e)
+    in
     model.transactions
         |> List.filter (\t -> model.currentMonth == Model.dateToMonth t.date)
-        |> List.foldl (updateBudgetRowDict model) Dict.empty
+        |> List.foldl (updateBudgetRowDict model) rowsFromBudget
         |> Dict.values
 
 
@@ -197,6 +205,15 @@ updateBudgetRowDict model transaction rows =
             , available = budget + transaction.value
             }
             rows
+
+
+budgetRowFromEntry : BudgetEntry -> BudgetRow
+budgetRowFromEntry entry =
+    { category = entry.category
+    , budgeted = entry.value
+    , activity = 0
+    , available = 0
+    }
 
 
 budgetEntry : Model -> CategoryId -> Money
