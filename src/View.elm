@@ -7,6 +7,7 @@ import Element exposing (Element, column, el, row, text)
 import Element.Font as Font
 import Element.Input as Input
 import Html
+import Html.Attributes
 import Html.Events
 import Json.Decode as Decode
 import Model exposing (..)
@@ -105,7 +106,7 @@ transactionList model =
               , width = Element.fill
               , view =
                     \t ->
-                        Input.text []
+                        Input.text [alignInput "right"]
                             { placeholder = Nothing
                             , label = Input.labelHidden "value"
                             , text = String.fromInt t.value
@@ -137,7 +138,7 @@ budgetView model =
               , width = Element.fill
               , view =
                     \r ->
-                        Input.text [ Font.alignRight ]
+                        Input.text [ alignInput "right" ]
                             { text = String.fromInt r.budgeted
                             , placeholder = Nothing
                             , label = Input.labelHidden "budgeted"
@@ -217,3 +218,6 @@ onEnter msg =
                     )
             )
         )
+
+alignInput val =
+    Element.htmlAttribute (Html.Attributes.style "text-align" val)
