@@ -1,7 +1,6 @@
 port module Storage exposing (decodeModel, modelUpdated, storeModel)
 
 import Date exposing (Date)
-import Debug
 import Dict exposing (Dict)
 import Json.Decode as D exposing (field)
 import Json.Encode as E

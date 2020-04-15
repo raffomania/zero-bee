@@ -1,7 +1,8 @@
 {
   "devDependencies": {
     "elm-hot": "^1.1.4",
-    "node-elm-compiler": "^5.0.4"
+    "node-elm-compiler": "^5.0.4",
+    "parcel-bundler": "^1.12.4"
   },
   "name": "whynab",
   "version": "0.1.0",

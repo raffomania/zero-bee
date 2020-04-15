@@ -1,0 +1,9 @@
+image: node:latest
+pages:
+  script:
+    - npm install
+    - npx parcel build index.html
+  artifacts:
+    paths:
+      - dist
+    
