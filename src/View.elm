@@ -32,14 +32,15 @@ monthPicker : Model -> Element Msg
 monthPicker model =
     let
         label =
-            Debug.toString model.currentMonth.month ++ " " ++ String.fromInt model.currentMonth.year
+            Date.fromCalendarDate model.currentMonth.year model.currentMonth.month 1
+              |> Date.format "MMMM y"
     in
     row [ Element.spacing 10 ]
         [ Input.button [ Element.width <| Element.px 30, Font.center ]
             { onPress = Just PreviousMonth
             , label = text "<"
             }
-        , el [ Element.width <| Element.px 100, Font.center ] (text label)
+        , el [ Element.width <| Element.px 200, Font.center ] (text label)
         , Input.button [ Element.width <| Element.px 30, Font.center ]
             { onPress = Just NextMonth
             , label = text ">"
@@ -75,15 +76,17 @@ toBeBudgeted model =
 addTransactionForm : Model -> Element Msg
 addTransactionForm model =
     let
+        parsedDate =
+            Result.map Date.toIsoString <| Date.fromIsoString model.newTransaction.date
         currentDate =
-            Debug.toString <| Result.map Date.toIsoString <| Date.fromIsoString model.newTransaction.date
+            case parsedDate of
+                Ok d -> d
+                _ -> "Invalid date"
     in
     row [ onEnter AddTransaction, Element.spacing 10 ]
         [ text "New transaction"
-        , Input.text []
-            { placeholder = Nothing
-            , label = Input.labelAbove [] <| text "value"
-            , text = model.newTransaction.value
+        , Money.input
+            { value = String.toInt model.newTransaction.value |> Maybe.withDefault 0
             , onChange = AddTransactionNewValue
             }
         , Input.text []
@@ -117,11 +120,9 @@ transactionList model =
               , width = Element.fill
               , view =
                     \t ->
-                        Input.text [ alignInput "right" ]
-                            { placeholder = Nothing
-                            , label = Input.labelHidden "value"
-                            , text = String.fromInt t.value
-                            , onChange = ChangeTransactionValue t
+                        Money.input
+                            { onChange = ChangeTransactionValue t
+                            , value = t.value
                             }
               }
             , { header = Element.none
@@ -152,16 +153,14 @@ budgetView model =
         , columns =
             [ { header = text "category"
               , width = Element.fillPortion 2
-              , view = \r -> el [Element.centerY] <| text r.category
+              , view = \r -> el [ Element.centerY ] <| text r.category
               }
             , { header = text "budgeted"
               , width = Element.fill
               , view =
                     \r ->
-                        Input.text [ alignInput "right" ]
-                            { text = String.fromInt r.budgeted
-                            , placeholder = Nothing
-                            , label = Input.labelHidden "budgeted"
+                        Money.input
+                            { value = r.budgeted
                             , onChange = ChangeBudgetEntry model.currentMonth r.category
                             }
               }
@@ -179,11 +178,12 @@ budgetView model =
                     \r ->
                         if r.activity /= 0 then
                             Element.none
+
                         else
-                          Input.button [Font.center, Element.height Element.fill]
-                              { onPress = Just <| RemoveBudgetEntry model.currentMonth r.category
-                              , label = text "x"
-                              }
+                            Input.button [ Font.center, Element.height Element.fill ]
+                                { onPress = Just <| RemoveBudgetEntry model.currentMonth r.category
+                                , label = text "x"
+                                }
               }
             ]
         }

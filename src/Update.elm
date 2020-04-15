@@ -100,7 +100,7 @@ update msg ({ newTransaction } as model) =
                     ( { model | transactions = newModel.transactions, budgetEntries = newModel.budgetEntries }, Cmd.none )
 
                 _ ->
-                    Debug.todo "decoding failed"
+                    (model, Cmd.none)
 
         ChangeTransactionValue transaction value ->
             case Money.parse value of
