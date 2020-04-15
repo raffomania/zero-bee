@@ -12,4 +12,6 @@ pages:
   artifacts:
     paths:
       - dist
+  only:
+    - master
     
