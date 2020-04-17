@@ -70,6 +70,13 @@ toBeBudgeted model =
         currentlyBudgeted =
             sumBudgets currentMonthEntries
 
+        budgetedInFuture =
+            model.budgetEntries
+                |> Dict.filter (\index _ -> compareMonths (parseMonthIndex index) model.currentMonth == GT)
+                |> Dict.values
+                |> List.map sumBudgets
+                |> List.sum
+
         availableCash =
             model.transactions
                 |> List.filter
@@ -84,18 +91,35 @@ toBeBudgeted model =
                 |> List.filter ((<) 0)
                 |> List.sum
     in
-    row []
-        [ text <| Money.format availableCash
-        , el [ Font.color Colors.grey ] <| text " funds"
-        , text " -"
-        , text <| Money.format previouslyBudgeted
-        , el [Font.color Colors.grey] <| text " previously budgeted"
-        , text " -"
-        , text <| Money.format currentlyBudgeted
-        , el [Font.color Colors.grey] <| text " budgeted = "
-        , text <| (Money.format <| availableCash - currentlyBudgeted - previouslyBudgeted)
-        , text " to be budgeted"
-        ]
+    Element.table [ Element.spacing 10 ]
+        { data =
+            [ { value = availableCash
+              , text = "funds"
+              }
+            , { value = -previouslyBudgeted
+              , text = "previously budgeted"
+              }
+            , { value = -currentlyBudgeted
+              , text = "budgeted"
+              }
+            , { value = -budgetedInFuture
+              , text = "budgeted in future"
+              }
+            , { value = availableCash - previouslyBudgeted - currentlyBudgeted - budgetedInFuture
+              , text = "to be budgeted"
+              }
+            ]
+        , columns =
+            [ { header = Element.none
+              , width = Element.px 200
+              , view = \d -> el [ Font.alignRight ] <| text <| Money.format d.value
+              }
+            , { header = Element.none
+              , width = Element.px 200
+              , view = \d -> text <| d.text
+              }
+            ]
+        }
 
 
 addTransactionForm : Model -> Element Msg
