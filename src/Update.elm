@@ -66,7 +66,7 @@ update msg ({ newTransaction } as model) =
                     Model.getMonthIndex month
 
                 defaultEntry =
-                    { month = month, value = value, category = category }
+                    { value = value, category = category }
 
                 updateMonth =
                     \monthDict ->

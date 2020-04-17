@@ -44,8 +44,7 @@ type alias Transaction =
 
 
 type alias BudgetEntry =
-    { month : MonthOfYear
-    , value : Money
+    { value : Money
     , category : CategoryId
     }
 
@@ -68,10 +67,10 @@ parseMonthIndex index =
             { year = String.toInt year |> Maybe.withDefault 2020
             , month = Date.numberToMonth (String.toInt month |> Maybe.withDefault 1)
             }
+
         _ ->
-            {
-                year = 2020,
-                month = Time.Jan
+            { year = 2020
+            , month = Time.Jan
             }
 
 

@@ -57,9 +57,8 @@ encodeBudgetDict dict =
 encodeBudgetEntry : BudgetEntry -> E.Value
 encodeBudgetEntry entry =
     E.object
-        [ ( "month", E.object [ ( "month", E.int <| Date.monthToNumber entry.month.month ), ( "year", E.int entry.month.year ) ] )
-        , ( "value", E.int entry.value)
-        , ( "category", E.string entry.category)
+        [ ( "value", E.int entry.value )
+        , ( "category", E.string entry.category )
         ]
 
 
@@ -107,8 +106,7 @@ budgetMonthDecoder =
 
 budgetEntryDecoder : D.Decoder BudgetEntry
 budgetEntryDecoder =
-    D.map3 BudgetEntry
-        (field "month" (D.map2 MonthOfYear (field "month" monthDecoder) (field "year" D.int)))
+    D.map2 BudgetEntry
         (field "value" D.int)
         (field "category" D.string)
 

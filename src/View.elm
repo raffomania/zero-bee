@@ -231,7 +231,7 @@ budgetView model =
               , width = Element.fill
               , view = \r -> el [ Font.alignRight, Element.centerY ] <| text <| Money.format r.available
               }
-            , { header = text "remove"
+            , { header = Element.none
               , width = Element.px 50
               , view =
                     \r ->
@@ -255,7 +255,6 @@ budgetRows model =
             model.budgetEntries
                 |> Dict.get (getMonthIndex model.currentMonth)
                 |> Maybe.withDefault Dict.empty
-                |> Dict.filter (\_ e -> e.month == model.currentMonth)
                 |> Dict.map (\_ e -> budgetRowFromEntry e)
     in
     model.transactions
@@ -303,8 +302,7 @@ budgetEntry model name =
         entry =
             Model.getBudgetEntry name model.currentMonth model
                 |> Maybe.withDefault
-                    { month = model.currentMonth
-                    , value = 0
+                    { value = 0
                     , category = name
                     }
     in
