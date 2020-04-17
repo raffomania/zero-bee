@@ -55,7 +55,9 @@ toBeBudgeted model =
             Dict.get (Model.getMonthIndex model.currentMonth) model.budgetEntries |> Maybe.withDefault Dict.empty
 
         alreadyBudgeted =
-            Dict.foldl (\_ e acc -> e.value + acc) 0 budgetEntries
+            Dict.values budgetEntries
+                |> List.map .value
+                |> List.sum
 
         availableCash =
             model.transactions
