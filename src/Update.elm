@@ -4,6 +4,7 @@ import Date
 import Dict
 import Model exposing (Model)
 import Money
+import Month
 import Msg exposing (..)
 import Set
 import Storage
@@ -111,34 +112,10 @@ update msg ({ newTransaction } as model) =
             ( updatedModel, Storage.storeModel updatedModel )
 
         NextMonth ->
-            let
-                current =
-                    model.currentMonth
-
-                updatedMonth =
-                    case current.month of
-                        Time.Dec ->
-                            { month = Time.Jan, year = current.year + 1 }
-
-                        _ ->
-                            { current | month = Date.numberToMonth <| Date.monthToNumber current.month + 1 }
-            in
-            ( { model | currentMonth = updatedMonth }, Cmd.none )
+            ( { model | currentMonth = Month.increment model.currentMonth }, Cmd.none )
 
         PreviousMonth ->
-            let
-                current =
-                    model.currentMonth
-
-                updatedMonth =
-                    case current.month of
-                        Time.Jan ->
-                            { month = Time.Dec, year = current.year - 1 }
-
-                        _ ->
-                            { current | month = Date.numberToMonth <| Date.monthToNumber current.month - 1 }
-            in
-            ( { model | currentMonth = updatedMonth }, Cmd.none )
+            ( { model | currentMonth = Month.decrement model.currentMonth }, Cmd.none )
 
         RemoveTransaction transaction ->
             let
