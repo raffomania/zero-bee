@@ -1,6 +1,7 @@
 module View exposing (view)
 
 import Browser
+import Colors
 import Date
 import Dict exposing (Dict)
 import Element exposing (Element, column, el, row, text)
@@ -66,7 +67,8 @@ toBeBudgeted model =
                 |> List.map sumBudgets
                 |> List.sum
 
-        currentlyBudgeted = sumBudgets currentMonthEntries
+        currentlyBudgeted =
+            sumBudgets currentMonthEntries
 
         availableCash =
             model.transactions
@@ -83,11 +85,13 @@ toBeBudgeted model =
     in
     row []
         [ text <| Money.format availableCash
-        , text " funds -"
+        , el [ Font.color Colors.grey ] <| text " funds"
+        , text " -"
         , text <| Money.format previouslyBudgeted
-        , text " previously budgeted -"
+        , el [Font.color Colors.grey] <| text " previously budgeted"
+        , text " -"
         , text <| Money.format currentlyBudgeted
-        , text " budgeted = "
+        , el [Font.color Colors.grey] <| text " budgeted = "
         , text <| (Money.format <| availableCash - currentlyBudgeted - previouslyBudgeted)
         , text " to be budgeted"
         ]
