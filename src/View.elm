@@ -88,6 +88,7 @@ addTransactionForm model =
         , Money.input
             { value = String.toInt model.newTransaction.value |> Maybe.withDefault 0
             , onChange = AddTransactionNewValue
+            , label = Just <| Input.labelAbove [] <| text "value"
             }
         , Input.text []
             { placeholder = Nothing
@@ -116,13 +117,14 @@ transactionList model =
               , width = Element.fill
               , view = \t -> text <| t.category
               }
-            , { header = text "value"
+            , { header = el [Font.alignRight] <| text "value"
               , width = Element.fill
               , view =
                     \t ->
                         Money.input
                             { onChange = ChangeTransactionValue t
                             , value = t.value
+                            , label = Nothing
                             }
               }
             , { header = Element.none
@@ -155,20 +157,21 @@ budgetView model =
               , width = Element.fillPortion 2
               , view = \r -> el [ Element.centerY ] <| text r.category
               }
-            , { header = text "budgeted"
+            , { header = el [Font.alignRight] <| text "budgeted"
               , width = Element.fill
               , view =
                     \r ->
                         Money.input
                             { value = r.budgeted
                             , onChange = ChangeBudgetEntry model.currentMonth r.category
+                            , label = Nothing
                             }
               }
-            , { header = text "activity"
+            , { header = el [Font.alignRight] <| text "activity"
               , width = Element.fill
               , view = \r -> el [ Font.alignRight, Element.centerY ] <| text <| Money.format r.activity
               }
-            , { header = text "available"
+            , { header = el [Font.alignRight] <| text "available"
               , width = Element.fill
               , view = \r -> el [ Font.alignRight, Element.centerY ] <| text <| Money.format r.available
               }

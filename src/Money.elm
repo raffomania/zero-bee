@@ -34,6 +34,7 @@ format val =
 type alias InputOptions msg =
     { onChange : String -> msg
     , value : Money
+    , label : Maybe (Element.Input.Label msg)
     }
 
 
@@ -47,7 +48,7 @@ input options =
         [ Element.Input.text [ alignInput "right", Element.paddingEach padding ]
             { text = String.fromInt options.value
             , placeholder = Nothing
-            , label = Element.Input.labelHidden "money input"
+            , label = options.label |> Maybe.withDefault (Element.Input.labelHidden "money input")
             , onChange = options.onChange
             }
         , Element.text "€"
