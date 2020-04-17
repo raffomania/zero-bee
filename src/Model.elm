@@ -73,5 +73,28 @@ dateToMonth date =
     }
 
 
+monthToDate : MonthOfYear -> Date.Date
+monthToDate month =
+    Date.fromCalendarDate month.year month.month 1
+
+
 isTransactionInMonth month transaction =
     month == dateToMonth transaction.date
+
+
+compareMonths : MonthOfYear -> MonthOfYear -> Order
+compareMonths a b =
+    if a == b then
+        EQ
+
+    else if a.year > b.year then
+        GT
+
+    else if a.year < b.year then
+        LT
+
+    else if Date.monthToNumber a.month > Date.monthToNumber b.month then
+        GT
+
+    else
+        LT

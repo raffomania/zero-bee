@@ -32,8 +32,8 @@ monthPicker : Model -> Element Msg
 monthPicker model =
     let
         label =
-            Date.fromCalendarDate model.currentMonth.year model.currentMonth.month 1
-              |> Date.format "MMMM y"
+            Model.monthToDate model.currentMonth
+                |> Date.format "MMMM y"
     in
     row [ Element.spacing 10 ]
         [ Input.button [ Element.width <| Element.px 30, Font.center ]
@@ -80,10 +80,14 @@ addTransactionForm model =
     let
         parsedDate =
             Result.map Date.toIsoString <| Date.fromIsoString model.newTransaction.date
+
         currentDate =
             case parsedDate of
-                Ok d -> d
-                _ -> "Invalid date"
+                Ok d ->
+                    d
+
+                _ ->
+                    "Invalid date"
     in
     row [ onEnter AddTransaction, Element.spacing 10 ]
         [ text "New transaction"
@@ -109,7 +113,10 @@ addTransactionForm model =
 
 transactionList model =
     Element.table [ Element.spacing 10 ]
-        { data = model.transactions |> List.filter (\t -> Model.dateToMonth t.date == model.currentMonth)
+        { data =
+            model.transactions
+                |> List.filter (\t -> Model.dateToMonth t.date == model.currentMonth)
+                |> List.sortWith (\a b -> Date.compare b.date a.date)
         , columns =
             [ { header = text "date"
               , width = Element.fill
@@ -119,7 +126,7 @@ transactionList model =
               , width = Element.fill
               , view = \t -> text <| t.category
               }
-            , { header = el [Font.alignRight] <| text "value"
+            , { header = el [ Font.alignRight ] <| text "value"
               , width = Element.fill
               , view =
                     \t ->
@@ -159,7 +166,7 @@ budgetView model =
               , width = Element.fillPortion 2
               , view = \r -> el [ Element.centerY ] <| text r.category
               }
-            , { header = el [Font.alignRight] <| text "budgeted"
+            , { header = el [ Font.alignRight ] <| text "budgeted"
               , width = Element.fill
               , view =
                     \r ->
@@ -169,11 +176,11 @@ budgetView model =
                             , label = Nothing
                             }
               }
-            , { header = el [Font.alignRight] <| text "activity"
+            , { header = el [ Font.alignRight ] <| text "activity"
               , width = Element.fill
               , view = \r -> el [ Font.alignRight, Element.centerY ] <| text <| Money.format r.activity
               }
-            , { header = el [Font.alignRight] <| text "available"
+            , { header = el [ Font.alignRight ] <| text "available"
               , width = Element.fill
               , view = \r -> el [ Font.alignRight, Element.centerY ] <| text <| Money.format r.available
               }
