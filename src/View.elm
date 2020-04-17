@@ -13,6 +13,7 @@ import Html.Events
 import Json.Decode as Decode
 import Model exposing (..)
 import Money
+import Month
 import Msg exposing (..)
 
 
@@ -251,10 +252,19 @@ budgetView model =
 budgetRows : Model -> List BudgetRow
 budgetRows model =
     let
-        rowsFromBudget =
+        previousMonth =
+            model.budgetEntries
+                |> Dict.get (getMonthIndex <| Month.decrement model.currentMonth)
+                |> Maybe.withDefault Dict.empty
+                |> Dict.map (\_ e -> {e | value = 0})
+
+        thisMonth =
             model.budgetEntries
                 |> Dict.get (getMonthIndex model.currentMonth)
                 |> Maybe.withDefault Dict.empty
+
+        rowsFromBudget =
+            Dict.union thisMonth previousMonth
                 |> Dict.map (\_ e -> budgetRowFromEntry e)
     in
     model.transactions
