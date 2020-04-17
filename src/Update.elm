@@ -25,26 +25,23 @@ update msg ({ newTransaction } as model) =
             let
                 maybeDate =
                     Date.fromIsoString model.newTransaction.date
-
-                maybeValue =
-                    String.toInt model.newTransaction.value
             in
-            case ( maybeDate, maybeValue ) of
-                ( Ok date, Just value ) ->
+            case maybeDate of
+                Ok date ->
                     let
                         transaction =
                             model.newTransaction
 
                         updatedTransaction =
                             { date = date
-                            , value = value
+                            , value = model.newTransaction.value
                             , category = transaction.category
                             }
 
                         updatedModel =
                             { model
                                 | transactions = updatedTransaction :: model.transactions
-                                , newTransaction = { newTransaction | value = "" }
+                                , newTransaction = { newTransaction | value = 0 }
                             }
                     in
                     ( updatedModel
@@ -65,20 +62,17 @@ update msg ({ newTransaction } as model) =
 
         ChangeBudgetEntry month category value ->
             let
-                newValue =
-                    value |> String.toInt |> Maybe.withDefault 0
-
                 monthIndex =
                     Model.getMonthIndex month
 
                 defaultEntry =
-                    { month = month, value = newValue, category = category }
+                    { month = month, value = value, category = category }
 
                 updateMonth =
                     \monthDict ->
                         dictUpsert
                             category
-                            (Maybe.map (\e -> { e | value = newValue }))
+                            (Maybe.map (\e -> { e | value = value }))
                             defaultEntry
                             monthDict
 
@@ -100,26 +94,21 @@ update msg ({ newTransaction } as model) =
                     ( { model | transactions = newModel.transactions, budgetEntries = newModel.budgetEntries }, Cmd.none )
 
                 _ ->
-                    (model, Cmd.none)
+                    ( model, Cmd.none )
 
         ChangeTransactionValue transaction value ->
-            case Money.parse value of
-                Just moneyValue ->
-                    let
-                        updateTransaction t =
-                            if t == transaction then
-                                { t | value = moneyValue }
+            let
+                updateTransaction t =
+                    if t == transaction then
+                        { t | value = value }
 
-                            else
-                                t
+                    else
+                        t
 
-                        updatedModel =
-                            { model | transactions = List.map updateTransaction model.transactions }
-                    in
-                    ( updatedModel, Storage.storeModel updatedModel )
-
-                _ ->
-                    ( model, Cmd.none )
+                updatedModel =
+                    { model | transactions = List.map updateTransaction model.transactions }
+            in
+            ( updatedModel, Storage.storeModel updatedModel )
 
         NextMonth ->
             let

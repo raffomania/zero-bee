@@ -29,7 +29,7 @@ init flags =
       , budgetEntries = Dict.empty
       , newTransaction =
             { category = ""
-            , value = ""
+            , value = 0
             , date = ""
             }
       }

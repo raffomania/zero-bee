@@ -8,11 +8,11 @@ import Time
 type Msg
     = NewTime Time.Posix
     | AddTransaction
-    | AddTransactionNewValue String
+    | AddTransactionNewValue Model.Money
     | AddTransactionNewCategory String
     | AddTransactionNewDate String
-    | ChangeTransactionValue Model.Transaction String
-    | ChangeBudgetEntry Model.MonthOfYear Model.CategoryId String
+    | ChangeTransactionValue Model.Transaction Model.Money
+    | ChangeBudgetEntry Model.MonthOfYear Model.CategoryId Model.Money
     | UpdateFromStorage Json.Decode.Value
     | NextMonth
     | PreviousMonth

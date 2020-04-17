@@ -115,7 +115,7 @@ addTransactionForm model =
     row [ onEnter AddTransaction, Element.spacing 10 ]
         [ text "New transaction"
         , Money.input
-            { value = String.toInt model.newTransaction.value |> Maybe.withDefault 0
+            { value = model.newTransaction.value
             , onChange = AddTransactionNewValue
             , label = Just <| Input.labelAbove [] <| text "value"
             }

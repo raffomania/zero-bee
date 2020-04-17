@@ -37,10 +37,17 @@ formatOnlyNumber val =
 
 
 type alias InputOptions msg =
-    { onChange : String -> msg
+    { onChange : Money -> msg
     , value : Money
     , label : Maybe (Element.Input.Label msg)
     }
+
+
+parseInputValue : Money -> String -> Money
+parseInputValue previous str =
+    String.replace "," "" str
+        |> String.toInt
+        |> Maybe.withDefault previous
 
 
 input : InputOptions msg -> Element.Element msg
@@ -49,7 +56,7 @@ input options =
         padding =
             { top = 10, right = 0, bottom = 10, left = 10 }
         onChange =
-            String.replace "," "" >> options.onChange
+             parseInputValue options.value >> options.onChange
     in
     Element.row [Element.width Element.fill]
         [ Element.Input.text [ alignInput "right", Element.paddingEach padding ]
