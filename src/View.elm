@@ -202,6 +202,7 @@ type alias BudgetRow =
     , budgeted : Money
     , activity : Money
     , available : Money
+    , isFromPreviousMonth : Bool
     }
 
 
@@ -212,7 +213,20 @@ budgetView model =
         , columns =
             [ { header = text "category"
               , width = Element.fillPortion 2
-              , view = \r -> el [ Element.centerY ] <| text r.category
+              , view =
+                    \r ->
+                        let
+                            attrs =
+                                List.append
+                                    [ Element.centerY ]
+                                    (if r.isFromPreviousMonth then
+                                        [ Font.color Colors.grey ]
+
+                                     else
+                                        []
+                                    )
+                        in
+                        el attrs <| text r.category
               }
             , { header = el [ Font.alignRight ] <| text "budgeted"
               , width = Element.fill
@@ -236,7 +250,7 @@ budgetView model =
               , width = Element.px 50
               , view =
                     \r ->
-                        if r.activity /= 0 then
+                        if r.activity /= 0 || r.isFromPreviousMonth then
                             Element.none
 
                         else
@@ -256,16 +270,17 @@ budgetRows model =
             model.budgetEntries
                 |> Dict.get (getMonthIndex <| Month.decrement model.currentMonth)
                 |> Maybe.withDefault Dict.empty
-                |> Dict.map (\_ e -> {e | value = 0})
+                |> Dict.map (\_ e -> { e | value = 0 })
+                |> Dict.map (\_ e -> budgetRowFromEntry True e)
 
         thisMonth =
             model.budgetEntries
                 |> Dict.get (getMonthIndex model.currentMonth)
                 |> Maybe.withDefault Dict.empty
+                |> Dict.map (\_ e -> budgetRowFromEntry False e)
 
         rowsFromBudget =
             Dict.union thisMonth previousMonth
-                |> Dict.map (\_ e -> budgetRowFromEntry e)
     in
     model.transactions
         |> List.filter (\t -> model.currentMonth == Model.dateToMonth t.date)
@@ -293,16 +308,18 @@ updateBudgetRowDict model transaction rows =
             , budgeted = budget
             , activity = transaction.value
             , available = budget + transaction.value
+            , isFromPreviousMonth = False
             }
             rows
 
 
-budgetRowFromEntry : BudgetEntry -> BudgetRow
-budgetRowFromEntry entry =
+budgetRowFromEntry : Bool -> BudgetEntry -> BudgetRow
+budgetRowFromEntry isFromPreviousMonth entry =
     { category = entry.category
     , budgeted = entry.value
     , activity = 0
     , available = entry.value
+    , isFromPreviousMonth = isFromPreviousMonth
     }
 
 
