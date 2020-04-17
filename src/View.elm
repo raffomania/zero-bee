@@ -81,6 +81,7 @@ toBeBudgeted model =
                         order /= LT
                     )
                 |> List.map .value
+                |> List.filter ((<) 0)
                 |> List.sum
     in
     row []
