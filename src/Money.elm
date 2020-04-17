@@ -18,9 +18,13 @@ parse val =
 
 format : Money -> String
 format val =
+    formatOnlyNumber val ++ "€"
+
+formatOnlyNumber : Money -> String
+formatOnlyNumber val =
     let
         str =
-            String.fromInt val |> String.padRight 3 '0'
+            String.fromInt val |> String.padLeft 3 '0'
 
         wholes =
             String.slice 0 -2 str
@@ -28,7 +32,8 @@ format val =
         cents =
             String.slice -2 (String.length str) str
     in
-    wholes ++ "," ++ cents ++ "€"
+    wholes ++ "," ++ cents
+
 
 
 type alias InputOptions msg =
@@ -43,13 +48,15 @@ input options =
     let
         padding =
             { top = 10, right = 0, bottom = 10, left = 10 }
+        onChange =
+            String.replace "," "" >> options.onChange
     in
     Element.row [Element.width Element.fill]
         [ Element.Input.text [ alignInput "right", Element.paddingEach padding ]
-            { text = String.fromInt options.value
+            { text = formatOnlyNumber options.value
             , placeholder = Nothing
             , label = options.label |> Maybe.withDefault (Element.Input.labelHidden "money input")
-            , onChange = options.onChange
+            , onChange = onChange
             }
         , Element.text "€"
         ]
