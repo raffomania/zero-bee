@@ -59,6 +59,22 @@ getMonthIndex monthYear =
         ]
 
 
+parseMonthIndex : String -> MonthOfYear
+parseMonthIndex index =
+    case
+        String.split "-" index
+    of
+        [ year, month ] ->
+            { year = String.toInt year |> Maybe.withDefault 2020
+            , month = Date.numberToMonth (String.toInt month |> Maybe.withDefault 1)
+            }
+        _ ->
+            {
+                year = 2020,
+                month = Time.Jan
+            }
+
+
 getBudgetEntry : CategoryId -> MonthOfYear -> Model -> Maybe BudgetEntry
 getBudgetEntry category month model =
     model.budgetEntries

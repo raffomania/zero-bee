@@ -51,26 +51,44 @@ monthPicker model =
 toBeBudgeted : Model -> Element Msg
 toBeBudgeted model =
     let
-        budgetEntries =
-            Dict.get (Model.getMonthIndex model.currentMonth) model.budgetEntries |> Maybe.withDefault Dict.empty
+        currentMonthEntries =
+            Dict.get (getMonthIndex model.currentMonth) model.budgetEntries |> Maybe.withDefault Dict.empty
 
-        alreadyBudgeted =
-            Dict.values budgetEntries
+        sumBudgets dict =
+            Dict.values dict
                 |> List.map .value
                 |> List.sum
 
+        previouslyBudgeted =
+            model.budgetEntries
+                |> Dict.filter (\index _ -> compareMonths (parseMonthIndex index) model.currentMonth == LT)
+                |> Dict.values
+                |> List.map sumBudgets
+                |> List.sum
+
+        currentlyBudgeted = sumBudgets currentMonthEntries
+
         availableCash =
             model.transactions
-                |> List.filter (Model.isTransactionInMonth model.currentMonth)
+                |> List.filter
+                    (\t ->
+                        let
+                            order =
+                                Model.compareMonths model.currentMonth (Model.dateToMonth t.date)
+                        in
+                        order /= LT
+                    )
                 |> List.map .value
                 |> List.sum
     in
     row []
         [ text <| Money.format availableCash
         , text " funds -"
-        , text <| Money.format alreadyBudgeted
+        , text <| Money.format previouslyBudgeted
+        , text " previously budgeted -"
+        , text <| Money.format currentlyBudgeted
         , text " budgeted = "
-        , text <| (Money.format <| availableCash - alreadyBudgeted)
+        , text <| (Money.format <| availableCash - currentlyBudgeted - previouslyBudgeted)
         , text " to be budgeted"
         ]
 
