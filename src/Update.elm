@@ -73,14 +73,14 @@ update msg ({ newTransaction } as model) =
                     \monthDict ->
                         dictUpsert
                             category
-                            (Maybe.map (\e -> { e | value = value }))
+                            (\e -> { e | value = value })
                             defaultEntry
                             monthDict
 
                 months =
                     dictUpsert
                         monthIndex
-                        (Maybe.map updateMonth)
+                        updateMonth
                         (Dict.singleton category defaultEntry)
                         model.budgetEntries
 

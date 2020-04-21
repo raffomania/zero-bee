@@ -15,6 +15,7 @@ import Model exposing (..)
 import Money
 import Month
 import Msg exposing (..)
+import Util exposing (dictUpsert)
 
 
 view : Model -> Html.Html Msg
@@ -81,13 +82,7 @@ toBeBudgeted model =
         availableCash =
             model.transactions
                 |> List.filter
-                    (\t ->
-                        let
-                            order =
-                                Model.compareMonths model.currentMonth (Model.dateToMonth t.date)
-                        in
-                        order /= LT
-                    )
+                    (\t -> Model.compareMonths model.currentMonth (Model.dateToMonth t.date) /= LT)
                 |> List.map .value
                 |> List.filter ((<) 0)
                 |> List.sum
@@ -202,7 +197,6 @@ type alias BudgetRow =
     , budgeted : Money
     , activity : Money
     , available : Money
-    , isFromPreviousMonth : Bool
     }
 
 
@@ -219,7 +213,7 @@ budgetView model =
                             attrs =
                                 List.append
                                     [ Element.centerY ]
-                                    (if r.isFromPreviousMonth then
+                                    (if r.activity == 0 then
                                         [ Font.color Colors.grey ]
 
                                      else
@@ -250,7 +244,7 @@ budgetView model =
               , width = Element.px 50
               , view =
                     \r ->
-                        if r.activity /= 0 || r.isFromPreviousMonth then
+                        if r.activity /= 0 then
                             Element.none
 
                         else
@@ -266,74 +260,75 @@ budgetView model =
 budgetRows : Model -> List BudgetRow
 budgetRows model =
     let
-        previousMonth =
+        pastMonths =
             model.budgetEntries
-                |> Dict.get (getMonthIndex <| Month.decrement model.currentMonth)
-                |> Maybe.withDefault Dict.empty
-                |> Dict.map (\_ e -> { e | value = 0 })
-                |> Dict.map (\_ e -> budgetRowFromEntry True e)
+                |> Dict.filter (\i _ -> compareMonths model.currentMonth (parseMonthIndex i) == GT)
+                |> Dict.map (\_ monthDict -> Dict.map (\_ e -> budgetRowFromEntry e) monthDict)
+                |> Dict.foldl applyMonthDict Dict.empty
 
         thisMonth =
             model.budgetEntries
                 |> Dict.get (getMonthIndex model.currentMonth)
                 |> Maybe.withDefault Dict.empty
-                |> Dict.map (\_ e -> budgetRowFromEntry False e)
+                |> Dict.map (\_ e -> budgetRowFromEntry e)
 
-        rowsFromBudget =
-            Dict.union thisMonth previousMonth
+        mergedRows =
+            Dict.merge
+                (\k past -> Dict.insert k { past | budgeted = 0 })
+                (\k past present -> Dict.insert k { present | available = past.available + present.available })
+                (\k present -> Dict.insert k present)
+                pastMonths
+                thisMonth
+                Dict.empty
     in
     model.transactions
-        |> List.filter (\t -> model.currentMonth == Model.dateToMonth t.date)
-        |> List.foldl (updateBudgetRowDict model) rowsFromBudget
+        |> List.filter (\t -> Model.compareMonths model.currentMonth (Model.dateToMonth t.date) /= LT)
+        |> List.foldl (applyTransaction model.currentMonth) mergedRows
         |> Dict.values
 
 
-updateBudgetRowDict : Model -> Transaction -> Dict CategoryId BudgetRow -> Dict CategoryId BudgetRow
-updateBudgetRowDict model transaction rows =
-    if Dict.member transaction.category rows then
-        let
-            updateRow =
-                \r -> { r | activity = r.activity + transaction.value, available = r.available + transaction.value }
-        in
-        Dict.update transaction.category (Maybe.map updateRow) rows
-
-    else
-        let
-            budget =
-                budgetEntry model transaction.category
-        in
-        Dict.insert
-            transaction.category
-            { category = transaction.category
-            , budgeted = budget
-            , activity = transaction.value
-            , available = budget + transaction.value
-            , isFromPreviousMonth = False
-            }
-            rows
+applyMonthDict : MonthIndex -> Dict MonthIndex BudgetRow -> Dict CategoryId BudgetRow -> Dict CategoryId BudgetRow
+applyMonthDict monthIndex monthDict rowDict =
+    let
+        updateRow : BudgetRow -> BudgetRow -> BudgetRow
+        updateRow newRow oldRow =
+            { oldRow | budgeted = oldRow.budgeted + newRow.budgeted, available = oldRow.available + newRow.available }
+    in
+    monthDict
+        |> Dict.foldl (\category row -> dictUpsert category (updateRow row) row) rowDict
 
 
-budgetRowFromEntry : Bool -> BudgetEntry -> BudgetRow
-budgetRowFromEntry isFromPreviousMonth entry =
+applyTransaction : MonthOfYear -> Transaction -> Dict CategoryId BudgetRow -> Dict CategoryId BudgetRow
+applyTransaction currentMonth transaction rows =
+    let
+        activityValue =
+            if dateToMonth transaction.date == currentMonth then
+                transaction.value
+
+            else
+                0
+
+        updateRow =
+            \r -> { r | activity = r.activity + activityValue, available = r.available + transaction.value }
+    in
+    dictUpsert
+        transaction.category
+        updateRow
+        { category = transaction.category
+        , budgeted = 0
+        , activity = transaction.value
+        , available = transaction.value
+        }
+        rows
+
+
+budgetRowFromEntry : BudgetEntry -> BudgetRow
+budgetRowFromEntry entry =
     { category = entry.category
     , budgeted = entry.value
     , activity = 0
     , available = entry.value
-    , isFromPreviousMonth = isFromPreviousMonth
     }
-
-
-budgetEntry : Model -> CategoryId -> Money
-budgetEntry model name =
-    let
-        entry =
-            Model.getBudgetEntry name model.currentMonth model
-                |> Maybe.withDefault
-                    { value = 0
-                    , category = name
-                    }
-    in
-    entry.value
 
 
 onEnter : msg -> Element.Attribute msg
