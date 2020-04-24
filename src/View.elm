@@ -4,7 +4,8 @@ import Browser
 import Colors
 import Date
 import Dict exposing (Dict)
-import Element exposing (Element, column, el, row, text)
+import Element exposing (..)
+import Element.Background as Background
 import Element.Font as Font
 import Element.Input as Input
 import Html
@@ -20,34 +21,80 @@ import Util exposing (dictUpsert)
 
 view : Model -> Html.Html Msg
 view model =
-    Element.layout [ Element.padding 20 ]
-        (column [ Element.spacing 20 ]
-            [ monthPicker model
-            , addTransactionForm model
-            , transactionList model
-            , toBeBudgeted model
-            , budgetView model
+    let
+        page =
+            case model.currentPage of
+                Budget ->
+                    [ toBeBudgeted model
+                    , budgetView model
+                    ]
+
+                Transactions ->
+                    [ addTransactionForm model
+                    , transactionList model
+                    ]
+    in
+    layout [ Background.color Colors.bg ]
+        (column []
+            [ navigation model
+            , column [ spacing 20, padding 20 ] page
             ]
         )
 
 
-monthPicker : Model -> Element Msg
-monthPicker model =
+navigation : Model -> Element Msg
+navigation model =
     let
         label =
             Model.monthToDate model.currentMonth
                 |> Date.format "MMMM y"
+
+        activePage =
+            [ Background.color Colors.accent ]
+
+        buttonStyle =
+            [ height fill, padding 10 ]
     in
-    row [ Element.spacing 10 ]
-        [ Input.button [ Element.width <| Element.px 30, Font.center ]
-            { onPress = Just PreviousMonth
-            , label = text "<"
-            }
-        , el [ Element.width <| Element.px 200, Font.center ] (text label)
-        , Input.button [ Element.width <| Element.px 30, Font.center ]
-            { onPress = Just NextMonth
-            , label = text ">"
-            }
+    row [ spacing 10, Background.color Colors.bgAccent, width fill, height (px 50) ]
+        [ row [ width <| fillPortion 2, height fill, spacing 10 ]
+            [ Input.button [ width fill, Font.center, height fill ]
+                { onPress = Just PreviousMonth
+                , label = text "<"
+                }
+            , el [ Font.center, width (px 150) ] (text label)
+            , Input.button [ width fill, Font.center, height fill ]
+                { onPress = Just NextMonth
+                , label = text ">"
+                }
+            ]
+        , row [width <| fillPortion 3, height fill]
+            [ Input.button
+                (List.append
+                    (if model.currentPage == Transactions then
+                        activePage
+
+                     else
+                        []
+                    )
+                    buttonStyle
+                )
+                { onPress = Just <| ChangePage Transactions
+                , label = text "Transactions"
+                }
+            , Input.button
+                (List.append
+                    (if model.currentPage == Budget then
+                        activePage
+
+                     else
+                        []
+                    )
+                    buttonStyle
+                )
+                { onPress = Just <| ChangePage Budget
+                , label = text "Budget"
+                }
+            ]
         ]
 
 
@@ -87,7 +134,7 @@ toBeBudgeted model =
                 |> List.filter ((<) 0)
                 |> List.sum
     in
-    Element.table [ Element.spacing 10 ]
+    table [ spacing 10 ]
         { data =
             [ { value = availableCash
               , text = "funds"
@@ -106,12 +153,12 @@ toBeBudgeted model =
               }
             ]
         , columns =
-            [ { header = Element.none
-              , width = Element.px 200
+            [ { header = none
+              , width = px 200
               , view = \d -> el [ Font.alignRight ] <| text <| Money.format d.value
               }
-            , { header = Element.none
-              , width = Element.px 200
+            , { header = none
+              , width = px 200
               , view = \d -> text <| d.text
               }
             ]
@@ -132,7 +179,7 @@ addTransactionForm model =
                 _ ->
                     "Invalid date"
     in
-    row [ onEnter AddTransaction, Element.spacing 10 ]
+    row [ onEnter AddTransaction, spacing 10 ]
         [ text "New transaction"
         , Money.input
             { value = model.newTransaction.value
@@ -155,22 +202,22 @@ addTransactionForm model =
 
 
 transactionList model =
-    Element.table [ Element.spacing 10 ]
+    table [ spacing 10 ]
         { data =
             model.transactions
                 |> List.filter (\t -> Model.dateToMonth t.date == model.currentMonth)
                 |> List.sortWith (\a b -> Date.compare b.date a.date)
         , columns =
             [ { header = text "date"
-              , width = Element.fill
+              , width = fill
               , view = \t -> text <| Date.toIsoString t.date
               }
             , { header = text "category"
-              , width = Element.fill
+              , width = fill
               , view = \t -> text <| t.category
               }
             , { header = el [ Font.alignRight ] <| text "value"
-              , width = Element.fill
+              , width = fill
               , view =
                     \t ->
                         Money.input
@@ -179,11 +226,11 @@ transactionList model =
                             , label = Nothing
                             }
               }
-            , { header = Element.none
-              , width = Element.px 40
+            , { header = none
+              , width = px 40
               , view =
                     \t ->
-                        Input.button [ Element.height Element.fill, Font.center ]
+                        Input.button [ height fill, Font.center ]
                             { onPress = Just <| RemoveTransaction t
                             , label = text "x"
                             }
@@ -202,17 +249,17 @@ type alias BudgetRow =
 
 budgetView : Model -> Element Msg
 budgetView model =
-    Element.table [ Element.spacing 10 ]
+    table [ spacing 10 ]
         { data = budgetRows model
         , columns =
             [ { header = text "category"
-              , width = Element.fillPortion 2
+              , width = fillPortion 2
               , view =
                     \r ->
                         let
                             attrs =
                                 List.append
-                                    [ Element.centerY ]
+                                    [ centerY ]
                                     (if r.activity == 0 then
                                         [ Font.color Colors.grey ]
 
@@ -223,7 +270,7 @@ budgetView model =
                         el attrs <| text r.category
               }
             , { header = el [ Font.alignRight ] <| text "budgeted"
-              , width = Element.fill
+              , width = fill
               , view =
                     \r ->
                         Money.input
@@ -233,22 +280,22 @@ budgetView model =
                             }
               }
             , { header = el [ Font.alignRight ] <| text "activity"
-              , width = Element.fill
-              , view = \r -> el [ Font.alignRight, Element.centerY ] <| text <| Money.format r.activity
+              , width = fill
+              , view = \r -> el [ Font.alignRight, centerY ] <| text <| Money.format r.activity
               }
             , { header = el [ Font.alignRight ] <| text "available"
-              , width = Element.fill
-              , view = \r -> el [ Font.alignRight, Element.centerY ] <| text <| Money.format r.available
+              , width = fill
+              , view = \r -> el [ Font.alignRight, centerY ] <| text <| Money.format r.available
               }
-            , { header = Element.none
-              , width = Element.px 50
+            , { header = none
+              , width = px 50
               , view =
                     \r ->
                         if r.activity /= 0 then
-                            Element.none
+                            none
 
                         else
-                            Input.button [ Font.center, Element.height Element.fill ]
+                            Input.button [ Font.center, height fill ]
                                 { onPress = Just <| RemoveBudgetEntry model.currentMonth r.category
                                 , label = text "x"
                                 }
@@ -331,9 +378,9 @@ budgetRowFromEntry entry =
     }
 
 
-onEnter : msg -> Element.Attribute msg
+onEnter : msg -> Attribute msg
 onEnter msg =
-    Element.htmlAttribute
+    htmlAttribute
         (Html.Events.on "keyup"
             (Decode.field "key" Decode.string
                 |> Decode.andThen
@@ -349,4 +396,4 @@ onEnter msg =
 
 
 alignInput val =
-    Element.htmlAttribute (Html.Attributes.style "text-align" val)
+    htmlAttribute (Html.Attributes.style "text-align" val)

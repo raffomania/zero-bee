@@ -18,3 +18,4 @@ type Msg
     | PreviousMonth
     | RemoveTransaction Model.Transaction
     | RemoveBudgetEntry Model.MonthOfYear Model.CategoryId
+    | ChangePage Model.Page

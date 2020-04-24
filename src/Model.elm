@@ -10,12 +10,15 @@ type alias Model =
     { transactions : List Transaction
     , currentMonth : MonthOfYear
     , budgetEntries : Dict MonthIndex (Dict CategoryId BudgetEntry)
+    , currentPage : Page
     , newTransaction :
         { value : Money
         , date : String
         , category : CategoryId
         }
     }
+
+type Page = Transactions | Budget
 
 
 type alias CategoryId =

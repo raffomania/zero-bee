@@ -1,6 +1,8 @@
 module Money exposing (..)
 
+import Colors
 import Element
+import Element.Font as Font
 import Element.Input
 import Html.Attributes
 import Model exposing (Money)
@@ -20,6 +22,7 @@ format : Money -> String
 format val =
     formatOnlyNumber val ++ "€"
 
+
 formatOnlyNumber : Money -> String
 formatOnlyNumber val =
     let
@@ -33,7 +36,6 @@ formatOnlyNumber val =
             String.slice -2 (String.length str) str
     in
     wholes ++ "," ++ cents
-
 
 
 type alias InputOptions msg =
@@ -55,11 +57,21 @@ input options =
     let
         padding =
             { top = 10, right = 0, bottom = 10, left = 10 }
+
         onChange =
-             parseInputValue options.value >> options.onChange
+            parseInputValue options.value >> options.onChange
+
+        color =
+            if options.value > 0 then
+                Colors.green
+
+            else if options.value < 0 then
+                Colors.red
+            else
+                Colors.black
     in
-    Element.row [Element.width Element.fill]
-        [ Element.Input.text [ alignInput "right", Element.paddingEach padding ]
+    Element.row [ Element.width Element.fill ]
+        [ Element.Input.text [ alignInput "right", Element.paddingEach padding, Font.color color ]
             { text = formatOnlyNumber options.value
             , placeholder = Nothing
             , label = options.label |> Maybe.withDefault (Element.Input.labelHidden "money input")

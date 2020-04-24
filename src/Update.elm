@@ -142,3 +142,6 @@ update msg ({ newTransaction } as model) =
                     { model | budgetEntries = updatedEntries }
             in
             ( updatedModel, Storage.storeModel updatedModel )
+
+        ChangePage page ->
+            ({model | currentPage = page}, Cmd.none)

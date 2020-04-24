@@ -27,6 +27,7 @@ init flags =
     ( { transactions = []
       , currentMonth = { month = Time.Jan, year = 0 }
       , budgetEntries = Dict.empty
+      , currentPage = Model.Budget
       , newTransaction =
             { category = ""
             , value = 0
