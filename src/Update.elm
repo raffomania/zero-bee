@@ -144,4 +144,4 @@ update msg ({ newTransaction } as model) =
             ( updatedModel, Storage.storeModel updatedModel )
 
         ChangePage page ->
-            ({model | currentPage = page}, Cmd.none)
+            ( { model | currentPage = page }, Cmd.none )

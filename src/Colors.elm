@@ -15,29 +15,36 @@ bg =
     rgb255 244 244 244
 
 
-
 accent =
--- teal
+    -- teal
     rgb255 142 198 197
+
+
 bgAccent =
--- blue =
+    -- blue =
     rgb255 105 131 170
+
+
 accent2 =
--- purple =
+    -- purple =
     rgb255 133 102 170
+
+
+
 -- vibrant
-
-
 -- bg =
 --     rgb255 241 252 252
-
-
 -- accent =
 --     rgb255 64 224 208
 
 
-green = rgb255 90 157 92
+green =
+    rgb255 90 157 92
 
-red = rgb255 216 52 85
 
-black = rgb255 0 0 0
+red =
+    rgb255 216 52 85
+
+
+black =
+    rgb255 0 0 0

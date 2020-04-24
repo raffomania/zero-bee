@@ -18,7 +18,10 @@ type alias Model =
         }
     }
 
-type Page = Transactions | Budget
+
+type Page
+    = Transactions
+    | Budget
 
 
 type alias CategoryId =

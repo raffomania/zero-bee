@@ -14,6 +14,7 @@ decrement month =
         _ ->
             { month | month = Date.numberToMonth <| Date.monthToNumber month.month - 1 }
 
+
 increment : MonthOfYear -> MonthOfYear
 increment month =
     case month.month of
@@ -22,4 +23,3 @@ increment month =
 
         _ ->
             { month | month = Date.numberToMonth <| Date.monthToNumber month.month + 1 }
-

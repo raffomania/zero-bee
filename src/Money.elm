@@ -62,7 +62,7 @@ input options =
             parseInputValue options.value >> options.onChange
     in
     Element.row [ Element.width Element.fill ]
-        [ Element.Input.text [ alignInput "right", Element.paddingEach padding]
+        [ Element.Input.text [ alignInput "right", Element.paddingEach padding ]
             { text = formatOnlyNumber options.value
             , placeholder = Nothing
             , label = options.label |> Maybe.withDefault (Element.Input.labelHidden "money input")
