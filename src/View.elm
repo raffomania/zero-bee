@@ -41,7 +41,7 @@ view model =
     in
     layout [ Background.color Colors.bg ]
         (column [ height fill, width fill ]
-            [ el [Background.color Colors.accent, width fill] (navigation model)
+            [ el [ Background.color Colors.accent, width fill ] (navigation model)
             , el [ Border.widthXY 0 4, Border.color Colors.bgAccent, width fill ]
                 (column [ spacing 20, padding 20, centerX ] page)
             , el [ height fill, Background.color Colors.accent, width fill ] none
@@ -77,19 +77,6 @@ navigation model =
         , row [ width <| fillPortion 3, height fill ]
             [ Input.button
                 (List.append
-                    (if model.currentPage == Transactions then
-                        activePage
-
-                     else
-                        []
-                    )
-                    buttonStyle
-                )
-                { onPress = Just <| ChangePage Transactions
-                , label = text "Transactions"
-                }
-            , Input.button
-                (List.append
                     (if model.currentPage == Budget then
                         activePage
 
@@ -100,6 +87,19 @@ navigation model =
                 )
                 { onPress = Just <| ChangePage Budget
                 , label = text "Budget"
+                }
+            , Input.button
+                (List.append
+                    (if model.currentPage == Transactions then
+                        activePage
+
+                     else
+                        []
+                    )
+                    buttonStyle
+                )
+                { onPress = Just <| ChangePage Transactions
+                , label = text "Transactions"
                 }
             ]
         ]
