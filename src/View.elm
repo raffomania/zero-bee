@@ -22,8 +22,8 @@ view : Model -> Html.Html Msg
 view model =
     Element.layout [ Element.padding 20 ]
         (column [ Element.spacing 20 ]
-            [ addTransactionForm model
-            , monthPicker model
+            [ monthPicker model
+            , addTransactionForm model
             , transactionList model
             , toBeBudgeted model
             , budgetView model
