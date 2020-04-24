@@ -22,8 +22,9 @@ accent =
 bgAccent =
 -- blue =
     rgb255 105 131 170
+accent2 =
 -- purple =
-    -- rgb255 133 102 170
+    rgb255 133 102 170
 -- vibrant
 
 

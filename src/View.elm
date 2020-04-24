@@ -6,6 +6,7 @@ import Date
 import Dict exposing (Dict)
 import Element exposing (..)
 import Element.Background as Background
+import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
 import Html
@@ -18,6 +19,7 @@ import Month
 import Msg exposing (..)
 import Util exposing (dictUpsert)
 
+borders = { bottom = 0, left = 0, right = 0, top = 0 }
 
 view : Model -> Html.Html Msg
 view model =
@@ -34,10 +36,11 @@ view model =
                     , transactionList model
                     ]
     in
-    layout [ Background.color Colors.bg ]
-        (column []
+    layout [ Background.color Colors.bg]
+        (column [height fill, width fill]
             [ navigation model
-            , column [ spacing 20, padding 20 ] page
+            , column [ spacing 20, padding 20, centerX] page
+            , el [height fill, Background.color Colors.accent, width fill] none
             ]
         )
 
@@ -50,12 +53,12 @@ navigation model =
                 |> Date.format "MMMM y"
 
         activePage =
-            [ Background.color Colors.accent ]
+            [ Background.color Colors.bgAccent ]
 
         buttonStyle =
             [ height fill, padding 10 ]
     in
-    row [ spacing 10, Background.color Colors.bgAccent, width fill, height (px 50) ]
+    row [ spacing 10, Background.color Colors.accent, width fill, height (px 50), Border.color Colors.accent2 , Font.color Colors.bg, Border.widthEach {borders|bottom  = 4}, Border.color Colors.bgAccent]
         [ row [ width <| fillPortion 2, height fill, spacing 10 ]
             [ Input.button [ width fill, Font.center, height fill ]
                 { onPress = Just PreviousMonth
