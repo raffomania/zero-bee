@@ -41,7 +41,7 @@ view model =
     in
     layout [ Background.color Colors.bg ]
         (column [ height fill, width fill ]
-            [ navigation model
+            [ el [Background.color Colors.accent, width fill] (navigation model)
             , el [ Border.widthXY 0 4, Border.color Colors.bgAccent, width fill ]
                 (column [ spacing 20, padding 20, centerX ] page)
             , el [ height fill, Background.color Colors.accent, width fill ] none
@@ -60,9 +60,9 @@ navigation model =
             [ Background.color Colors.bgAccent ]
 
         buttonStyle =
-            [ height fill, padding 10 ]
+            [ height fill, width fill, Font.center, padding 10 ]
     in
-    row [ spacing 10, Background.color Colors.accent, width fill, height (px 50), Font.color Colors.bg ]
+    row [ spacing 10, width (fill |> maximum 1200), centerX, height (px 50), Font.color Colors.bg ]
         [ row [ width <| fillPortion 2, height fill, spacing 10 ]
             [ Input.button [ width fill, Font.center, height fill ]
                 { onPress = Just PreviousMonth
