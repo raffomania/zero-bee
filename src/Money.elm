@@ -60,18 +60,9 @@ input options =
 
         onChange =
             parseInputValue options.value >> options.onChange
-
-        color =
-            if options.value > 0 then
-                Colors.green
-
-            else if options.value < 0 then
-                Colors.red
-            else
-                Colors.black
     in
     Element.row [ Element.width Element.fill ]
-        [ Element.Input.text [ alignInput "right", Element.paddingEach padding, Font.color color ]
+        [ Element.Input.text [ alignInput "right", Element.paddingEach padding]
             { text = formatOnlyNumber options.value
             , placeholder = Nothing
             , label = options.label |> Maybe.withDefault (Element.Input.labelHidden "money input")
@@ -83,3 +74,14 @@ input options =
 
 alignInput val =
     Element.htmlAttribute (Html.Attributes.style "text-align" val)
+
+
+toColor val =
+    if val > 0 then
+        Colors.green
+
+    else if val < 0 then
+        Colors.red
+
+    else
+        Colors.black

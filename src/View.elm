@@ -67,7 +67,7 @@ navigation model =
                 , label = text ">"
                 }
             ]
-        , row [width <| fillPortion 3, height fill]
+        , row [ width <| fillPortion 3, height fill ]
             [ Input.button
                 (List.append
                     (if model.currentPage == Transactions then
@@ -220,11 +220,13 @@ transactionList model =
               , width = fill
               , view =
                     \t ->
-                        Money.input
-                            { onChange = ChangeTransactionValue t
-                            , value = t.value
-                            , label = Nothing
-                            }
+                        el [ Font.color <| Money.toColor t.value ]
+                            (Money.input
+                                { onChange = ChangeTransactionValue t
+                                , value = t.value
+                                , label = Nothing
+                                }
+                            )
               }
             , { header = none
               , width = px 40
@@ -285,7 +287,7 @@ budgetView model =
               }
             , { header = el [ Font.alignRight ] <| text "available"
               , width = fill
-              , view = \r -> el [ Font.alignRight, centerY ] <| text <| Money.format r.available
+              , view = \r -> el [ Font.alignRight, centerY, Font.color (Money.toColor r.available) ] <| text <| Money.format r.available
               }
             , { header = none
               , width = px 50
