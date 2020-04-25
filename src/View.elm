@@ -210,6 +210,14 @@ addTransactionForm model =
 
 
 transactionList model =
+    let
+        color date =
+            if Date.compare model.date date == LT then
+                Colors.grey
+
+            else
+                Colors.black
+    in
     table [ spacing 10 ]
         { data =
             model.transactions
@@ -218,11 +226,11 @@ transactionList model =
         , columns =
             [ { header = text "date"
               , width = fill
-              , view = \t -> text <| Date.toIsoString t.date
+              , view = \t -> el [ Font.color <| color t.date ] (text <| Date.toIsoString t.date)
               }
             , { header = text "category"
               , width = fill
-              , view = \t -> text <| t.category
+              , view = \t -> el [Font.color <| color t.date] <| text t.category
               }
             , { header = el [ Font.alignRight ] <| text "value"
               , width = fill
