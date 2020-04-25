@@ -11,6 +11,7 @@ type alias Model =
     , currentMonth : MonthOfYear
     , budgetEntries : Dict MonthIndex (Dict CategoryId BudgetEntry)
     , currentPage : Page
+    , date : Date.Date
     , newTransaction :
         { value : Money
         , date : String

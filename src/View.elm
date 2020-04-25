@@ -35,7 +35,9 @@ view model =
                     ]
 
                 Transactions ->
-                    [ addTransactionForm model
+                    [
+                     balance model
+                     , addTransactionForm model
                     , transactionList model
                     ]
     in
@@ -246,6 +248,15 @@ transactionList model =
               }
             ]
         }
+
+
+balance model =
+    let value = model.transactions
+                       |> List.filter (\t -> Date.compare t.date model.date /= GT)
+                       |> List.map .value
+                       |> List.sum
+    in
+        text <| "Balance: " ++ Money.format value
 
 
 type alias BudgetRow =

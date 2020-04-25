@@ -19,8 +19,9 @@ update msg ({ newTransaction } as model) =
             let
                 monthOfYear =
                     { month = Time.toMonth Time.utc time, year = Time.toYear Time.utc time }
+                date = Date.fromPosix Time.utc time
             in
-            ( { model | currentMonth = monthOfYear }, Cmd.none )
+            ( { model | currentMonth = monthOfYear, date = date }, Cmd.none )
 
         AddTransaction ->
             let

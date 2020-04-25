@@ -28,6 +28,7 @@ init flags =
       , currentMonth = { month = Time.Jan, year = 0 }
       , budgetEntries = Dict.empty
       , currentPage = Model.Budget
+      , date = Date.fromPosix Time.utc (Time.millisToPosix 0)
       , newTransaction =
             { category = ""
             , value = 0
