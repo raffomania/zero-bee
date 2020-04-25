@@ -41,4 +41,7 @@ init flags =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Storage.modelUpdated UpdateFromStorage
+    Sub.batch
+        [ Storage.modelUpdated UpdateFromStorage
+        , Time.every (60 * 1000) NewTime
+        ]
