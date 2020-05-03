@@ -23,6 +23,7 @@ type alias Model =
 type Page
     = Transactions
     | Budget
+    | Settings
 
 
 type alias CategoryId =

@@ -39,6 +39,9 @@ view model =
                     , addTransactionForm model
                     , transactionList model
                     ]
+
+                Settings ->
+                    []
     in
     layout [ Background.color Colors.bg ]
         (column [ height fill, width fill ]
@@ -103,6 +106,19 @@ navigation model =
                 , label = text "Transactions"
                 }
             ]
+        , Input.button
+            (List.append
+                (if model.currentPage == Settings then
+                    activePage
+
+                 else
+                    []
+                )
+                [ height fill, width (px 60), Font.center, Font.size 24 ]
+            )
+            { onPress = Just <| ChangePage Settings
+            , label = text "⚙"
+            }
         ]
 
 
@@ -230,7 +246,7 @@ transactionList model =
               }
             , { header = text "category"
               , width = fill
-              , view = \t -> el [Font.color <| color t.date] <| text t.category
+              , view = \t -> el [ Font.color <| color t.date ] <| text t.category
               }
             , { header = el [ Font.alignRight ] <| text "value"
               , width = fill
