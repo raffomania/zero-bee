@@ -17,6 +17,7 @@ type alias Model =
         , date : String
         , category : CategoryId
         }
+    , settings : SettingsData
     }
 
 
@@ -56,6 +57,10 @@ type alias BudgetEntry =
     , category : CategoryId
     }
 
+type alias SettingsData =
+    {
+        currencySymbol: String
+    }
 
 getMonthIndex : MonthOfYear -> MonthIndex
 getMonthIndex monthYear =
