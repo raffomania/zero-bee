@@ -34,7 +34,7 @@ init flags =
             , value = 0
             , date = ""
             }
-      , settings = {currencySymbol = "€"}
+      , settings = { currencySymbol = "€" }
       }
     , Task.perform NewTime Time.now
     )

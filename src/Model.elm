@@ -57,10 +57,11 @@ type alias BudgetEntry =
     , category : CategoryId
     }
 
+
 type alias SettingsData =
-    {
-        currencySymbol: String
+    { currencySymbol : String
     }
+
 
 getMonthIndex : MonthOfYear -> MonthIndex
 getMonthIndex monthYear =

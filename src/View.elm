@@ -17,8 +17,8 @@ import Model exposing (..)
 import Money
 import Month
 import Msg exposing (..)
-import Util exposing (dictUpsert)
 import Settings
+import Util exposing (dictUpsert)
 
 
 borders =
@@ -42,7 +42,7 @@ view model =
                     ]
 
                 Settings ->
-                    [Settings.view model]
+                    [ Settings.view model ]
     in
     layout [ Background.color Colors.bg ]
         (column [ height fill, width fill ]
