@@ -148,3 +148,5 @@ update msg ({ newTransaction } as model) =
 
         ChangePage page ->
             ( { model | currentPage = page }, Cmd.none )
+        NoOp ->
+            (model, Cmd.none)

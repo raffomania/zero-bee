@@ -5,7 +5,6 @@ import Date
 import Dict
 import Model exposing (Model)
 import Msg exposing (..)
-import Set
 import Storage
 import Task
 import Time
@@ -13,6 +12,7 @@ import Update exposing (update)
 import View exposing (view)
 
 
+main : Program {} Model Msg
 main =
     Browser.element
         { init = init
@@ -23,7 +23,7 @@ main =
 
 
 init : {} -> ( Model, Cmd Msg )
-init flags =
+init _ =
     ( { transactions = []
       , currentMonth = { month = Time.Jan, year = 0 }
       , budgetEntries = Dict.empty
@@ -40,7 +40,7 @@ init flags =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.batch
         [ Storage.modelUpdated UpdateFromStorage
         , Time.every (60 * 1000) NewTime

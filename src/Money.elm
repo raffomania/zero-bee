@@ -2,7 +2,6 @@ module Money exposing (..)
 
 import Colors
 import Element
-import Element.Font as Font
 import Element.Input
 import Html.Attributes
 import Model exposing (Money)
@@ -15,7 +14,21 @@ parse val =
             Just 0
 
         _ ->
-            String.toInt val
+            let
+                maybeInt =
+                    String.toInt (String.replace "-" "" val)
+
+                minuses =
+                    List.length (String.indices "-" val)
+
+                shouldNegate =
+                    modBy 2 minuses == 1
+            in
+            if shouldNegate then
+                Maybe.map negate maybeInt
+
+            else
+                maybeInt
 
 
 format : Money -> String
@@ -48,7 +61,7 @@ type alias InputOptions msg =
 parseInputValue : Money -> String -> Money
 parseInputValue previous str =
     String.replace "," "" str
-        |> String.toInt
+        |> parse
         |> Maybe.withDefault previous
 
 
@@ -60,9 +73,11 @@ input options =
 
         onChange =
             parseInputValue options.value >> options.onChange
+
+        attrs = [ alignInput "right", Element.paddingEach padding ]
     in
     Element.row [ Element.width Element.fill ]
-        [ Element.Input.text [ alignInput "right", Element.paddingEach padding ]
+        [ Element.Input.text attrs
             { text = formatOnlyNumber options.value
             , placeholder = Nothing
             , label = options.label |> Maybe.withDefault (Element.Input.labelHidden "money input")

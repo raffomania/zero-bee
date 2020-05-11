@@ -1,6 +1,5 @@
 module View exposing (view)
 
-import Browser
 import Colors
 import Date
 import Dict exposing (Dict)
@@ -9,13 +8,13 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
+import Element.Keyed as Keyed
 import Html
 import Html.Attributes
 import Html.Events
 import Json.Decode as Decode
 import Model exposing (..)
 import Money
-import Month
 import Msg exposing (..)
 import Util exposing (dictUpsert)
 
@@ -230,7 +229,7 @@ transactionList model =
               }
             , { header = text "category"
               , width = fill
-              , view = \t -> el [Font.color <| color t.date] <| text t.category
+              , view = \t -> el [ Font.color <| color t.date ] <| text t.category
               }
             , { header = el [ Font.alignRight ] <| text "value"
               , width = fill
@@ -302,11 +301,14 @@ budgetView model =
               , width = fill
               , view =
                     \r ->
-                        Money.input
-                            { value = r.budgeted
-                            , onChange = ChangeBudgetEntry model.currentMonth r.category
-                            , label = Nothing
-                            }
+                        Keyed.el []
+                            ( r.category
+                            , Money.input
+                                { value = r.budgeted
+                                , onChange = ChangeBudgetEntry model.currentMonth r.category
+                                , label = Nothing
+                                }
+                            )
               }
             , { header = el [ Font.alignRight ] <| text "activity"
               , width = fill
@@ -361,6 +363,8 @@ budgetRows model =
         |> List.filter (\t -> Model.compareMonths model.currentMonth (Model.dateToMonth t.date) /= LT)
         |> List.foldl (applyTransaction model.currentMonth) mergedRows
         |> Dict.values
+        |> List.sortBy .category
+        |> List.reverse
 
 
 applyMonthDict : MonthIndex -> Dict MonthIndex BudgetRow -> Dict CategoryId BudgetRow -> Dict CategoryId BudgetRow
