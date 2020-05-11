@@ -17,12 +17,14 @@ type alias Model =
         , date : String
         , category : CategoryId
         }
+    , settings : SettingsData
     }
 
 
 type Page
     = Transactions
     | Budget
+    | Settings
 
 
 type alias CategoryId =
@@ -53,6 +55,11 @@ type alias Transaction =
 type alias BudgetEntry =
     { value : Money
     , category : CategoryId
+    }
+
+
+type alias SettingsData =
+    { currencySymbol : String
     }
 
 

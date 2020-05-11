@@ -148,5 +148,16 @@ update msg ({ newTransaction } as model) =
 
         ChangePage page ->
             ( { model | currentPage = page }, Cmd.none )
+
         NoOp ->
-            (model, Cmd.none)
+            ( model, Cmd.none )
+
+        ChangeCurrencySymbol symbol ->
+            let
+                settings =
+                    model.settings
+
+                updatedSettings =
+                    { settings | currencySymbol = symbol }
+            in
+            ( { model | settings = updatedSettings }, Cmd.none )

@@ -20,3 +20,4 @@ type Msg
     | RemoveBudgetEntry Model.MonthOfYear Model.CategoryId
     | ChangePage Model.Page
     | NoOp
+    | ChangeCurrencySymbol String

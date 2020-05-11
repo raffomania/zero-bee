@@ -31,9 +31,9 @@ parse val =
                 maybeInt
 
 
-format : Money -> String
-format val =
-    formatOnlyNumber val ++ "€"
+format : String -> Money -> String
+format symbol val =
+    formatOnlyNumber val ++ symbol
 
 
 formatOnlyNumber : Money -> String
@@ -55,6 +55,7 @@ type alias InputOptions msg =
     { onChange : Money -> msg
     , value : Money
     , label : Maybe (Element.Input.Label msg)
+    , currencySymbol : String
     }
 
 
@@ -74,7 +75,8 @@ input options =
         onChange =
             parseInputValue options.value >> options.onChange
 
-        attrs = [ alignInput "right", Element.paddingEach padding ]
+        attrs =
+            [ alignInput "right", Element.paddingEach padding ]
     in
     Element.row [ Element.width Element.fill ]
         [ Element.Input.text attrs
@@ -83,7 +85,7 @@ input options =
             , label = options.label |> Maybe.withDefault (Element.Input.labelHidden "money input")
             , onChange = onChange
             }
-        , Element.text "€"
+        , Element.text options.currencySymbol
         ]
 
 

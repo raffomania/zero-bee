@@ -16,6 +16,7 @@ import Json.Decode as Decode
 import Model exposing (..)
 import Money
 import Msg exposing (..)
+import Settings
 import Util exposing (dictUpsert)
 
 
@@ -38,6 +39,9 @@ view model =
                     , addTransactionForm model
                     , transactionList model
                     ]
+
+                Settings ->
+                    [ Settings.view model ]
     in
     layout [ Background.color Colors.bg ]
         (column [ height fill, width fill ]
@@ -102,6 +106,19 @@ navigation model =
                 , label = text "Transactions"
                 }
             ]
+        , Input.button
+            (List.append
+                (if model.currentPage == Settings then
+                    activePage
+
+                 else
+                    []
+                )
+                [ height fill, width (px 60), Font.center, Font.size 24 ]
+            )
+            { onPress = Just <| ChangePage Settings
+            , label = text "⚙"
+            }
         ]
 
 
@@ -162,7 +179,7 @@ toBeBudgeted model =
         , columns =
             [ { header = none
               , width = px 200
-              , view = \d -> el [ Font.alignRight ] <| text <| Money.format d.value
+              , view = \d -> el [ Font.alignRight ] <| text <| Money.format model.settings.currencySymbol d.value
               }
             , { header = none
               , width = px 200
@@ -192,6 +209,7 @@ addTransactionForm model =
             { value = model.newTransaction.value
             , onChange = AddTransactionNewValue
             , label = Just <| Input.labelAbove [] <| text "value"
+            , currencySymbol = model.settings.currencySymbol
             }
         , Input.text []
             { placeholder = Nothing
@@ -240,6 +258,7 @@ transactionList model =
                                 { onChange = ChangeTransactionValue t
                                 , value = t.value
                                 , label = Nothing
+                                , currencySymbol = model.settings.currencySymbol
                                 }
                             )
               }
@@ -264,7 +283,7 @@ balance model =
                 |> List.map .value
                 |> List.sum
     in
-    text <| "Balance: " ++ Money.format value
+    text <| "Balance: " ++ Money.format model.settings.currencySymbol value
 
 
 type alias BudgetRow =
@@ -307,16 +326,17 @@ budgetView model =
                                 { value = r.budgeted
                                 , onChange = ChangeBudgetEntry model.currentMonth r.category
                                 , label = Nothing
+                                , currencySymbol = model.settings.currencySymbol
                                 }
                             )
               }
             , { header = el [ Font.alignRight ] <| text "activity"
               , width = fill
-              , view = \r -> el [ Font.alignRight, centerY ] <| text <| Money.format r.activity
+              , view = \r -> el [ Font.alignRight, centerY ] <| text <| Money.format model.settings.currencySymbol r.activity
               }
             , { header = el [ Font.alignRight ] <| text "available"
               , width = fill
-              , view = \r -> el [ Font.alignRight, centerY, Font.color (Money.toColor r.available) ] <| text <| Money.format r.available
+              , view = \r -> el [ Font.alignRight, centerY, Font.color (Money.toColor r.available) ] <| text <| Money.format model.settings.currencySymbol r.available
               }
             , { header = none
               , width = px 50
