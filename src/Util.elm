@@ -10,3 +10,16 @@ dictUpsert key fn default dict =
 
     else
         Dict.insert key default dict
+
+
+doubleCompare : (v -> comparable) -> (v -> comparable) -> v -> v -> Order
+doubleCompare fnFirst fnSecond aVal bVal =
+    let
+        firstOrder =
+            compare (fnFirst aVal) (fnFirst bVal)
+    in
+    if firstOrder /= EQ then
+        firstOrder
+
+    else
+        compare (fnSecond aVal) (fnSecond bVal)

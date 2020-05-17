@@ -383,8 +383,7 @@ budgetRows model =
         |> List.filter (\t -> Model.compareMonths model.currentMonth (Model.dateToMonth t.date) /= LT)
         |> List.foldl (applyTransaction model.currentMonth) mergedRows
         |> Dict.values
-        |> List.sortBy .category
-        |> List.reverse
+        |> List.sortWith (Util.doubleCompare .activity (.budgeted >> negate))
 
 
 applyMonthDict : MonthIndex -> Dict MonthIndex BudgetRow -> Dict CategoryId BudgetRow -> Dict CategoryId BudgetRow
