@@ -152,11 +152,21 @@ toBeBudgeted model =
 
         availableCash =
             model.transactions
-                |> List.filter
-                    (\t -> Model.compareMonths model.currentMonth (Model.dateToMonth t.date) /= LT)
+                |> List.filter (not << Model.isInFuture model.currentMonth)
                 |> List.map .value
                 |> List.filter ((<) 0)
                 |> List.sum
+
+        cashSpent =
+            model.transactions
+                |> List.filter (not << Model.isInFuture model.currentMonth)
+                |> List.map .value
+                |> List.filter ((>) 0)
+                |> List.sum
+
+        budgeted = previouslyBudgeted + currentlyBudgeted + budgetedInFuture
+
+        overspent = min (previouslyBudgeted + currentlyBudgeted + cashSpent) 0
     in
     table [ spacing 10 ]
         { data =
@@ -172,7 +182,10 @@ toBeBudgeted model =
             , { value = -budgetedInFuture
               , text = "budgeted in future"
               }
-            , { value = availableCash - previouslyBudgeted - currentlyBudgeted - budgetedInFuture
+            , { value = overspent
+              , text = "overspent"
+              }
+            , { value = availableCash - budgeted + overspent
               , text = "to be budgeted"
               }
             ]
@@ -380,7 +393,7 @@ budgetRows model =
                 Dict.empty
     in
     model.transactions
-        |> List.filter (\t -> Model.compareMonths model.currentMonth (Model.dateToMonth t.date) /= LT)
+        |> List.filter (not << Model.isInFuture model.currentMonth)
         |> List.foldl (applyTransaction model.currentMonth) mergedRows
         |> Dict.values
         |> List.sortWith (Util.doubleCompare .activity (.budgeted >> negate))
@@ -409,15 +422,18 @@ applyTransaction currentMonth transaction rows =
 
         updateRow =
             \r -> { r | activity = r.activity + activityValue, available = r.available + transaction.value }
+
+        default =
+            { category = transaction.category
+            , budgeted = 0
+            , activity = transaction.value
+            , available = transaction.value
+            }
     in
     dictUpsert
         transaction.category
         updateRow
-        { category = transaction.category
-        , budgeted = 0
-        , activity = transaction.value
-        , available = transaction.value
-        }
+        default
         rows
 
 

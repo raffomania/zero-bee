@@ -110,6 +110,8 @@ monthToDate month =
 isTransactionInMonth month transaction =
     month == dateToMonth transaction.date
 
+isInFuture currentMonth transaction = 
+    (compareMonths currentMonth (dateToMonth transaction.date)) == LT
 
 compareMonths : MonthOfYear -> MonthOfYear -> Order
 compareMonths a b =
