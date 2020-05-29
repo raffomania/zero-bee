@@ -1,15 +1,12 @@
 import { Elm } from './Main.elm';
 import RemoteStorage from 'remotestoragejs';
-// import Widget from 'remotestorage-widget';
+import Widget from 'remotestorage-widget';
 
 const remoteStorage = new RemoteStorage({logging: true});
 remoteStorage.access.claim('whynab', 'rw');
 remoteStorage.caching.enable('/whynab/');
 
 window.addEventListener('DOMContentLoaded', () => {
-    // const widget = new Widget(remoteStorage);
-    // widget.attach('remotestorage');
-
     remoteStorage.on('ready', () => {
         const client = remoteStorage.scope('/whynab/');
         let app = Elm.Main.init({
@@ -27,4 +24,19 @@ window.addEventListener('DOMContentLoaded', () => {
             app.ports.modelUpdated.send(event.newValue);
         });
     });
+
+    customElements.define('connect-remote-storage',
+        class extends HTMLElement {
+            constructor() { 
+                super(); 
+                this.widget = new Widget(remoteStorage, {modalBackdrop: false});
+            }
+            connectedCallback() { 
+                this.setAttribute('id', 'widget-container');
+                this.widget.attach('widget-container')
+            }
+            attributeChangedCallback() {}
+            static get observedAttributes() {}
+        }
+    );
 });
