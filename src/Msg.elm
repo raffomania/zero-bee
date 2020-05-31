@@ -21,3 +21,4 @@ type Msg
     | ChangePage Model.Page
     | NoOp
     | ChangeCurrencySymbol String
+    | ChangeEditedBudgetEntry Model.MonthOfYear Model.CategoryId Model.Money

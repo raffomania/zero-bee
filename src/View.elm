@@ -10,8 +10,6 @@ import Element.Font as Font
 import Element.Input as Input
 import Html
 import Html.Attributes
-import Html.Events
-import Json.Decode as Decode
 import Model exposing (..)
 import Money
 import Msg exposing (..)
@@ -216,9 +214,9 @@ addTransactionForm model =
                 _ ->
                     "Invalid date"
     in
-    row [ onEnter AddTransaction, spacing 10 ]
+    row [ Util.onEnter AddTransaction, spacing 10 ]
         [ text "New transaction"
-        , Money.input
+        , Money.input []
             { value = model.newTransaction.value
             , onChange = AddTransactionNewValue
             , label = Just <| Input.labelAbove [] <| text "value"
@@ -267,7 +265,7 @@ transactionList model =
               , view =
                     \t ->
                         el [ Font.color <| Money.toColor t.value ]
-                            (Money.input
+                            (Money.input []
                                 { onChange = ChangeTransactionValue t
                                 , value = t.value
                                 , label = Nothing
@@ -297,22 +295,6 @@ balance model =
                 |> List.sum
     in
     text <| "Balance: " ++ Money.format model.settings.currencySymbol value
-onEnter : msg -> Attribute msg
-onEnter msg =
-    htmlAttribute
-        (Html.Events.on "keyup"
-            (Decode.field "key" Decode.string
-                |> Decode.andThen
-                    (\key ->
-                        if key == "Enter" then
-                            Decode.succeed msg
-
-                        else
-                            Decode.fail "Not the enter key"
-                    )
-            )
-        )
-
 
 alignInput val =
     htmlAttribute (Html.Attributes.style "text-align" val)

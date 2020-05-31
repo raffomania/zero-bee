@@ -1,16 +1,17 @@
 module View.Budget exposing (view)
 
-import Model exposing (Money)
-import Element.Input as Input
+import Colors
 import Dict exposing (Dict)
 import Element exposing (..)
-import Model exposing (..)
-import Util
-import Msg exposing (..)
+import Element.Events as Events
 import Element.Font as Font
-import Money
-import Colors
+import Element.Input as Input
 import Element.Keyed as Keyed
+import Model exposing (..)
+import Money
+import Msg exposing (..)
+import Util
+
 
 type alias BudgetRow =
     { category : String
@@ -44,17 +45,7 @@ view model =
               }
             , { header = el [ Font.alignRight ] <| text "budgeted"
               , width = fill
-              , view =
-                    \r ->
-                        Keyed.el []
-                            ( r.category
-                            , Money.input
-                                { value = r.budgeted
-                                , onChange = ChangeBudgetEntry model.currentMonth r.category
-                                , label = Nothing
-                                , currencySymbol = model.settings.currencySymbol
-                                }
-                            )
+              , view = budgetInput model
               }
             , { header = el [ Font.alignRight ] <| text "activity"
               , width = fill
@@ -79,6 +70,35 @@ view model =
               }
             ]
         }
+
+
+budgetInput : Model -> BudgetRow -> Element Msg
+budgetInput model r =
+    let
+        value =
+            case model.editingBudgetEntry of
+                Just entry ->
+                    if entry.month == model.currentMonth && entry.category == r.category then
+                        entry.value
+
+                    else
+                        r.budgeted
+
+                Nothing ->
+                    r.budgeted
+    in
+    Keyed.el []
+        ( r.category
+        , Money.input
+            [ Events.onLoseFocus (Msg.ChangeBudgetEntry model.currentMonth r.category value)
+            , Util.onEnter (Msg.ChangeBudgetEntry model.currentMonth r.category value)
+            ]
+            { value = value
+            , onChange = Msg.ChangeEditedBudgetEntry model.currentMonth r.category
+            , label = Nothing
+            , currencySymbol = model.settings.currencySymbol
+            }
+        )
 
 
 budgetRows : Model -> List BudgetRow
@@ -113,7 +133,7 @@ budgetRows model =
 
 
 applyMonthDict : MonthIndex -> Dict MonthIndex BudgetRow -> Dict CategoryId BudgetRow -> Dict CategoryId BudgetRow
-applyMonthDict monthIndex monthDict rowDict =
+applyMonthDict _ monthDict rowDict =
     let
         updateRow : BudgetRow -> BudgetRow -> BudgetRow
         updateRow newRow oldRow =
@@ -157,6 +177,3 @@ budgetRowFromEntry entry =
     , activity = 0
     , available = entry.value
     }
-
-
-

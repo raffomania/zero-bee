@@ -88,7 +88,7 @@ update msg ({ newTransaction } as model) =
                         model.budgetEntries
 
                 updatedModel =
-                    { model | budgetEntries = months }
+                    { model | budgetEntries = months, editingBudgetEntry = Nothing }
             in
             ( updatedModel, Storage.storeModel updatedModel )
 
@@ -161,3 +161,21 @@ update msg ({ newTransaction } as model) =
                     { settings | currencySymbol = symbol }
             in
             ( { model | settings = updatedSettings }, Cmd.none )
+
+        Msg.ChangeEditedBudgetEntry month category value ->
+            let
+                default =
+                    { category = category
+                    , month = month
+                    , value = value
+                    }
+
+                edit =
+                    model.editingBudgetEntry
+                        |> Maybe.andThen (\e -> if e.month /= month || e.category /= category then Nothing else Just e)
+                        |> Maybe.withDefault default
+
+                newEdit =
+                    { edit | value = value }
+            in
+            ( { model | editingBudgetEntry = Just newEdit }, Cmd.none )

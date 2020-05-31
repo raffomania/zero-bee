@@ -62,7 +62,7 @@ type alias BudgetEntry =
 type alias BudgetEntryEdit =
     { value : Money
     , category : CategoryId
-    , month : Time.Month
+    , month : MonthOfYear
     }
 
 

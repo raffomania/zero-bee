@@ -66,8 +66,8 @@ parseInputValue previous str =
         |> Maybe.withDefault previous
 
 
-input : InputOptions msg -> Element.Element msg
-input options =
+input : List (Element.Attribute msg) -> InputOptions msg -> Element.Element msg
+input attrs options =
     let
         padding =
             { top = 10, right = 0, bottom = 10, left = 10 }
@@ -75,11 +75,11 @@ input options =
         onChange =
             parseInputValue options.value >> options.onChange
 
-        attrs =
-            [ alignInput "right", Element.paddingEach padding ]
+        mergedAttrs =
+            List.concat [[ alignInput "right", Element.paddingEach padding ], attrs]
     in
     Element.row [ Element.width Element.fill ]
-        [ Element.Input.text attrs
+        [ Element.Input.text mergedAttrs
             { text = formatOnlyNumber options.value
             , placeholder = Nothing
             , label = options.label |> Maybe.withDefault (Element.Input.labelHidden "money input")
