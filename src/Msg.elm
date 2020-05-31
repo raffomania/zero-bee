@@ -7,6 +7,7 @@ import Time
 
 type Msg
     = NewTime Time.Posix
+    | SetCurrentMonth Time.Posix
     | AddTransaction
     | AddTransactionNewValue Model.Money
     | AddTransactionNewCategory String

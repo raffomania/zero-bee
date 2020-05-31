@@ -3,10 +3,8 @@ module Update exposing (update)
 import Date
 import Dict
 import Model exposing (Model)
-import Money
 import Month
 import Msg exposing (..)
-import Set
 import Storage
 import Time
 import Util exposing (dictUpsert)
@@ -17,13 +15,17 @@ update msg ({ newTransaction } as model) =
     case msg of
         NewTime time ->
             let
-                monthOfYear =
-                    { month = Time.toMonth Time.utc time, year = Time.toYear Time.utc time }
-
                 date =
                     Date.fromPosix Time.utc time
             in
-            ( { model | currentMonth = monthOfYear, date = date }, Cmd.none )
+            ( { model | date = date }, Cmd.none )
+
+        Msg.SetCurrentMonth time ->
+            let
+                monthOfYear =
+                    { month = Time.toMonth Time.utc time, year = Time.toYear Time.utc time }
+            in
+            ( { model | currentMonth = monthOfYear }, Cmd.none )
 
         AddTransaction ->
             let
@@ -172,7 +174,14 @@ update msg ({ newTransaction } as model) =
 
                 edit =
                     model.editingBudgetEntry
-                        |> Maybe.andThen (\e -> if e.month /= month || e.category /= category then Nothing else Just e)
+                        |> Maybe.andThen
+                            (\e ->
+                                if e.month /= month || e.category /= category then
+                                    Nothing
+
+                                else
+                                    Just e
+                            )
                         |> Maybe.withDefault default
 
                 newEdit =
