@@ -10,6 +10,7 @@ type alias Model =
     { transactions : List Transaction
     , currentMonth : MonthOfYear
     , budgetEntries : Dict MonthIndex (Dict CategoryId BudgetEntry)
+    , editingBudgetEntry : Maybe BudgetEntryEdit
     , currentPage : Page
     , date : Date.Date
     , newTransaction :
@@ -55,6 +56,13 @@ type alias Transaction =
 type alias BudgetEntry =
     { value : Money
     , category : CategoryId
+    }
+
+
+type alias BudgetEntryEdit =
+    { value : Money
+    , category : CategoryId
+    , month : Time.Month
     }
 
 
@@ -110,8 +118,10 @@ monthToDate month =
 isTransactionInMonth month transaction =
     month == dateToMonth transaction.date
 
-isInFuture currentMonth transaction = 
-    (compareMonths currentMonth (dateToMonth transaction.date)) == LT
+
+isInFuture currentMonth transaction =
+    compareMonths currentMonth (dateToMonth transaction.date) == LT
+
 
 compareMonths : MonthOfYear -> MonthOfYear -> Order
 compareMonths a b =
