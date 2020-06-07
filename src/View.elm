@@ -28,8 +28,7 @@ view model =
         page =
             case model.currentPage of
                 Budget ->
-                    [ toBeBudgeted model
-                    , View.Budget.view model
+                    [ View.Budget.view model
                     ]
 
                 Transactions ->
@@ -118,86 +117,6 @@ navigation model =
             , label = text "⚙"
             }
         ]
-
-
-toBeBudgeted : Model -> Element Msg
-toBeBudgeted model =
-    let
-        currentMonthEntries =
-            Dict.get (getMonthIndex model.currentMonth) model.budgetEntries |> Maybe.withDefault Dict.empty
-
-        sumBudgets dict =
-            Dict.values dict
-                |> List.map .value
-                |> List.sum
-
-        previouslyBudgeted =
-            model.budgetEntries
-                |> Dict.filter (\index _ -> compareMonths (parseMonthIndex index) model.currentMonth == LT)
-                |> Dict.values
-                |> List.map sumBudgets
-                |> List.sum
-
-        currentlyBudgeted =
-            sumBudgets currentMonthEntries
-
-        budgetedInFuture =
-            model.budgetEntries
-                |> Dict.filter (\index _ -> compareMonths (parseMonthIndex index) model.currentMonth == GT)
-                |> Dict.values
-                |> List.map sumBudgets
-                |> List.sum
-
-        availableCash =
-            model.transactions
-                |> List.filter (not << Model.isInFuture model.currentMonth)
-                |> List.map .value
-                |> List.filter ((<) 0)
-                |> List.sum
-
-        cashSpent =
-            model.transactions
-                |> List.filter (not << Model.isInFuture model.currentMonth)
-                |> List.map .value
-                |> List.filter ((>) 0)
-                |> List.sum
-
-        budgeted = previouslyBudgeted + currentlyBudgeted + budgetedInFuture
-
-        overspent = min (previouslyBudgeted + currentlyBudgeted + cashSpent) 0
-    in
-    table [ spacing 10 ]
-        { data =
-            [ { value = availableCash
-              , text = "funds"
-              }
-            , { value = -previouslyBudgeted
-              , text = "previously budgeted"
-              }
-            , { value = -currentlyBudgeted
-              , text = "budgeted"
-              }
-            , { value = -budgetedInFuture
-              , text = "budgeted in future"
-              }
-            , { value = overspent
-              , text = "overspent"
-              }
-            , { value = availableCash - budgeted + overspent
-              , text = "to be budgeted"
-              }
-            ]
-        , columns =
-            [ { header = none
-              , width = px 200
-              , view = \d -> el [ Font.alignRight ] <| text <| Money.format model.settings.currencySymbol d.value
-              }
-            , { header = none
-              , width = px 200
-              , view = \d -> text <| d.text
-              }
-            ]
-        }
 
 
 addTransactionForm : Model -> Element Msg
@@ -295,6 +214,7 @@ balance model =
                 |> List.sum
     in
     text <| "Balance: " ++ Money.format model.settings.currencySymbol value
+
 
 alignInput val =
     htmlAttribute (Html.Attributes.style "text-align" val)

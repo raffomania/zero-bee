@@ -23,8 +23,19 @@ type alias BudgetRow =
 
 view : Model -> Element Msg
 view model =
+    let
+        budgetRows = calculateBudgetRows model
+    in 
+        column [] [
+            toBeBudgeted model budgetRows,
+            entryTable model budgetRows
+        ]
+
+
+entryTable : Model -> List BudgetRow -> Element Msg
+entryTable model budgetRows =
     table [ spacing 10 ]
-        { data = budgetRows model
+        { data = budgetRows
         , columns =
             [ { header = text "category"
               , width = fillPortion 2
@@ -101,8 +112,8 @@ budgetInput model r =
         )
 
 
-budgetRows : Model -> List BudgetRow
-budgetRows model =
+calculateBudgetRows : Model -> List BudgetRow
+calculateBudgetRows model =
     let
         pastMonths =
             model.budgetEntries
@@ -177,3 +188,80 @@ budgetRowFromEntry entry =
     , activity = 0
     , available = entry.value
     }
+
+toBeBudgeted : Model -> List BudgetRow -> Element Msg
+toBeBudgeted model budgetRows =
+    let
+        sumBudgets dict =
+            Dict.values dict
+                |> List.map .value
+                |> List.sum
+
+        previouslyBudgeted =
+            model.budgetEntries
+                |> Dict.filter (\index _ -> compareMonths (parseMonthIndex index) model.currentMonth == LT)
+                |> Dict.values
+                |> List.map sumBudgets
+                |> List.sum
+
+        currentlyBudgeted =
+            model.budgetEntries
+                |> Dict.get (getMonthIndex model.currentMonth)
+                |> Maybe.withDefault Dict.empty
+                |> sumBudgets
+
+        budgetedInFuture =
+            model.budgetEntries
+                |> Dict.filter (\index _ -> compareMonths (parseMonthIndex index) model.currentMonth == GT)
+                |> Dict.values
+                |> List.map sumBudgets
+                |> List.sum
+
+        availableCash =
+            model.transactions
+                |> List.filter (not << Model.isInFuture model.currentMonth)
+                |> List.map .value
+                |> List.filter ((<) 0)
+                |> List.sum
+
+        budgeted = previouslyBudgeted + currentlyBudgeted + budgetedInFuture
+
+        overspent = 
+            budgetRows
+                |> List.map .available
+                |> List.filter ((>) 0)
+                |> List.sum
+    in
+    table [ spacing 10 ]
+        { data =
+            [ { value = availableCash
+              , text = "funds"
+              }
+            , { value = -previouslyBudgeted
+              , text = "previously budgeted"
+              }
+            , { value = -currentlyBudgeted
+              , text = "budgeted"
+              }
+            , { value = -budgetedInFuture
+              , text = "budgeted in future"
+              }
+            , { value = overspent
+              , text = "overspent"
+              }
+            , { value = availableCash - budgeted + overspent
+              , text = "to be budgeted"
+              }
+            ]
+        , columns =
+            [ { header = none
+              , width = px 200
+              , view = \d -> el [ Font.alignRight ] <| text <| Money.format model.settings.currencySymbol d.value
+              }
+            , { header = none
+              , width = px 200
+              , view = \d -> text <| d.text
+              }
+            ]
+        }
+
