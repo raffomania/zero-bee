@@ -7,12 +7,11 @@ grey =
     rgb 0.4 0.35 0.4
 
 
-
 -- muted
 
 
 bg =
-    rgb255 244 248 249
+    rgb255 248 252 253
 
 
 accent =
@@ -47,4 +46,4 @@ red =
 
 
 black =
-    rgb255 0 0 0
+    rgb255 25 25 25

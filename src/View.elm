@@ -40,7 +40,7 @@ view model =
                 Settings ->
                     [ Settings.view model ]
     in
-    layout [ Background.color Colors.bg ]
+    layout [ Background.color Colors.bg, Font.color Colors.black ]
         (column [ height fill, width fill ]
             [ el [ Background.color Colors.accent, width fill ] (navigation model)
             , el [ Border.widthXY 0 4, Border.color Colors.bgAccent, width fill ]
