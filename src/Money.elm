@@ -7,16 +7,22 @@ import Html.Attributes
 import Model exposing (Money)
 
 
-parse : String -> Maybe Money
-parse val =
+parse : Money -> String -> Money
+parse default val =
     case val of
         "" ->
-            Just 0
+            default
+        
+        "-" -> negate default
 
         _ ->
             let
-                maybeInt =
-                    String.toInt (String.replace "-" "" val)
+                parsedInt =
+                    val
+                    |> String.replace "-" ""
+                    |> String.replace "," ""
+                    |> String.toInt
+                    |> Maybe.withDefault default
 
                 minuses =
                     List.length (String.indices "-" val)
@@ -25,10 +31,10 @@ parse val =
                     modBy 2 minuses == 1
             in
             if shouldNegate then
-                Maybe.map negate maybeInt
+                negate parsedInt
 
             else
-                maybeInt
+                parsedInt
 
 
 format : String -> Money -> String
@@ -59,13 +65,6 @@ type alias InputOptions msg =
     }
 
 
-parseInputValue : Money -> String -> Money
-parseInputValue previous str =
-    String.replace "," "" str
-        |> parse
-        |> Maybe.withDefault previous
-
-
 input : List (Element.Attribute msg) -> InputOptions msg -> Element.Element msg
 input attrs options =
     let
@@ -73,7 +72,7 @@ input attrs options =
             { top = 10, right = 0, bottom = 10, left = 10 }
 
         onChange =
-            parseInputValue options.value >> options.onChange
+            parse options.value >> options.onChange
 
         mergedAttrs =
             List.concat [[ alignInput "right", Element.paddingEach padding ], attrs]
