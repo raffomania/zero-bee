@@ -1,6 +1,7 @@
 module View.Budget exposing (view)
 
 import Colors
+import Date
 import Dict exposing (Dict)
 import Element exposing (..)
 import Element.Events as Events
@@ -237,11 +238,8 @@ toBeBudgeted model budgetRows =
     in
     table [ spacing 10 ]
         { data =
-            [ { value = availableCash
-              , text = "funds"
-              }
-            , { value = -previouslyBudgeted
-              , text = "previously budgeted"
+            [ { value = availableCash - previouslyBudgeted
+              , text = "funds for " ++ Date.format "MMMM" (Model.monthToDate model.currentMonth)
               }
             , { value = -currentlyBudgeted
               , text = "budgeted"
