@@ -235,9 +235,8 @@ toBeBudgeted model budgetRows =
                 |> List.map .available
                 |> List.filter ((>) 0)
                 |> List.sum
-    in
-    table [ spacing 10 ]
-        { data =
+
+        data =
             [ { value = availableCash - previouslyBudgeted
               , text = "funds for " ++ Date.format "MMMM" (Model.monthToDate model.currentMonth)
               }
@@ -254,6 +253,9 @@ toBeBudgeted model budgetRows =
               , text = "to be budgeted"
               }
             ]
+    in
+    table [ spacing 10 ]
+        { data = data
         , columns =
             [ { header = none
               , width = px 200
