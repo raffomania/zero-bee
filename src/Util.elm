@@ -27,6 +27,7 @@ doubleCompare fnFirst fnSecond aVal bVal =
     else
         compare (fnSecond aVal) (fnSecond bVal)
 
+
 onEnter : msg -> Element.Attribute msg
 onEnter msg =
     Element.htmlAttribute
@@ -42,4 +43,3 @@ onEnter msg =
                     )
             )
         )
-

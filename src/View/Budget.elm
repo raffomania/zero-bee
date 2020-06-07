@@ -24,11 +24,12 @@ type alias BudgetRow =
 view : Model -> Element Msg
 view model =
     let
-        budgetRows = calculateBudgetRows model
-    in 
-        column [] [
-            toBeBudgeted model budgetRows,
-            entryTable model budgetRows
+        budgetRows =
+            calculateBudgetRows model
+    in
+    column []
+        [ toBeBudgeted model budgetRows
+        , entryTable model budgetRows
         ]
 
 
@@ -189,6 +190,7 @@ budgetRowFromEntry entry =
     , available = entry.value
     }
 
+
 toBeBudgeted : Model -> List BudgetRow -> Element Msg
 toBeBudgeted model budgetRows =
     let
@@ -224,9 +226,10 @@ toBeBudgeted model budgetRows =
                 |> List.filter ((<) 0)
                 |> List.sum
 
-        budgeted = previouslyBudgeted + currentlyBudgeted + budgetedInFuture
+        budgeted =
+            previouslyBudgeted + currentlyBudgeted + budgetedInFuture
 
-        overspent = 
+        overspent =
             budgetRows
                 |> List.map .available
                 |> List.filter ((>) 0)
@@ -264,4 +267,3 @@ toBeBudgeted model budgetRows =
               }
             ]
         }
-

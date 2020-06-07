@@ -12,17 +12,18 @@ parse default val =
     case val of
         "" ->
             default
-        
-        "-" -> negate default
+
+        "-" ->
+            negate default
 
         _ ->
             let
                 parsedInt =
                     val
-                    |> String.replace "-" ""
-                    |> String.replace "," ""
-                    |> String.toInt
-                    |> Maybe.withDefault default
+                        |> String.replace "-" ""
+                        |> String.replace "," ""
+                        |> String.toInt
+                        |> Maybe.withDefault default
 
                 minuses =
                     List.length (String.indices "-" val)
@@ -75,7 +76,7 @@ input attrs options =
             parse options.value >> options.onChange
 
         mergedAttrs =
-            List.concat [[ alignInput "right", Element.paddingEach padding ], attrs]
+            List.concat [ [ alignInput "right", Element.paddingEach padding ], attrs ]
     in
     Element.row [ Element.width Element.fill ]
         [ Element.Input.text mergedAttrs
