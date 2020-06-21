@@ -67,7 +67,8 @@ type alias BudgetEntryEdit =
 
 
 type alias SettingsData =
-    { currencySymbol : String
+    { currencySymbol : String,
+      syncAddress : String
     }
 
 

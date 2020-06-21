@@ -35,7 +35,7 @@ init _ =
             , value = 0
             , date = ""
             }
-      , settings = { currencySymbol = "€" }
+      , settings = { currencySymbol = "€", syncAddress = "" }
       }
     , Task.perform Msg.SetCurrentMonth Time.now
     )

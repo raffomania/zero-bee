@@ -10,7 +10,6 @@
   "description": "why not a budget",
   "main": "src/index.js",
   "dependencies": {
-    "remotestorage-widget": "^1.5.1",
     "remotestoragejs": "^1.2.3"
   },
   "scripts": {

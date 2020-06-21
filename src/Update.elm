@@ -97,7 +97,12 @@ update msg ({ newTransaction } as model) =
         UpdateFromStorage value ->
             case Storage.decodeModel value of
                 Ok newModel ->
-                    ( { model | transactions = newModel.transactions, budgetEntries = newModel.budgetEntries }, Cmd.none )
+                    let updatedModel = { model | transactions = newModel.transactions, budgetEntries = newModel.budgetEntries }
+                        updatedWithSettings = case newModel.settings of 
+                            Just settings -> { updatedModel | settings = settings }
+                            _ -> updatedModel
+                    in
+                    ( updatedWithSettings, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
@@ -161,10 +166,11 @@ update msg ({ newTransaction } as model) =
 
                 updatedSettings =
                     { settings | currencySymbol = symbol }
+                updatedModel = { model | settings = updatedSettings }
             in
-            ( { model | settings = updatedSettings }, Cmd.none )
+            (updatedModel , Storage.storeModel updatedModel )
 
-        Msg.ChangeEditedBudgetEntry month category value ->
+        ChangeEditedBudgetEntry month category value ->
             let
                 default =
                     { category = category
@@ -188,3 +194,14 @@ update msg ({ newTransaction } as model) =
                     { edit | value = value }
             in
             ( { model | editingBudgetEntry = Just newEdit }, Cmd.none )
+        ChangeSyncAddress newAddress ->
+             let
+                settings =
+                    model.settings
+
+                updatedSettings =
+                    { settings | syncAddress = newAddress }
+            in
+            ( { model | settings = updatedSettings }, Cmd.none )
+        ConnectRemoteStorage ->
+            (model, Cmd.batch [Storage.connect model.settings.syncAddress, Storage.storeModel model])

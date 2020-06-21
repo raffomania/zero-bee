@@ -23,3 +23,5 @@ type Msg
     | NoOp
     | ChangeCurrencySymbol String
     | ChangeEditedBudgetEntry Model.MonthOfYear Model.CategoryId Model.Money
+    | ChangeSyncAddress String
+    | ConnectRemoteStorage

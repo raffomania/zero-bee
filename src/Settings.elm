@@ -1,5 +1,6 @@
 module Settings exposing (view)
 
+import Util
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -16,6 +17,11 @@ view model =
             , label = Input.labelAbove [] <| text "Currency Symbol"
             , text = model.settings.currencySymbol
             , onChange = ChangeCurrencySymbol
-            }
-        , html (Html.node "connect-remote-storage" [] [])
+            },
+          Input.text [Util.onEnter ConnectRemoteStorage]
+              {placeholder = Nothing
+                  , label = Input.labelAbove [] <| text "RemoteStorage sync address"
+                  , text = model.settings.syncAddress
+                  , onChange = ChangeSyncAddress
+              }
         ]
