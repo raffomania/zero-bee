@@ -97,10 +97,17 @@ update msg ({ newTransaction } as model) =
         UpdateFromStorage value ->
             case Storage.decodeModel value of
                 Ok newModel ->
-                    let updatedModel = { model | transactions = newModel.transactions, budgetEntries = newModel.budgetEntries }
-                        updatedWithSettings = case newModel.settings of 
-                            Just settings -> { updatedModel | settings = settings }
-                            _ -> updatedModel
+                    let
+                        updatedModel =
+                            { model | transactions = newModel.transactions, budgetEntries = newModel.budgetEntries }
+
+                        updatedWithSettings =
+                            case newModel.settings of
+                                Just settings ->
+                                    { updatedModel | settings = settings }
+
+                                _ ->
+                                    updatedModel
                     in
                     ( updatedWithSettings, Cmd.none )
 
@@ -166,9 +173,11 @@ update msg ({ newTransaction } as model) =
 
                 updatedSettings =
                     { settings | currencySymbol = symbol }
-                updatedModel = { model | settings = updatedSettings }
+
+                updatedModel =
+                    { model | settings = updatedSettings }
             in
-            (updatedModel , Storage.storeModel updatedModel )
+            ( updatedModel, Storage.storeModel updatedModel )
 
         ChangeEditedBudgetEntry month category value ->
             let
@@ -194,8 +203,9 @@ update msg ({ newTransaction } as model) =
                     { edit | value = value }
             in
             ( { model | editingBudgetEntry = Just newEdit }, Cmd.none )
+
         ChangeSyncAddress newAddress ->
-             let
+            let
                 settings =
                     model.settings
 
@@ -203,5 +213,6 @@ update msg ({ newTransaction } as model) =
                     { settings | syncAddress = newAddress }
             in
             ( { model | settings = updatedSettings }, Cmd.none )
+
         ConnectRemoteStorage ->
-            (model, Cmd.batch [Storage.connect model.settings.syncAddress, Storage.storeModel model])
+            ( model, Cmd.batch [ Storage.connect model.settings.syncAddress, Storage.storeModel model ] )
