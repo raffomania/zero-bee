@@ -1,6 +1,5 @@
 import { Elm } from './Main.elm';
 import RemoteStorage from 'remotestoragejs';
-import Widget from 'remotestorage-widget';
 
 const remoteStorage = new RemoteStorage({logging: true});
 remoteStorage.access.claim('whynab', 'rw');
