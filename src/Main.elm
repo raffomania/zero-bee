@@ -33,7 +33,8 @@ init _ =
       , newTransaction =
             { category = ""
             , value = 0
-            , date = ""
+            , dayOfMonth = "1"
+            , date = Date.fromPosix Time.utc (Time.millisToPosix 0)
             , note = ""
             }
       , settings = { currencySymbol = "€", syncAddress = "" }

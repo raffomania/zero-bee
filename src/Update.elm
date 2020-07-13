@@ -24,36 +24,33 @@ update msg ({ newTransaction } as model) =
             let
                 monthOfYear =
                     { month = Time.toMonth Time.utc time, year = Time.toYear Time.utc time }
+
+                updatedMonth =
+                    { model | currentMonth = monthOfYear }
+
+                updatedNewTransactionDate =
+                    update (AddTransactionNewDate newTransaction.dayOfMonth) updatedMonth
             in
-            ( { model | currentMonth = monthOfYear }, Cmd.none )
+            updatedNewTransactionDate
 
         AddTransaction ->
             let
-                maybeDate =
-                    Date.fromIsoString newTransaction.date
+                updatedTransaction =
+                    { date = newTransaction.date
+                    , value = newTransaction.value
+                    , category = newTransaction.category
+                    , note = newTransaction.note
+                    }
+
+                updatedModel =
+                    { model
+                        | transactions = updatedTransaction :: model.transactions
+                        , newTransaction = { newTransaction | value = 0, note = "" }
+                    }
             in
-            case maybeDate of
-                Ok date ->
-                    let
-                        updatedTransaction =
-                            { date = date
-                            , value = newTransaction.value
-                            , category = newTransaction.category
-                            , note = newTransaction.note
-                            }
-
-                        updatedModel =
-                            { model
-                                | transactions = updatedTransaction :: model.transactions
-                                , newTransaction = { newTransaction | value = 0, note = "" }
-                            }
-                    in
-                    ( updatedModel
-                    , Storage.storeModel updatedModel
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
+            ( updatedModel
+            , Storage.storeModel updatedModel
+            )
 
         AddTransactionNewValue value ->
             ( { model | newTransaction = { newTransaction | value = value } }, Cmd.none )
@@ -62,7 +59,17 @@ update msg ({ newTransaction } as model) =
             ( { model | newTransaction = { newTransaction | category = value } }, Cmd.none )
 
         AddTransactionNewDate value ->
-            ( { model | newTransaction = { newTransaction | date = value } }, Cmd.none )
+            let
+                newTransactionDay =
+                    value
+                        |> String.toInt
+                        |> Maybe.withDefault 1
+
+                newTransactionDate =
+                    newTransactionDay
+                        |> Date.fromCalendarDate model.currentMonth.year model.currentMonth.month
+            in
+            ( { model | newTransaction = { newTransaction | date = newTransactionDate, dayOfMonth = value } }, Cmd.none )
 
         AddTransactionNewNote value ->
             ( { model | newTransaction = { newTransaction | note = value } }, Cmd.none )

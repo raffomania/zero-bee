@@ -1,58 +1,54 @@
 module View.Transactions exposing (view)
-import Util
-import Model
-import Element.Input as Input
-import Date
-import Money
+
 import Colors
-import Element.Font as Font
-import Msg
-
+import Date
 import Element exposing (..)
+import Element.Font as Font
+import Element.Input as Input
+import Model
+import Money
+import Msg
+import Util
 
-view model = column []
-             [balance model
-                , addTransactionForm model
-                , transactionList model]
+
+view model =
+    column []
+        [ balance model
+        , addTransactionForm model
+        , transactionList model
+        ]
 
 
 addTransactionForm : Model.Model -> Element Msg.Msg
 addTransactionForm model =
     let
-        parsedDate =
-            Result.map Date.toIsoString <| Date.fromIsoString model.newTransaction.date
-
         currentDate =
-            case parsedDate of
-                Ok d ->
-                    d
-
-                _ ->
-                    "Invalid date"
+            model.newTransaction.date
+                |> Date.toIsoString
     in
     row [ Util.onEnter Msg.AddTransaction, spacing 10 ]
         [ text "New transaction"
         , Money.input []
             { value = model.newTransaction.value
             , onChange = Msg.AddTransactionNewValue
-            , label = Just <| Input.labelAbove [] <| text "value"
+            , label = Just <| Input.labelAbove [] <| text "Value"
             , currencySymbol = model.settings.currencySymbol
             }
         , Input.text []
             { placeholder = Nothing
-            , label = Input.labelAbove [] <| text "category"
+            , label = Input.labelAbove [] <| text "Category"
             , text = model.newTransaction.category
             , onChange = Msg.AddTransactionNewCategory
             }
         , Input.text []
             { placeholder = Nothing
-            , label = Input.labelAbove [] <| text ("date: " ++ currentDate)
-            , text = model.newTransaction.date
+            , label = Input.labelAbove [] <| text ("Day in " ++ Date.format "MMMM y" (Model.monthToDate model.currentMonth) ++ ":")
+            , text = model.newTransaction.dayOfMonth
             , onChange = Msg.AddTransactionNewDate
             }
         , Input.text []
             { placeholder = Nothing
-            , label = Input.labelAbove [] <| text "note"
+            , label = Input.labelAbove [] <| text "Note"
             , text = model.newTransaction.note
             , onChange = Msg.AddTransactionNewNote
             }
@@ -75,19 +71,19 @@ transactionList model =
                 |> List.filter (\t -> Model.dateToMonth t.date == model.currentMonth)
                 |> List.sortWith (\a b -> Date.compare b.date a.date)
         , columns =
-            [ { header = text "date"
+            [ { header = text "Date"
               , width = fill
               , view = \t -> el [ Font.color <| color t.date ] (text <| Date.toIsoString t.date)
               }
-            , { header = text "category"
+            , { header = text "Category"
               , width = fill
               , view = \t -> el [ Font.color <| color t.date ] <| text t.category
               }
-            , { header = text "note"
+            , { header = text "Note"
               , width = fill
               , view = \t -> el [ Font.color <| color t.date ] <| text t.note
               }
-            , { header = el [ Font.alignRight ] <| text "value"
+            , { header = el [ Font.alignRight ] <| text "Value"
               , width = fill
               , view =
                     \t ->
@@ -123,5 +119,3 @@ balance model =
                 |> List.sum
     in
     text <| "Balance: " ++ Money.format model.settings.currencySymbol value
-
-
