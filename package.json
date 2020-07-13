@@ -6,9 +6,9 @@
     "node-elm-compiler": "^5.0.4",
     "parcel-bundler": "^1.12.4"
   },
-  "name": "whynab",
+  "name": "bzero",
   "version": "0.1.0",
-  "description": "why not a budget",
+  "description": "zero-based budgeting",
   "main": "src/index.js",
   "dependencies": {
     "remotestoragejs": "^1.2.3"
@@ -18,12 +18,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/raffomania/whynab.git"
+    "url": "git+ssh://git@gitlab.com/raffomania/bzero.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://gitlab.com/raffomania/whynab/issues"
+    "url": "https://gitlab.com/raffomania/bzero/issues"
   },
-  "homepage": "https://gitlab.com/raffomania/whynab#readme"
+  "homepage": "https://gitlab.com/raffomania/bzero#readme"
 }
