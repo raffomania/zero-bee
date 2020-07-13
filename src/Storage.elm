@@ -50,6 +50,7 @@ encodeTransaction transaction =
         [ ( "value", E.int transaction.value )
         , ( "date", encodeDate transaction.date )
         , ( "category", E.string transaction.category )
+        , ( "note", E.string transaction.note )
         ]
 
 
@@ -94,10 +95,11 @@ settingsDecoder =
 
 transactionDecoder : D.Decoder Transaction
 transactionDecoder =
-    D.map3 Transaction
+    D.map4 Transaction
         (field "value" D.int)
         (field "date" dateDecoder)
         (field "category" D.string)
+        (D.oneOf [ field "note" D.string, D.succeed "" ])
 
 
 dateDecoder : D.Decoder Date

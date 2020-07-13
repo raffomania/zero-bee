@@ -17,6 +17,7 @@ type alias Model =
         { value : Money
         , date : String
         , category : CategoryId
+        , note : String
         }
     , settings : SettingsData
     }
@@ -50,6 +51,7 @@ type alias Transaction =
     { value : Money
     , date : Date.Date
     , category : CategoryId
+    , note : String
     }
 
 

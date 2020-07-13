@@ -34,6 +34,7 @@ init _ =
             { category = ""
             , value = 0
             , date = ""
+            , note = ""
             }
       , settings = { currencySymbol = "€", syncAddress = "" }
       }

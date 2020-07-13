@@ -12,6 +12,7 @@ type Msg
     | AddTransactionNewValue Model.Money
     | AddTransactionNewCategory String
     | AddTransactionNewDate String
+    | AddTransactionNewNote String
     | ChangeTransactionValue Model.Transaction Model.Money
     | ChangeBudgetEntry Model.MonthOfYear Model.CategoryId Model.Money
     | UpdateFromStorage Json.Decode.Value

@@ -30,24 +30,22 @@ update msg ({ newTransaction } as model) =
         AddTransaction ->
             let
                 maybeDate =
-                    Date.fromIsoString model.newTransaction.date
+                    Date.fromIsoString newTransaction.date
             in
             case maybeDate of
                 Ok date ->
                     let
-                        transaction =
-                            model.newTransaction
-
                         updatedTransaction =
                             { date = date
-                            , value = model.newTransaction.value
-                            , category = transaction.category
+                            , value = newTransaction.value
+                            , category = newTransaction.category
+                            , note = newTransaction.note
                             }
 
                         updatedModel =
                             { model
                                 | transactions = updatedTransaction :: model.transactions
-                                , newTransaction = { newTransaction | value = 0 }
+                                , newTransaction = { newTransaction | value = 0, note = "" }
                             }
                     in
                     ( updatedModel
@@ -65,6 +63,9 @@ update msg ({ newTransaction } as model) =
 
         AddTransactionNewDate value ->
             ( { model | newTransaction = { newTransaction | date = value } }, Cmd.none )
+
+        AddTransactionNewNote value ->
+            ( { model | newTransaction = { newTransaction | note = value } }, Cmd.none )
 
         ChangeBudgetEntry month category value ->
             let

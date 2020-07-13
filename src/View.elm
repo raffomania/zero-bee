@@ -153,6 +153,12 @@ addTransactionForm model =
             , text = model.newTransaction.date
             , onChange = AddTransactionNewDate
             }
+        , Input.text []
+            { placeholder = Nothing
+            , label = Input.labelAbove [] <| text "note"
+            , text = model.newTransaction.note
+            , onChange = AddTransactionNewNote
+            }
         ]
 
 
@@ -178,6 +184,10 @@ transactionList model =
             , { header = text "category"
               , width = fill
               , view = \t -> el [ Font.color <| color t.date ] <| text t.category
+              }
+            , { header = text "note"
+              , width = fill
+              , view = \t -> el [ Font.color <| color t.date ] <| text t.note
               }
             , { header = el [ Font.alignRight ] <| text "value"
               , width = fill
