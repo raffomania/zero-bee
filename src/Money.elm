@@ -1,6 +1,5 @@
 module Money exposing (..)
 
-import Colors
 import Element
 import Element.Input
 import Html.Attributes
@@ -95,10 +94,10 @@ alignInput val =
 
 toColor val =
     if val > 0 then
-        Colors.green
+        "green"
 
     else if val < 0 then
-        Colors.red
+        "red"
 
     else
-        Colors.black
+        ""

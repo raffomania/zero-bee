@@ -1,6 +1,5 @@
 module View.Transactions exposing (view)
 
-import Colors
 import Date
 import Element exposing (..)
 import Element.Font as Font
@@ -8,7 +7,7 @@ import Element.Input as Input
 import Model
 import Money
 import Msg
-import Util
+import Util exposing (class)
 
 
 view model =
@@ -60,10 +59,10 @@ transactionList model =
     let
         color date =
             if Date.compare model.date date == LT then
-                Colors.grey
+                "fl"
 
             else
-                Colors.black
+                "fh"
     in
     table [ spacing 10 ]
         { data =
@@ -73,21 +72,21 @@ transactionList model =
         , columns =
             [ { header = text "Date"
               , width = fill
-              , view = \t -> el [ Font.color <| color t.date ] (text <| Date.toIsoString t.date)
+              , view = \t -> el [ class <| color t.date ] (text <| Date.toIsoString t.date)
               }
             , { header = text "Category"
               , width = fill
-              , view = \t -> el [ Font.color <| color t.date ] <| text t.category
+              , view = \t -> el [ class <| color t.date ] <| text t.category
               }
             , { header = text "Note"
               , width = fill
-              , view = \t -> el [ Font.color <| color t.date ] <| text t.note
+              , view = \t -> el [ class <| color t.date ] <| text t.note
               }
             , { header = el [ Font.alignRight ] <| text "Value"
               , width = fill
               , view =
                     \t ->
-                        el [ Font.color <| Money.toColor t.value ]
+                        el [ class <| Money.toColor t.value ]
                             (Money.input []
                                 { onChange = Msg.ChangeTransactionValue t
                                 , value = t.value

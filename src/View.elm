@@ -1,6 +1,5 @@
 module View exposing (view)
 
-import Colors
 import Date
 import Dict exposing (Dict)
 import Element exposing (..)
@@ -14,7 +13,7 @@ import Model exposing (..)
 import Money
 import Msg exposing (..)
 import Settings
-import Util exposing (dictUpsert)
+import Util exposing (dictUpsert, class)
 import View.Budget
 import View.Transactions
 
@@ -38,12 +37,12 @@ view model =
                 Settings ->
                     [ Settings.view model ]
     in
-    layout [ Background.color Colors.bg, Font.color Colors.black ]
+    layout [ class "fh" ]
         (column [ height fill, width fill ]
-            [ el [ Background.color Colors.accent, width fill ] (navigation model)
-            , el [ Border.widthXY 0 4, Border.color Colors.bgAccent, width fill ]
+            [ el [ class "bm", width fill ] (navigation model)
+            , el [ Border.widthXY 0 4, class "b-bh", width fill ]
                 (column [ spacing 20, padding 20, centerX ] page)
-            , el [ height fill, Background.color Colors.accent, width fill ] none
+            , el [ height fill, class "bm", width fill ] none
             ]
         )
 
@@ -56,12 +55,12 @@ navigation model =
                 |> Date.format "MMMM y"
 
         activePage =
-            [ Background.color Colors.bgAccent ]
+            [ class "bh fm" ]
 
         buttonStyle =
             [ height fill, width fill, Font.center, padding 10 ]
     in
-    row [ spacing 10, width (fill |> maximum 1200), centerX, height (px 50), Font.color Colors.bg ]
+    row [ spacing 10, width (fill |> maximum 1200), centerX, height (px 50), class "fl" ]
         [ row [ width <| fillPortion 2, height fill, spacing 10 ]
             [ Input.button [ width fill, Font.center, height fill ]
                 { onPress = Just PreviousMonth

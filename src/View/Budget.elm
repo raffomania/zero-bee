@@ -1,6 +1,5 @@
 module View.Budget exposing (view)
 
-import Colors
 import Date
 import Dict exposing (Dict)
 import Element exposing (..)
@@ -48,7 +47,7 @@ entryTable model budgetRows =
                                 List.append
                                     [ centerY ]
                                     (if r.activity == 0 then
-                                        [ Font.color Colors.grey ]
+                                        [ Util.class "fl" ]
 
                                      else
                                         []
@@ -66,7 +65,7 @@ entryTable model budgetRows =
               }
             , { header = el [ Font.alignRight ] <| text "available"
               , width = fill
-              , view = \r -> el [ Font.alignRight, centerY, Font.color (Money.toColor r.available) ] <| text <| Money.format model.settings.currencySymbol r.available
+              , view = \r -> el [ Font.alignRight, centerY, Util.class (Money.toColor r.available) ] <| text <| Money.format model.settings.currencySymbol r.available
               }
             , { header = none
               , width = px 50
