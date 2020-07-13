@@ -28,7 +28,7 @@ view model =
         budgetRows =
             calculateBudgetRows model
     in
-    column []
+    column [spacing 20]
         [ toBeBudgeted model budgetRows
         , entryTable model budgetRows
         ]

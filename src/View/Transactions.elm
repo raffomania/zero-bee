@@ -12,7 +12,7 @@ import Util
 
 
 view model =
-    column []
+    column [spacing 20]
         [ balance model
         , addTransactionForm model
         , transactionList model

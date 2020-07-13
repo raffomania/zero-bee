@@ -11,7 +11,7 @@ import Util
 
 
 view model =
-    column []
+    column [spacing 20]
         [ Input.text []
             { placeholder = Nothing
             , label = Input.labelAbove [] <| text "Currency Symbol"
