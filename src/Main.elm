@@ -39,7 +39,10 @@ init _ =
             }
       , settings = { currencySymbol = "€", syncAddress = "" }
       }
-    , Task.perform Msg.SetCurrentMonth Time.now
+    , Cmd.batch
+        [ Task.perform Msg.SetCurrentMonth Time.now
+        , Task.perform Msg.NewTime Time.now
+        ]
     )
 
 
