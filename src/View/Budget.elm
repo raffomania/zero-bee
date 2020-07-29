@@ -201,7 +201,7 @@ toBeBudgeted model budgetRows =
 
         previouslyBudgeted =
             model.budgetEntries
-                |> Dict.filter (\index _ -> (compareMonths (parseMonthIndex index) model.currentMonth) == LT)
+                |> Dict.filter (\index _ -> compareMonths (parseMonthIndex index) model.currentMonth == LT)
                 |> Dict.values
                 |> List.map sumBudgets
                 |> List.sum
@@ -219,13 +219,6 @@ toBeBudgeted model budgetRows =
                 |> List.map sumBudgets
                 |> List.sum
 
-        availableCash =
-            model.transactions
-                |> List.filter (not << Model.isInFuture model.currentMonth)
-                |> List.map .value
-                |> List.filter ((<) 0)
-                |> List.sum
-
         budgeted =
             previouslyBudgeted + currentlyBudgeted + budgetedInFuture
 
@@ -235,28 +228,26 @@ toBeBudgeted model budgetRows =
                 |> List.filter ((>) 0)
                 |> List.sum
 
-        balance =
-            model.transactions
-                |> List.filter (not << Model.isInFuture model.currentMonth)
-                |> List.map .value
-                |> List.sum
-
         totalAvailable =
             budgetRows
                 |> List.map .available
                 |> List.sum
 
+        inflow = 
+            model.transactions
+                |> List.filter (Model.isTransactionInMonth model.currentMonth)
+                |> List.map .value
+                |> List.filter ((<) 0)
+                |> List.sum
+
         data =
-            [ { value = availableCash - previouslyBudgeted
-              , text = "funds for " ++ Date.format "MMMM" (Model.monthToDate model.currentMonth)
-              }
-            , { value = balance, text = "balance" }
-            , { value = totalAvailable, text = "total available" }
-            , { value = previouslyBudgeted, text = "previously budgeted"}
-            , { value = currentlyBudgeted
+            [ { value = totalAvailable, text = "total available" }
+            , { value = inflow, text = "inflow"}
+            , { value = -previouslyBudgeted, text = "from previous month"}
+            , { value = -currentlyBudgeted
               , text = "budgeted"
               }
-            , { value = budgetedInFuture
+            , { value = -budgetedInFuture
               , text = "budgeted in future"
               }
             , { value = overspent
