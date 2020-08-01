@@ -1,4 +1,4 @@
-module Money exposing (..)
+module Money exposing (parse, format, input, toColor)
 
 import Element
 import Element.Input
@@ -88,10 +88,12 @@ input attrs options =
         ]
 
 
+alignInput : String -> Element.Attribute msg
 alignInput val =
     Element.htmlAttribute (Html.Attributes.style "text-align" val)
 
 
+toColor : Model.Money -> String
 toColor val =
     if val > 0 then
         "green"

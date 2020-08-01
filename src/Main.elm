@@ -4,8 +4,8 @@ import Browser
 import Date
 import Dict
 import Model exposing (Model)
-import Msg exposing (..)
-import Storage
+import Msg exposing (Msg)
+import StorageInterface
 import Task
 import Time
 import Update exposing (update)
@@ -49,6 +49,6 @@ init _ =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ Storage.modelUpdated UpdateFromStorage
-        , Time.every (60 * 1000) NewTime
+        [ StorageInterface.modelUpdated Msg.UpdateFromStorage
+        , Time.every (60 * 1000) Msg.NewTime
         ]

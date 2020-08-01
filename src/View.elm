@@ -1,25 +1,17 @@
 module View exposing (view)
 
 import Date
-import Dict exposing (Dict)
 import Element exposing (..)
-import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
 import Html
-import Html.Attributes
 import Model exposing (..)
-import Money
 import Msg exposing (..)
 import Settings
-import Util exposing (dictUpsert, class)
+import Util exposing (class)
 import View.Budget
 import View.Transactions
-
-
-borders =
-    { bottom = 0, left = 0, right = 0, top = 0 }
 
 
 view : Model -> Html.Html Msg
@@ -34,8 +26,8 @@ view model =
                 Transactions ->
                     [ View.Transactions.view model ]
 
-                Settings ->
-                    [ Settings.view model ]
+                SettingsPage ->
+                    [ Element.map Msg.ChangeSettings (Settings.view model.settings) ]
     in
     layout [ class "fh" ]
         (column [ height fill, width fill ]
@@ -102,7 +94,7 @@ navigation model =
             ]
         , Input.button
             (List.append
-                (if model.currentPage == Settings then
+                (if model.currentPage == SettingsPage then
                     activePage
 
                  else
@@ -110,7 +102,7 @@ navigation model =
                 )
                 [ height fill, width (px 60), Font.center, Font.size 24 ]
             )
-            { onPress = Just <| ChangePage Settings
+            { onPress = Just <| ChangePage SettingsPage
             , label = text "⚙"
             }
         ]

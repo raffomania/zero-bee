@@ -1,33 +1,17 @@
-port module Storage exposing (connect, decodeModel, modelUpdated, storeModel)
+module Storage exposing (decodeModel, encodeModel)
 
 import Date exposing (Date)
 import Dict exposing (Dict)
 import Json.Decode as D exposing (field)
 import Json.Encode as E
-import Model exposing (..)
+import Model exposing (Model)
 
 
 type alias StoredModel =
-    { transactions : List Transaction
-    , budgetEntries : Dict MonthIndex (Dict CategoryId BudgetEntry)
-    , settings : Maybe SettingsData
+    { transactions : List Model.Transaction
+    , budgetEntries : Dict Model.MonthIndex (Dict Model.CategoryId Model.BudgetEntry)
+    , settings : Maybe Model.Settings
     }
-
-
-port sendModel : E.Value -> Cmd msg
-
-
-port modelUpdated : (E.Value -> msg) -> Sub msg
-
-
-port connect : String -> Cmd msg
-
-
-storeModel : Model -> Cmd msg
-storeModel model =
-    model
-        |> encodeModel
-        |> sendModel
 
 
 encodeModel : Model -> E.Value
@@ -44,7 +28,7 @@ encodeModel model =
         ]
 
 
-encodeTransaction : Transaction -> E.Value
+encodeTransaction : Model.Transaction -> E.Value
 encodeTransaction transaction =
     E.object
         [ ( "value", E.int transaction.value )
@@ -61,11 +45,12 @@ encodeDate date =
         |> E.string
 
 
+encodeBudgetDict : Dict Model.MonthIndex Model.BudgetEntry -> E.Value
 encodeBudgetDict dict =
     E.dict identity encodeBudgetEntry dict
 
 
-encodeBudgetEntry : BudgetEntry -> E.Value
+encodeBudgetEntry : Model.BudgetEntry -> E.Value
 encodeBudgetEntry entry =
     E.object
         [ ( "value", E.int entry.value )
@@ -86,16 +71,16 @@ modelDecoder =
         (D.maybe (field "settings" settingsDecoder))
 
 
-settingsDecoder : D.Decoder SettingsData
+settingsDecoder : D.Decoder Model.Settings
 settingsDecoder =
-    D.map2 SettingsData
+    D.map2 Model.Settings
         (field "currencySymbol" D.string)
         (field "syncAddress" D.string)
 
 
-transactionDecoder : D.Decoder Transaction
+transactionDecoder : D.Decoder Model.Transaction
 transactionDecoder =
-    D.map4 Transaction
+    D.map4 Model.Transaction
         (field "value" D.int)
         (field "date" dateDecoder)
         (field "category" D.string)
@@ -119,17 +104,13 @@ resultDecoder res =
             D.fail desc
 
 
-budgetMonthDecoder : D.Decoder (Dict CategoryId BudgetEntry)
+budgetMonthDecoder : D.Decoder (Dict Model.CategoryId Model.BudgetEntry)
 budgetMonthDecoder =
     D.dict budgetEntryDecoder
 
 
-budgetEntryDecoder : D.Decoder BudgetEntry
+budgetEntryDecoder : D.Decoder Model.BudgetEntry
 budgetEntryDecoder =
-    D.map2 BudgetEntry
+    D.map2 Model.BudgetEntry
         (field "value" D.int)
         (field "category" D.string)
-
-
-monthDecoder =
-    D.map Date.numberToMonth D.int

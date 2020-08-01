@@ -5,9 +5,11 @@ import Dict
 import Model exposing (Model)
 import Month
 import Msg exposing (..)
+import StorageInterface
 import Storage
 import Time
 import Util exposing (dictUpsert)
+import Settings
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -49,7 +51,7 @@ update msg ({ newTransaction } as model) =
                     }
             in
             ( updatedModel
-            , Storage.storeModel updatedModel
+            , StorageInterface.storeModel updatedModel
             )
 
         AddTransactionNewValue value ->
@@ -100,7 +102,7 @@ update msg ({ newTransaction } as model) =
                 updatedModel =
                     { model | budgetEntries = months, editingBudgetEntry = Nothing }
             in
-            ( updatedModel, Storage.storeModel updatedModel )
+            ( updatedModel, StorageInterface.storeModel updatedModel )
 
         UpdateFromStorage value ->
             case Storage.decodeModel value of
@@ -134,7 +136,7 @@ update msg ({ newTransaction } as model) =
                 updatedModel =
                     { model | transactions = List.map updateTransaction model.transactions }
             in
-            ( updatedModel, Storage.storeModel updatedModel )
+            ( updatedModel, StorageInterface.storeModel updatedModel )
 
         NextMonth ->
             ( { model | currentMonth = Month.increment model.currentMonth }, Cmd.none )
@@ -151,7 +153,7 @@ update msg ({ newTransaction } as model) =
                 updatedModel =
                     { model | transactions = updatedTransactions }
             in
-            ( updatedModel, Storage.storeModel updatedModel )
+            ( updatedModel, StorageInterface.storeModel updatedModel )
 
         RemoveBudgetEntry month category ->
             let
@@ -166,26 +168,13 @@ update msg ({ newTransaction } as model) =
                 updatedModel =
                     { model | budgetEntries = updatedEntries }
             in
-            ( updatedModel, Storage.storeModel updatedModel )
+            ( updatedModel, StorageInterface.storeModel updatedModel )
 
         ChangePage page ->
             ( { model | currentPage = page }, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )
-
-        ChangeCurrencySymbol symbol ->
-            let
-                settings =
-                    model.settings
-
-                updatedSettings =
-                    { settings | currencySymbol = symbol }
-
-                updatedModel =
-                    { model | settings = updatedSettings }
-            in
-            ( updatedModel, Storage.storeModel updatedModel )
 
         ChangeEditedBudgetEntry month category value ->
             let
@@ -212,15 +201,8 @@ update msg ({ newTransaction } as model) =
             in
             ( { model | editingBudgetEntry = Just newEdit }, Cmd.none )
 
-        ChangeSyncAddress newAddress ->
+        Msg.ChangeSettings settingsMsg ->
             let
-                settings =
-                    model.settings
-
-                updatedSettings =
-                    { settings | syncAddress = newAddress }
+                (updatedModel, cmd) = Settings.update settingsMsg model
             in
-            ( { model | settings = updatedSettings }, Cmd.none )
-
-        ConnectRemoteStorage ->
-            ( model, Cmd.batch [ Storage.connect model.settings.syncAddress, Storage.storeModel model ] )
+            ( updatedModel, Cmd.map Msg.ChangeSettings cmd)

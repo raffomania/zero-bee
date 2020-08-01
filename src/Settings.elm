@@ -1,27 +1,59 @@
-module Settings exposing (view)
+module Settings exposing (view, update, Msg)
 
-import Element exposing (..)
-import Element.Background as Background
-import Element.Border as Border
-import Element.Font as Font
+import Element exposing (column, Element, text, spacing)
 import Element.Input as Input
-import Html
-import Msg exposing (..)
 import Util
+import StorageInterface
+import Model exposing (Model)
 
 
+type Msg = ChangeCurrencySymbol String | ChangeSyncAddress String | ConnectRemoteStorage
+
+update : Msg -> Model -> (Model, Cmd Msg)
+update msg model =
+    case msg of
+        ChangeSyncAddress newAddress ->
+            let
+                settings =
+                    model.settings
+
+                updatedSettings = { settings | syncAddress = newAddress}
+
+            in
+            ( { model | settings = updatedSettings }, Cmd.none )
+
+        ConnectRemoteStorage ->
+            ( model, Cmd.batch [ StorageInterface.connect model.settings.syncAddress, StorageInterface.storeModel model ] )
+
+        ChangeCurrencySymbol symbol ->
+            let
+                settings =
+                    model.settings
+
+                updatedSettings =
+                    { settings | currencySymbol = symbol }
+
+                updatedModel =
+                    { model | settings = updatedSettings }
+            in
+            ( updatedModel, StorageInterface.storeModel updatedModel )
+
+
+
+view : Model.Settings -> Element Msg
 view model =
     column [spacing 20]
         [ Input.text []
             { placeholder = Nothing
             , label = Input.labelAbove [] <| text "Currency Symbol"
-            , text = model.settings.currencySymbol
+            , text = model.currencySymbol
             , onChange = ChangeCurrencySymbol
             }
         , Input.text [ Util.onEnter ConnectRemoteStorage ]
             { placeholder = Nothing
             , label = Input.labelAbove [] <| text "RemoteStorage sync address"
-            , text = model.settings.syncAddress
+            , text = model.syncAddress
             , onChange = ChangeSyncAddress
             }
         ]
+

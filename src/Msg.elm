@@ -3,6 +3,7 @@ module Msg exposing (..)
 import Json.Decode
 import Model
 import Time
+import Settings
 
 
 type Msg
@@ -22,7 +23,5 @@ type Msg
     | RemoveBudgetEntry Model.MonthOfYear Model.CategoryId
     | ChangePage Model.Page
     | NoOp
-    | ChangeCurrencySymbol String
     | ChangeEditedBudgetEntry Model.MonthOfYear Model.CategoryId Model.Money
-    | ChangeSyncAddress String
-    | ConnectRemoteStorage
+    | ChangeSettings Settings.Msg 

@@ -2,7 +2,6 @@ module Model exposing (..)
 
 import Date
 import Dict exposing (Dict)
-import Set exposing (Set)
 import Time
 
 
@@ -20,14 +19,19 @@ type alias Model =
         , category : CategoryId
         , note : String
         }
-    , settings : SettingsData
+    , settings : Settings
+    }
+
+type alias Settings =
+    { currencySymbol : String
+    , syncAddress : String
     }
 
 
 type Page
     = Transactions
     | Budget
-    | Settings
+    | SettingsPage
 
 
 type alias CategoryId =
@@ -67,13 +71,6 @@ type alias BudgetEntryEdit =
     , category : CategoryId
     , month : MonthOfYear
     }
-
-
-type alias SettingsData =
-    { currencySymbol : String
-    , syncAddress : String
-    }
-
 
 getMonthIndex : MonthOfYear -> MonthIndex
 getMonthIndex monthYear =
@@ -119,10 +116,12 @@ monthToDate month =
     Date.fromCalendarDate month.year month.month 1
 
 
+isTransactionInMonth : MonthOfYear -> Transaction -> Bool
 isTransactionInMonth month transaction =
     month == dateToMonth transaction.date
 
 
+isInFuture : MonthOfYear -> Transaction -> Bool
 isInFuture currentMonth transaction =
     compareMonths currentMonth (dateToMonth transaction.date) == LT
 
