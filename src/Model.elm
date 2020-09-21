@@ -14,7 +14,6 @@ type alias Model =
     , date : Date.Date
     , newTransaction :
         { value : Money
-        , date : Date.Date
         , dayOfMonth : String
         , category : CategoryId
         , note : String

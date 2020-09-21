@@ -37,8 +37,17 @@ update msg ({ newTransaction } as model) =
 
         AddTransaction ->
             let
+                newTransactionDay =
+                    newTransaction.dayOfMonth
+                        |> String.toInt
+                        |> Maybe.withDefault 1
+
+                newTransactionDate =
+                    newTransactionDay
+                        |> Date.fromCalendarDate model.currentMonth.year model.currentMonth.month
+
                 updatedTransaction =
-                    { date = newTransaction.date
+                    { date = newTransactionDate
                     , value = newTransaction.value
                     , category = newTransaction.category
                     , note = newTransaction.note
@@ -61,17 +70,7 @@ update msg ({ newTransaction } as model) =
             ( { model | newTransaction = { newTransaction | category = value } }, Cmd.none )
 
         AddTransactionNewDate value ->
-            let
-                newTransactionDay =
-                    value
-                        |> String.toInt
-                        |> Maybe.withDefault 1
-
-                newTransactionDate =
-                    newTransactionDay
-                        |> Date.fromCalendarDate model.currentMonth.year model.currentMonth.month
-            in
-            ( { model | newTransaction = { newTransaction | date = newTransactionDate, dayOfMonth = value } }, Cmd.none )
+            ( { model | newTransaction = { newTransaction | dayOfMonth = value } }, Cmd.none )
 
         AddTransactionNewNote value ->
             ( { model | newTransaction = { newTransaction | note = value } }, Cmd.none )
@@ -146,6 +145,8 @@ update msg ({ newTransaction } as model) =
 
         RemoveTransaction transaction ->
             let
+                -- TODO this removes duplicate transactions
+                -- but should remove only one of them
                 updatedTransactions =
                     model.transactions
                         |> List.filter ((/=) transaction)

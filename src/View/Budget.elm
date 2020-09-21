@@ -201,7 +201,7 @@ toBeBudgeted model budgetRows =
 
         previouslyBudgeted =
             model.budgetEntries
-                |> Dict.filter (\index _ -> (compareMonths (parseMonthIndex index) model.currentMonth) == LT)
+                |> Dict.filter (\index _ -> compareMonths (parseMonthIndex index) model.currentMonth == LT)
                 |> Dict.values
                 |> List.map sumBudgets
                 |> List.sum

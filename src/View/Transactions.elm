@@ -20,12 +20,7 @@ view model =
 
 addTransactionForm : Model.Model -> Element Msg.Msg
 addTransactionForm model =
-    let
-        currentDate =
-            model.newTransaction.date
-                |> Date.toIsoString
-    in
-    row [ Util.onEnter Msg.AddTransaction, spacing 10 ]
+   row [ Util.onEnter Msg.AddTransaction, spacing 10 ]
         [ text "New transaction"
         , Money.input []
             { value = model.newTransaction.value
