@@ -219,20 +219,6 @@ toBeBudgeted model budgetRows =
                 |> List.map sumBudgets
                 |> List.sum
 
-        totalInflow =
-            model.transactions
-                |> List.filter (not << Model.isInFuture model.currentMonth)
-                |> List.map .value
-                |> List.filter ((<) 0)
-                |> List.sum
-
-        inflow = 
-            model.transactions
-                |> List.filter (Model.isTransactionInMonth model.currentMonth)
-                |> List.map .value
-                |> List.filter((<) 0)
-                |> List.sum
-
         budgeted =
             previouslyBudgeted + currentlyBudgeted + budgetedInFuture
 
@@ -242,35 +228,32 @@ toBeBudgeted model budgetRows =
                 |> List.filter ((>) 0)
                 |> List.sum
 
-        balance =
-            model.transactions
-                |> List.filter (not << Model.isInFuture model.currentMonth)
-                |> List.map .value
-                |> List.sum
-
         totalAvailable =
             budgetRows
                 |> List.map .available
                 |> List.sum
 
+        inflow = 
+            model.transactions
+                |> List.filter (Model.isTransactionInMonth model.currentMonth)
+                |> List.map .value
+                |> List.filter ((<) 0)
+                |> List.sum
+
         data =
-            [ { value = totalInflow - previouslyBudgeted
-              , text = "funds for " ++ Date.format "MMMM" (Model.monthToDate model.currentMonth)
-              }
-            , { value = balance, text = "balance" }
-            , { value = totalAvailable, text = "total available" }
+            [ { value = totalAvailable, text = "total available" }
             , { value = inflow, text = "inflow"}
-            , { value = previouslyBudgeted, text = "previously budgeted"}
-            , { value = currentlyBudgeted
+            , { value = -previouslyBudgeted, text = "from previous month"}
+            , { value = -currentlyBudgeted
               , text = "budgeted"
               }
-            , { value = budgetedInFuture
+            , { value = -budgetedInFuture
               , text = "budgeted in future"
               }
             , { value = overspent
               , text = "overspent"
               }
-            , { value = totalInflow - budgeted + overspent
+            , { value = negate budgeted + overspent
               , text = "to be budgeted"
               }
             ]
