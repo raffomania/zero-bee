@@ -219,11 +219,18 @@ toBeBudgeted model budgetRows =
                 |> List.map sumBudgets
                 |> List.sum
 
-        availableCash =
+        totalInflow =
             model.transactions
                 |> List.filter (not << Model.isInFuture model.currentMonth)
                 |> List.map .value
                 |> List.filter ((<) 0)
+                |> List.sum
+
+        inflow = 
+            model.transactions
+                |> List.filter (Model.isTransactionInMonth model.currentMonth)
+                |> List.map .value
+                |> List.filter((<) 0)
                 |> List.sum
 
         budgeted =
@@ -247,11 +254,12 @@ toBeBudgeted model budgetRows =
                 |> List.sum
 
         data =
-            [ { value = availableCash - previouslyBudgeted
+            [ { value = totalInflow - previouslyBudgeted
               , text = "funds for " ++ Date.format "MMMM" (Model.monthToDate model.currentMonth)
               }
             , { value = balance, text = "balance" }
             , { value = totalAvailable, text = "total available" }
+            , { value = inflow, text = "inflow"}
             , { value = previouslyBudgeted, text = "previously budgeted"}
             , { value = currentlyBudgeted
               , text = "budgeted"
@@ -262,7 +270,7 @@ toBeBudgeted model budgetRows =
             , { value = overspent
               , text = "overspent"
               }
-            , { value = negate budgeted + overspent
+            , { value = totalInflow - budgeted + overspent
               , text = "to be budgeted"
               }
             ]
