@@ -106,9 +106,19 @@ export default function Theme (client) {
 
   this.drop = (e) => {
     e.preventDefault()
-    const file = e.dataTransfer.files[0]
-    if (file.name.indexOf('.svg') > -1) {
-      this.read(file, this.load)
+    if (e.dataTransfer.files.length > 0) {
+      const file = e.dataTransfer.files[0]
+      if (file.name.indexOf('.svg') > -1) {
+        this.read(file, this.load)
+      }
+    } else {
+      let urlItem = Array.from(e.dataTransfer.items)
+        .find(i => i.type === 'text/plain');
+      urlItem.getAsString((url) => {
+        fetch(url)
+          .then(res => res.text()) 
+          .then(this.load);
+      });
     }
     e.stopPropagation()
   }
