@@ -35,6 +35,7 @@ encodeTransaction transaction =
         , ( "date", encodeDate transaction.date )
         , ( "category", E.string transaction.category )
         , ( "note", E.string transaction.note )
+        , ( "account", E.string transaction.account)
         ]
 
 
@@ -80,11 +81,12 @@ settingsDecoder =
 
 transactionDecoder : D.Decoder Model.Transaction
 transactionDecoder =
-    D.map4 Model.Transaction
+    D.map5 Model.Transaction
         (field "value" D.int)
         (field "date" dateDecoder)
         (field "category" D.string)
         (D.oneOf [ field "note" D.string, D.succeed "" ])
+        (D.oneOf [field "account" D.string, D.succeed ""])
 
 
 dateDecoder : D.Decoder Date

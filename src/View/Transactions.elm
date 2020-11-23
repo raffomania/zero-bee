@@ -1,6 +1,8 @@
 module View.Transactions exposing (view)
 
 import Date
+import Dict
+import Dict.Extra
 import Element exposing (..)
 import Element.Font as Font
 import Element.Input as Input
@@ -11,7 +13,7 @@ import Util exposing (class)
 
 
 view model =
-    column [spacing 20]
+    column [ spacing 20 ]
         [ balance model
         , addTransactionForm model
         , transactionList model
@@ -20,7 +22,7 @@ view model =
 
 addTransactionForm : Model.Model -> Element Msg.Msg
 addTransactionForm model =
-   row [ Util.onEnter Msg.AddTransaction, spacing 10 ]
+    row [ Util.onEnter Msg.AddTransaction, spacing 10 ]
         [ text "New transaction"
         , Money.input []
             { value = model.newTransaction.value
@@ -46,6 +48,12 @@ addTransactionForm model =
             , text = model.newTransaction.note
             , onChange = Msg.AddTransactionNewNote
             }
+        , Input.text []
+            { placeholder = Nothing
+            , label = Input.labelAbove [] <| text "Account"
+            , text = model.newTransaction.account
+            , onChange = Msg.AddTransactionNewAccount
+            }
         ]
 
 
@@ -69,6 +77,7 @@ transactionList model =
               , width = fill
               , view = \t -> el [ class <| color t.date ] (text <| Date.toIsoString t.date)
               }
+            , { header = text "Account", width = fill, view = \t -> text t.account }
             , { header = text "Category"
               , width = fill
               , view = \t -> el [ class <| color t.date ] <| text t.category
@@ -106,10 +115,30 @@ transactionList model =
 balance : Model.Model -> Element Msg.Msg
 balance model =
     let
-        value =
+        total =
             model.transactions
                 |> List.filter (\t -> Date.compare t.date model.date /= GT)
                 |> List.map .value
                 |> List.sum
+                |> Money.format model.settings.currencySymbol
+
+        transactionGroup acc ts =
+            let
+                val =
+                    List.map .value ts
+                        |> List.sum
+                        |> Money.format model.settings.currencySymbol
+            in
+            text <| acc ++ ": " ++ val
+
+        byAccount =
+            model.transactions
+                |> Dict.Extra.groupBy .account
+                |> Dict.Extra.mapKeys (\acc -> if acc == "" then "default account" else acc)
+                |> Dict.map transactionGroup
+                |> Dict.values
     in
-    text <| "Balance: " ++ Money.format model.settings.currencySymbol value
+    column [spacing 10]
+        ((text <| "Total Balance: " ++ total)
+            :: byAccount
+        )

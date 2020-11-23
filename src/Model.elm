@@ -17,6 +17,7 @@ type alias Model =
         , dayOfMonth : String
         , category : CategoryId
         , note : String
+        , account : String
         }
     , settings : Settings
     }
@@ -56,6 +57,7 @@ type alias Transaction =
     , date : Date.Date
     , category : CategoryId
     , note : String
+    , account: String
     }
 
 

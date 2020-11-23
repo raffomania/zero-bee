@@ -51,12 +51,13 @@ update msg ({ newTransaction } as model) =
                     , value = newTransaction.value
                     , category = newTransaction.category
                     , note = newTransaction.note
+                    , account = newTransaction.account
                     }
 
                 updatedModel =
                     { model
                         | transactions = updatedTransaction :: model.transactions
-                        , newTransaction = { newTransaction | value = 0, note = "" }
+                        , newTransaction = { newTransaction | value = 0, note = ""}
                     }
             in
             ( updatedModel
@@ -74,6 +75,9 @@ update msg ({ newTransaction } as model) =
 
         AddTransactionNewNote value ->
             ( { model | newTransaction = { newTransaction | note = value } }, Cmd.none )
+
+        AddTransactionNewAccount value ->
+            ( { model | newTransaction = { newTransaction | account = value } }, Cmd.none )
 
         ChangeBudgetEntry month category value ->
             let
@@ -107,8 +111,15 @@ update msg ({ newTransaction } as model) =
             case Storage.decodeModel value of
                 Ok newModel ->
                     let
+                        firstAccount = newModel.transactions
+                            |> List.head
+                            |> Maybe.map (\t -> t.account)
+                            |> Maybe.withDefault model.newTransaction.account
+
+                        updatedNewTransaction = { newTransaction | account = firstAccount}
+
                         updatedModel =
-                            { model | transactions = newModel.transactions, budgetEntries = newModel.budgetEntries }
+                            { model | transactions = newModel.transactions, budgetEntries = newModel.budgetEntries, newTransaction = updatedNewTransaction }
 
                         updatedWithSettings =
                             case newModel.settings of
