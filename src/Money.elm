@@ -1,4 +1,4 @@
-module Money exposing (parse, format, input, toColor)
+module Money exposing (parse, format, input, toColor, formatWithSign)
 
 import Element
 import Element.Input
@@ -40,6 +40,12 @@ parse default val =
 format : String -> Money -> String
 format symbol val =
     formatOnlyNumber val ++ symbol
+
+formatWithSign : String -> Money -> String
+formatWithSign symbol val =
+    let sign = if val > 0 then "+" else ""
+    in
+        sign ++ (format symbol val)
 
 
 formatOnlyNumber : Money -> String

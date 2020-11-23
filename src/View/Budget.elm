@@ -219,7 +219,7 @@ toBeBudgeted model budgetRows =
                 |> List.map sumBudgets
                 |> List.sum
 
-        budgeted =
+        totalBudgeted =
             previouslyBudgeted + currentlyBudgeted + budgetedInFuture
 
         overspent =
@@ -233,19 +233,27 @@ toBeBudgeted model budgetRows =
                 |> List.map .available
                 |> List.sum
 
-        inflow = 
+        inflow =
             model.transactions
                 |> List.filter (Model.isTransactionInMonth model.currentMonth)
                 |> List.map .value
                 |> List.filter ((<) 0)
                 |> List.sum
+        
+        outflow = 
+            model.transactions
+                |> List.filter (Model.isTransactionInMonth model.currentMonth)
+                |> List.map .value
+                |> List.filter ((>) 0)
+                |> List.sum
 
         data =
-            [ { value = totalAvailable, text = "total available" }
-            , { value = inflow, text = "inflow"}
-            , { value = -previouslyBudgeted, text = "from previous month"}
+            [ -- { value = totalAvailable, text = "total available" }
+            --   { value = inflow, text = "positive activity" }
+            -- , { value = outflow, text = "negative activity"}
+            { value = -previouslyBudgeted, text = "from previous month" }
             , { value = -currentlyBudgeted
-              , text = "budgeted"
+              , text = "budgeted this month"
               }
             , { value = -budgetedInFuture
               , text = "budgeted in future"
@@ -253,7 +261,7 @@ toBeBudgeted model budgetRows =
             , { value = overspent
               , text = "overspent"
               }
-            , { value = negate budgeted + overspent
+            , { value = negate totalBudgeted + overspent
               , text = "to be budgeted"
               }
             ]
@@ -263,7 +271,7 @@ toBeBudgeted model budgetRows =
         , columns =
             [ { header = none
               , width = px 200
-              , view = \d -> el [ Font.alignRight ] <| text <| Money.format model.settings.currencySymbol d.value
+              , view = \d -> el [ Font.alignRight ] <| text <| Money.formatWithSign model.settings.currencySymbol d.value
               }
             , { header = none
               , width = px 200
