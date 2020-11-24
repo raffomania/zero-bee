@@ -1,9 +1,8 @@
-port module StorageInterface exposing (connect, modelUpdated, storeModel, downloadBackup)
+port module StorageInterface exposing (connect, downloadBackup, modelUpdated, storeModel)
 
-import Storage exposing (encodeModel)
 import Json.Encode as E
 import Model
-import Util exposing (doubleCompare)
+import Storage exposing (encodeModel)
 
 
 port sendModel : E.Value -> Cmd msg
@@ -17,10 +16,9 @@ port connect : String -> Cmd msg
 
 port downloadBackup : () -> Cmd msg
 
+
 storeModel : Model.Model -> Cmd msg
 storeModel model =
     model
         |> encodeModel
         |> sendModel
-
-

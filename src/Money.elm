@@ -1,10 +1,9 @@
-module Money exposing (format, formatWithSign, input, parse, toColor)
+module Money exposing (format, formatWithSign, input, toColor)
 
 import Element
 import Element.Input
 import Html.Attributes
 import Model exposing (Money)
-import Util
 
 
 parse : Money -> String -> Money

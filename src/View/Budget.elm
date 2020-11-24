@@ -1,6 +1,5 @@
 module View.Budget exposing (view)
 
-import Date
 import Dict exposing (Dict)
 import Element exposing (..)
 import Element.Events as Events
