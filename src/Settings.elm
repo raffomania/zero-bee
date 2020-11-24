@@ -1,13 +1,13 @@
 module Settings exposing (view, update, Msg)
 
-import Element exposing (column, Element, text, spacing)
+import Element exposing (column, Element, text, spacing, padding)
 import Element.Input as Input
 import Util
 import StorageInterface
 import Model exposing (Model)
 
 
-type Msg = ChangeCurrencySymbol String | ChangeSyncAddress String | ConnectRemoteStorage
+type Msg = ChangeCurrencySymbol String | ChangeSyncAddress String | ConnectRemoteStorage | DownloadBackup
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -37,6 +37,8 @@ update msg model =
                     { model | settings = updatedSettings }
             in
             ( updatedModel, StorageInterface.storeModel updatedModel )
+        DownloadBackup ->
+            (model, StorageInterface.downloadBackup ())
 
 
 
@@ -55,5 +57,10 @@ view model =
             , text = model.syncAddress
             , onChange = ChangeSyncAddress
             }
+
+        , Input.button [Util.class "bh", padding 10] {
+            onPress = Just DownloadBackup,
+            label = text "Download a backup of your data"
+        }
         ]
 

@@ -18,12 +18,15 @@ window.addEventListener('DOMContentLoaded', () => {
         });
 
         app.ports.sendModel.subscribe(debounce((data) => {
-            console.warn('store');
             client.storeFile('application/json', 'db.json', JSON.stringify(data));
         }, 1000));
 
         app.ports.connect.subscribe((address) => {
             remoteStorage.connect(address);
+        });
+
+        app.ports.downloadBackup.subscribe(() => {
+            client.getFile('db.json').then(downloadBackup);
         });
 
         client.on('change', (event) => {
@@ -36,6 +39,19 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+function downloadBackup(data) {
+    data = JSON.stringify(data);
+    var elem = window.document.createElement('a');
+    var blob = new Blob([data], {type: 'application/json'});
+    elem.href = window.URL.createObjectURL(blob);
+    var year = (new Date()).getFullYear();
+    var month = parseInt((new Date()).getMonth(), 10) + 1;
+    elem.download = `bzero_backup_${year}_${month}.json`
+    document.body.appendChild(elem);
+    elem.click();        
+    document.body.removeChild(elem);
+}
 
 // stolen from underscore.js
 // Returns a function, that, as long as it continues to be invoked, will not
