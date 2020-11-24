@@ -58,7 +58,7 @@ view model =
             , onChange = ChangeSyncAddress
             }
 
-        , Input.button [Util.class "bh", padding 10] {
+        , Input.button [Util.class "bh fl", padding 10] {
             onPress = Just DownloadBackup,
             label = text "Download a backup of your data"
         }
