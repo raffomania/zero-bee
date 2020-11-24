@@ -253,7 +253,7 @@ toBeBudgeted model budgetRows =
               -- , { value = outflow, text = "negative activity"}
               { value = -previouslyBudgeted, text = "from previous month" }
             , { value = -currentlyBudgeted
-              , text = "budgeted this month"
+              , text = "to be budgeted this month"
               }
             , { value = -budgetedInFuture
               , text = "budgeted in future"
