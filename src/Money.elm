@@ -1,9 +1,10 @@
-module Money exposing (parse, format, input, toColor, formatWithSign)
+module Money exposing (format, formatWithSign, input, parse, toColor)
 
 import Element
 import Element.Input
 import Html.Attributes
 import Model exposing (Money)
+import Util
 
 
 parse : Money -> String -> Money
@@ -41,11 +42,18 @@ format : String -> Money -> String
 format symbol val =
     formatOnlyNumber val ++ symbol
 
+
 formatWithSign : String -> Money -> String
 formatWithSign symbol val =
-    let sign = if val > 0 then "+" else ""
+    let
+        sign =
+            if val > 0 then
+                "+"
+
+            else
+                ""
     in
-        sign ++ (format symbol val)
+    sign ++ format symbol val
 
 
 formatOnlyNumber : Money -> String
@@ -75,23 +83,28 @@ input : List (Element.Attribute msg) -> InputOptions msg -> Element.Element msg
 input attrs options =
     let
         padding =
-            { top = 10, right = 0, bottom = 10, left = 10 }
+            { top = 10, right = 15, bottom = 10, left = 10 }
 
         onChange =
             parse options.value >> options.onChange
 
+        currencyLabel =
+            Element.onRight <|
+                Element.el [ Element.moveLeft 14, Element.moveDown 9.5 ] <|
+                    Element.text options.currencySymbol
+
         mergedAttrs =
-            List.concat [ [ alignInput "right", Element.paddingEach padding ], attrs ]
+            List.concat
+                [ [ alignInput "right", Element.paddingEach padding, currencyLabel ]
+                , attrs
+                ]
     in
-    Element.row [ Element.width Element.fill ]
-        [ Element.Input.text mergedAttrs
-            { text = formatOnlyNumber options.value
-            , placeholder = Nothing
-            , label = options.label |> Maybe.withDefault (Element.Input.labelHidden "money input")
-            , onChange = onChange
-            }
-        , Element.text options.currencySymbol
-        ]
+    Element.Input.text mergedAttrs
+        { text = formatOnlyNumber options.value
+        , placeholder = Nothing
+        , label = options.label |> Maybe.withDefault (Element.Input.labelHidden "money input")
+        , onChange = onChange
+        }
 
 
 alignInput : String -> Element.Attribute msg

@@ -17,7 +17,11 @@ import Util exposing (class)
 view model =
     column [ spacing 20 ]
         [ balance model
-        , addTransactionForm model
+        , column [paddingXY 0 30, spacing 10]
+            [
+                text "Add transaction:",
+                addTransactionForm model
+            ]
         , transactionList model
         ]
 
@@ -25,8 +29,7 @@ view model =
 addTransactionForm : Model.Model -> Element Msg.Msg
 addTransactionForm model =
     row [ Util.onEnter Msg.AddTransaction, spacing 10 ]
-        [ text "New transaction"
-        , Money.input []
+        [ Money.input []
             { value = model.newTransaction.value
             , onChange = Msg.AddTransactionNewValue
             , label = Just <| Input.labelAbove [] <| text "Value"
@@ -148,7 +151,7 @@ balance model =
                     top = 0
                 }]
     in
-    table [ paddingXY 100 0 ]
+    table [ moveLeft 5]
         { data = byAccount
         , columns =
             [ { header = el (Font.alignRight :: headerStyle ) <| text total

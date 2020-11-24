@@ -266,15 +266,15 @@ toBeBudgeted model budgetRows =
               }
             ]
     in
-    table [ spacing 10 ]
+    table [ spacing 10, paddingXY 0 30 ]
         { data = data
         , columns =
             [ { header = none
-              , width = px 200
+              , width = shrink
               , view = \d -> el [ Font.alignRight ] <| text <| Money.formatWithSign model.settings.currencySymbol d.value
               }
             , { header = none
-              , width = px 200
+              , width = fill
               , view = \d -> text d.text
               }
             ]
