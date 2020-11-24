@@ -47,12 +47,12 @@ navigation model =
                 |> Date.format "MMMM y"
 
         activePage =
-            [ class "bh fm" ]
+            [ class "bh fl" ]
 
         buttonStyle =
             [ height fill, width fill, Font.center, padding 10 ]
     in
-    row [ spacing 10, width (fill |> maximum 1200), centerX, height (px 50), class "fl" ]
+    row [ spacing 10, width (fill |> maximum 1200), centerX, height (px 50), class "fm" ]
         [ row [ width <| fillPortion 2, height fill, spacing 10 ]
             [ Input.button [ width fill, Font.center, height fill ]
                 { onPress = Just PreviousMonth
