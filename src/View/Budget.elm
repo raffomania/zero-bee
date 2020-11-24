@@ -239,8 +239,8 @@ toBeBudgeted model budgetRows =
                 |> List.map .value
                 |> List.filter ((<) 0)
                 |> List.sum
-        
-        outflow = 
+
+        outflow =
             model.transactions
                 |> List.filter (Model.isTransactionInMonth model.currentMonth)
                 |> List.map .value
@@ -249,9 +249,9 @@ toBeBudgeted model budgetRows =
 
         data =
             [ -- { value = totalAvailable, text = "total available" }
-            --   { value = inflow, text = "positive activity" }
-            -- , { value = outflow, text = "negative activity"}
-            { value = -previouslyBudgeted, text = "from previous month" }
+              --   { value = inflow, text = "positive activity" }
+              -- , { value = outflow, text = "negative activity"}
+              { value = -previouslyBudgeted, text = "from previous month" }
             , { value = -currentlyBudgeted
               , text = "budgeted this month"
               }
@@ -275,7 +275,7 @@ toBeBudgeted model budgetRows =
               }
             , { header = none
               , width = px 200
-              , view = \d -> text <| d.text
+              , view = \d -> text d.text
               }
             ]
         }

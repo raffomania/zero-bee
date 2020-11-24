@@ -5,6 +5,7 @@ import Dict
 import Dict.Extra
 import Element exposing (..)
 import Element.Font as Font
+import Element.Border as Border
 import Element.Input as Input
 import Model
 import Model.Transactions
@@ -127,22 +128,36 @@ balance model =
                 |> Money.format model.settings.currencySymbol
 
         transactionGroup acc ts =
-            let
-                val =
-                    List.map .value ts
-                        |> List.sum
-                        |> Money.format model.settings.currencySymbol
-            in
-            text <| acc ++ ": " ++ val
+            List.map .value ts
+                |> List.sum
+                |> Money.format model.settings.currencySymbol
 
         byAccount =
             model.transactions
                 |> Dict.Extra.groupBy .account
                 |> Dict.Extra.mapKeys Model.Transactions.mapAccountName
                 |> Dict.map transactionGroup
-                |> Dict.values
+                |> Dict.toList
+                |> List.map (\( acc, val ) -> { value = val, text = acc })
+
+        headerStyle = 
+                [paddingXY 5 10, Border.widthEach {
+                    bottom = 1,
+                    left = 0,
+                    right = 0,
+                    top = 0
+                }]
     in
-    column [ spacing 10 ]
-        ((text <| "Total Balance: " ++ total)
-            :: byAccount
-        )
+    table [ paddingXY 100 0 ]
+        { data = byAccount
+        , columns =
+            [ { header = el (Font.alignRight :: headerStyle ) <| text total
+              , width = shrink
+              , view = \d -> el [Font.alignRight, padding 5] (text d.value)
+              }
+            , { header =  el headerStyle <| text "Total Balance"
+              , width = px 200
+              , view = \d -> el [padding 5] <| text d.text
+              }
+            ]
+        }
