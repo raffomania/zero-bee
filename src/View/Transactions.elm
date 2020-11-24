@@ -7,6 +7,7 @@ import Element exposing (..)
 import Element.Font as Font
 import Element.Input as Input
 import Model
+import Model.Transactions
 import Money
 import Msg
 import Util exposing (class)
@@ -77,7 +78,10 @@ transactionList model =
               , width = fill
               , view = \t -> el [ class <| color t.date ] (text <| Date.toIsoString t.date)
               }
-            , { header = text "Account", width = fill, view = \t -> text t.account }
+            , { header = text "Account"
+              , width = fill
+              , view = .account >> Model.Transactions.mapAccountName >> text
+              }
             , { header = text "Category"
               , width = fill
               , view = \t -> el [ class <| color t.date ] <| text t.category
@@ -134,11 +138,11 @@ balance model =
         byAccount =
             model.transactions
                 |> Dict.Extra.groupBy .account
-                |> Dict.Extra.mapKeys (\acc -> if acc == "" then "default account" else acc)
+                |> Dict.Extra.mapKeys Model.Transactions.mapAccountName
                 |> Dict.map transactionGroup
                 |> Dict.values
     in
-    column [spacing 10]
+    column [ spacing 10 ]
         ((text <| "Total Balance: " ++ total)
             :: byAccount
         )
