@@ -140,7 +140,7 @@ calculateBudgetRows model =
         |> List.filter (not << Model.isInFuture model.currentMonth)
         |> List.foldl (applyTransaction model.currentMonth) mergedRows
         |> Dict.values
-        |> List.sortWith (Util.doubleCompare .activity (.budgeted >> negate))
+        |> List.sortBy .category
 
 
 applyMonthDict : MonthIndex -> Dict MonthIndex BudgetRow -> Dict CategoryId BudgetRow -> Dict CategoryId BudgetRow
