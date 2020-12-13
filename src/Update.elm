@@ -103,7 +103,7 @@ update msg ({ newTransaction } as model) =
                         model.budgetEntries
 
                 updatedModel =
-                    { model | budgetEntries = months, editingBudgetEntry = Nothing }
+                    { model | budgetEntries = months }
             in
             ( updatedModel, StorageInterface.storeModel updatedModel )
 
@@ -187,31 +187,6 @@ update msg ({ newTransaction } as model) =
 
         NoOp ->
             ( model, Cmd.none )
-
-        ChangeEditedBudgetEntry month category value ->
-            let
-                default =
-                    { category = category
-                    , month = month
-                    , value = value
-                    }
-
-                edit =
-                    model.editingBudgetEntry
-                        |> Maybe.andThen
-                            (\e ->
-                                if e.month /= month || e.category /= category then
-                                    Nothing
-
-                                else
-                                    Just e
-                            )
-                        |> Maybe.withDefault default
-
-                newEdit =
-                    { edit | value = value }
-            in
-            ( { model | editingBudgetEntry = Just newEdit }, Cmd.none )
 
         Msg.ChangeSettings settingsMsg ->
             let

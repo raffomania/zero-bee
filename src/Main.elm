@@ -27,7 +27,6 @@ init _ =
     ( { transactions = []
       , currentMonth = { month = Time.Jan, year = 0 }
       , budgetEntries = Dict.empty
-      , editingBudgetEntry = Nothing
       , currentPage = Model.Budget
       , date = Date.fromPosix Time.utc (Time.millisToPosix 0)
       , newTransaction =
