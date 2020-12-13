@@ -9,6 +9,7 @@ type alias Model =
     { transactions : List Transaction
     , currentMonth : MonthOfYear
     , budgetEntries : Dict MonthIndex (Dict CategoryId BudgetEntry)
+    , editingBudgetEntry : Maybe BudgetEntryEdit
     , currentPage : Page
     , date : Date.Date
     , newTransaction :
@@ -65,6 +66,12 @@ type alias BudgetEntry =
     , category : CategoryId
     }
 
+
+type alias BudgetEntryEdit =
+    { value : Money
+    , category : CategoryId
+    , month : MonthOfYear
+    }
 
 getMonthIndex : MonthOfYear -> MonthIndex
 getMonthIndex monthYear =

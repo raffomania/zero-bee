@@ -85,12 +85,27 @@ entryTable model budgetRows =
 
 budgetInput : Model -> BudgetRow -> Element Msg
 budgetInput model r =
+    let
+        value =
+            case model.editingBudgetEntry of
+                Just entry ->
+                    if entry.month == model.currentMonth && entry.category == r.category then
+                        entry.value
+
+                    else
+                        r.budgeted
+
+                Nothing ->
+                    r.budgeted
+    in
     Keyed.el []
         ( r.category
         , Money.input
-            [ ]
-            { value = r.budgeted
-            , onChange = Msg.ChangeBudgetEntry model.currentMonth r.category
+            [ Events.onLoseFocus (Msg.ChangeBudgetEntry model.currentMonth r.category value)
+            , Util.onEnter (Msg.ChangeBudgetEntry model.currentMonth r.category value)
+            ]
+            { value = value
+            , onChange = Msg.ChangeEditedBudgetEntry model.currentMonth r.category
             , label = Nothing
             , currencySymbol = model.settings.currencySymbol
             }

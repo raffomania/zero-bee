@@ -24,4 +24,5 @@ type Msg
     | RemoveBudgetEntry Model.MonthOfYear Model.CategoryId
     | ChangePage Model.Page
     | NoOp
+    | ChangeEditedBudgetEntry Model.MonthOfYear Model.CategoryId Model.Money
     | ChangeSettings Settings.Msg 
