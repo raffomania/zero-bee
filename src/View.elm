@@ -29,12 +29,21 @@ view model =
                 SettingsPage ->
                     [ Element.map Msg.ChangeSettings (Settings.view model.settings) ]
     in
-    layout [ class "fh" ]
+    layout [ class "fh bm" ]
         (column [ height fill, width fill ]
             [ el [ class "bm", width fill ] (navigation model)
-            , el [ Border.widthXY 0 4, class "b-bh", width fill ]
+            , el
+                [ Border.widthXY 0 4
+                , class "b-bh bg"
+                , width fill
+                , Border.shadow
+                    { offset = ( 0, 10 )
+                    , size = -10
+                    , blur = 10
+                    , color = rgba 0 0 0 0.2
+                    }
+                ]
                 (column [ spacing 20, padding 20, centerX ] page)
-            , el [ height fill, class "bm", width fill ] none
             ]
         )
 
@@ -47,12 +56,45 @@ navigation model =
                 |> Date.format "MMMM y"
 
         activePage =
-            [ class "bh fl" ]
+            [ class "bh fl"
+            , Border.shadow
+                { offset = ( 0, 0 )
+                , size = 0
+                , blur = 10
+                , color = rgba 0 0 0 0.3
+                }
+            ]
+
+        inactivePage =
+            [ Border.shadow
+                { offset = ( 0, 0 )
+                , size = 1
+                , blur = 10
+                , color = rgba 0 0 0 0.2
+                }
+            ]
 
         buttonStyle =
-            [ height fill, width fill, Font.center, padding 10 ]
+            [ height fill
+            , width fill
+            , Font.center
+            , paddingEach { top = 20, bottom = 15, left = 15, right = 15 }
+            , Border.roundEach { topLeft = 4, topRight = 4, bottomLeft = 0, bottomRight = 0 }
+            ]
     in
-    row [ spacing 10, width (fill |> maximum 1200), centerX, height (px 50), class "fm" ]
+    row
+        [ spacing 20
+        , width fill
+        , centerX
+        , class "fm"
+        , paddingEach { top = 10, bottom = 0, left = 10, right = 10 }
+        , Border.innerShadow
+            { offset = ( 0, -15 )
+            , size = -15
+            , blur = 15
+            , color = rgba 0 0 0 0.2
+            }
+        ]
         [ row [ width <| fillPortion 2, height fill, spacing 10 ]
             [ Input.button [ width fill, Font.center, height fill ]
                 { onPress = Just PreviousMonth
@@ -64,14 +106,14 @@ navigation model =
                 , label = text ">"
                 }
             ]
-        , row [ width <| fillPortion 3, height fill ]
+        , row [ width <| fillPortion 3, height fill, spacing 10 ]
             [ Input.button
                 (List.append
                     (if model.currentPage == Budget then
                         activePage
 
                      else
-                        []
+                        inactivePage
                     )
                     buttonStyle
                 )
@@ -84,7 +126,7 @@ navigation model =
                         activePage
 
                      else
-                        []
+                        inactivePage
                     )
                     buttonStyle
                 )
@@ -93,14 +135,15 @@ navigation model =
                 }
             ]
         , Input.button
-            (List.append
-                (if model.currentPage == SettingsPage then
+            (List.concat
+                [ if model.currentPage == SettingsPage then
                     activePage
 
-                 else
-                    []
-                )
-                [ height fill, width (px 60), Font.center, Font.size 24 ]
+                  else
+                    inactivePage
+                , buttonStyle
+                , [ width (px 60), Font.size 24 ]
+                ]
             )
             { onPress = Just <| ChangePage SettingsPage
             , label = text "⚙"

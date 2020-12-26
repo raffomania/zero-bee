@@ -1,4 +1,5 @@
 body { background:var(--background) !important; }
+.bg { background:var(--background) !important;}
 .fh { color:var(--f_high) !important; stroke:var(--f_high) !important; }
 .fm { color:var(--f_med) !important; stroke:var(--f_med) !important; }
 .fl { color:var(--f_low) !important; stroke:var(--f_low) !important; }
