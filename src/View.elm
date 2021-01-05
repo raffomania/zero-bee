@@ -72,7 +72,7 @@ navigation model =
                 , blur = 7
                 , color = rgba 0 0 0 0.15
                 },
-                class "bm"
+                class "bl"
             ]
 
         buttonStyle =
