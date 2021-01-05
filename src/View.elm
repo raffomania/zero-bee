@@ -56,7 +56,7 @@ navigation model =
                 |> Date.format "MMMM y"
 
         activePage =
-            [ class "bg fl"
+            [ class "bg fh"
             , Border.shadow
                 { offset = ( 0, 8 )
                 , size = 0
@@ -71,7 +71,8 @@ navigation model =
                 , size = 1
                 , blur = 7
                 , color = rgba 0 0 0 0.15
-                }
+                },
+                class "bm"
             ]
 
         buttonStyle =
@@ -93,24 +94,24 @@ navigation model =
                 )
     in
     row
-        [ spacing 20
+        [ spacing 15
         , width fill
         , centerX
         , class "fm"
-        , paddingEach { top = 10, bottom = 0, left = 10, right = 10 }
+        , paddingEach { top = 10, bottom = 0, left = 20, right = 20 }
         ]
-        [ row [ width <| fillPortion 2, height fill, spacing 10 ]
+        [ row [ width <| fillPortion 2, height fill, class "fh" ]
             [ Input.button [ width fill, Font.center, height fill ]
                 { onPress = Just PreviousMonth
                 , label = text "<"
                 }
-            , el [ Font.center, width (px 150) ] (text label)
+            , el [ Font.center, width (px 130) ] (text label)
             , Input.button [ width fill, Font.center, height fill ]
                 { onPress = Just NextMonth
                 , label = text ">"
                 }
             ]
-        , row [ width <| fillPortion 3, height fill, spacing 10 ]
+        , row [ width <| fillPortion 3, height fill, spacing 15 ]
             [ Input.button
                 (buttonStyleForPage Budget)
                 { onPress = Just <| ChangePage Budget
@@ -125,7 +126,7 @@ navigation model =
         , Input.button
             (List.concat
                 [ buttonStyleForPage SettingsPage
-                , [ width (px 60), Font.size 24 ]
+                , [ width (px 65), Font.size 24 ]
                 ]
             )
             { onPress = Just <| ChangePage SettingsPage
