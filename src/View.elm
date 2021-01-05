@@ -30,17 +30,17 @@ view model =
                     [ Element.map Msg.ChangeSettings (Settings.view model.settings) ]
     in
     layout [ class "fh bm" ]
-        (column [ height fill, width fill ]
+        (column [ height fill, width fill, padding 10 ]
             [ el [ class "bm", width fill ] (navigation model)
             , el
-                [ Border.widthXY 0 4
-                , class "b-bh bg"
+                [ class "bg"
                 , width fill
+                , Border.rounded 4
                 , Border.shadow
                     { offset = ( 0, 10 )
-                    , size = -10
-                    , blur = 10
-                    , color = rgba 0 0 0 0.2
+                    , size = -5
+                    , blur = 15
+                    , color = rgba 0 0 0 0.3
                     }
                 ]
                 (column [ spacing 20, padding 20, centerX ] page)
@@ -56,9 +56,9 @@ navigation model =
                 |> Date.format "MMMM y"
 
         activePage =
-            [ class "bh fl"
+            [ class "bg fl"
             , Border.shadow
-                { offset = ( 0, 0 )
+                { offset = ( 0, 8 )
                 , size = 0
                 , blur = 10
                 , color = rgba 0 0 0 0.3
@@ -67,10 +67,10 @@ navigation model =
 
         inactivePage =
             [ Border.shadow
-                { offset = ( 0, 0 )
+                { offset = ( 0, 2 )
                 , size = 1
-                , blur = 10
-                , color = rgba 0 0 0 0.2
+                , blur = 7
+                , color = rgba 0 0 0 0.15
                 }
             ]
 
@@ -98,12 +98,6 @@ navigation model =
         , centerX
         , class "fm"
         , paddingEach { top = 10, bottom = 0, left = 10, right = 10 }
-        , Border.innerShadow
-            { offset = ( 0, -15 )
-            , size = -15
-            , blur = 15
-            , color = rgba 0 0 0 0.2
-            }
         ]
         [ row [ width <| fillPortion 2, height fill, spacing 10 ]
             [ Input.button [ width fill, Font.center, height fill ]
