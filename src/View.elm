@@ -81,6 +81,16 @@ navigation model =
             , paddingEach { top = 20, bottom = 15, left = 15, right = 15 }
             , Border.roundEach { topLeft = 4, topRight = 4, bottomLeft = 0, bottomRight = 0 }
             ]
+
+        buttonStyleForPage page =
+            List.append
+                buttonStyle
+                (if model.currentPage == page then
+                    activePage
+
+                 else
+                    inactivePage
+                )
     in
     row
         [ spacing 20
@@ -108,40 +118,19 @@ navigation model =
             ]
         , row [ width <| fillPortion 3, height fill, spacing 10 ]
             [ Input.button
-                (List.append
-                    (if model.currentPage == Budget then
-                        activePage
-
-                     else
-                        inactivePage
-                    )
-                    buttonStyle
-                )
+                (buttonStyleForPage Budget)
                 { onPress = Just <| ChangePage Budget
                 , label = text "Budget"
                 }
             , Input.button
-                (List.append
-                    (if model.currentPage == Transactions then
-                        activePage
-
-                     else
-                        inactivePage
-                    )
-                    buttonStyle
-                )
+                (buttonStyleForPage Transactions)
                 { onPress = Just <| ChangePage Transactions
                 , label = text "Transactions"
                 }
             ]
         , Input.button
             (List.concat
-                [ if model.currentPage == SettingsPage then
-                    activePage
-
-                  else
-                    inactivePage
-                , buttonStyle
+                [ buttonStyleForPage SettingsPage
                 , [ width (px 60), Font.size 24 ]
                 ]
             )
