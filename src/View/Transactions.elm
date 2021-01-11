@@ -137,8 +137,8 @@ balance model =
 
         byAccount =
             model.transactions
+                |> List.map (\t -> {t | account = Model.Transactions.mapAccountName (.account t)})
                 |> Dict.Extra.groupBy .account
-                |> Dict.Extra.mapKeys Model.Transactions.mapAccountName
                 |> Dict.map transactionGroup
                 |> Dict.toList
                 |> List.map (\( acc, val ) -> { value = val, text = acc })
