@@ -198,6 +198,7 @@ toBeBudgeted model budgetRows =
                 |> List.map .value
                 |> List.sum
 
+        -- todo this should probably include past overspent values
         previouslyBudgeted =
             model.budgetEntries
                 |> Dict.filter (\index _ -> compareMonths (parseMonthIndex index) model.currentMonth == LT)
@@ -232,30 +233,43 @@ toBeBudgeted model budgetRows =
                 |> List.map .available
                 |> List.sum
 
-        inflow =
+        positiveActivity =
             model.transactions
                 |> List.filter (Model.isTransactionInMonth model.currentMonth)
                 |> List.map .value
                 |> List.filter ((<) 0)
                 |> List.sum
 
-        outflow =
+        negativeActivity =
             model.transactions
                 |> List.filter (Model.isTransactionInMonth model.currentMonth)
                 |> List.map .value
                 |> List.filter ((>) 0)
                 |> List.sum
 
+        markedInflow =
+            budgetRows
+                |> List.map .budgeted
+                |> List.filter ((>) 0)
+                |> List.sum
+
+        plannedOutflow =
+            budgetRows
+                |> List.map .budgeted
+                |> List.filter ((<) 0)
+                |> List.sum
+
         data =
             [ -- { value = totalAvailable, text = "total available" }
-              --   { value = inflow, text = "positive activity" }
-              -- , { value = outflow, text = "negative activity"}
-              { value = -previouslyBudgeted, text = "from previous month" }
-            , { value = -currentlyBudgeted
-              , text = "to be budgeted this month"
+            { value = -previouslyBudgeted, text = "from previous month" }
+            -- , { value = inflow, text = "positive activity" }
+            -- , { value = outflow, text = "negative activity"}
+            , { value = -markedInflow, text = "marked as inflow"}
+            , { value = -plannedOutflow
+              , text = "budgeted this month"
               }
             , { value = -budgetedInFuture
-              , text = "budgeted in future"
+              , text = "planned in future"
               }
             , { value = overspent
               , text = "overspent"
