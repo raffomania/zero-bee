@@ -3,6 +3,7 @@ module Model exposing (..)
 import Date
 import Dict exposing (Dict)
 import Time
+import Set
 
 
 type alias Model =
@@ -152,4 +153,6 @@ autocompletedCategories : Model -> List String
 autocompletedCategories model =
     model.transactions
         |> List.map .category
-        |> List.filter (String.startsWith model.newTransaction.category)
+        |> Set.fromList
+        |> Set.filter (String.startsWith model.newTransaction.category)
+        |> Set.toList
