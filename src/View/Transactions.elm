@@ -35,7 +35,12 @@ addTransactionForm model =
             , label = Just <| Input.labelAbove [] <| text "Value"
             , currencySymbol = model.settings.currencySymbol
             }
-        , View.Autocomplete.view { rawInput = model.newTransaction.category, label = "Category", availableValues = Model.autocompletedCategories model, focused = model.newTransaction.categoryFocused }
+        , View.Autocomplete.view
+            { rawInput = model.newTransaction.category
+            , label = "Category"
+            , availableValues = Model.autocompletedCategories model
+            , focused = model.newTransaction.categoryFocused
+            }
         , Input.text []
             { placeholder = Nothing
             , label = Input.labelAbove [] <| text ("Day in " ++ Date.format "MMMM y" (Model.monthToDate model.currentMonth) ++ ":")

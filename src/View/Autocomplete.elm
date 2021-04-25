@@ -4,7 +4,6 @@ import Element exposing (..)
 import Element.Border exposing (roundEach)
 import Element.Events
 import Element.Input as Input
-import Model
 import Msg
 import Util exposing (class)
 
