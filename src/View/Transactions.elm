@@ -4,23 +4,23 @@ import Date
 import Dict
 import Dict.Extra
 import Element exposing (..)
-import Element.Font as Font
 import Element.Border as Border
+import Element.Font as Font
 import Element.Input as Input
 import Model
 import Model.Transactions
 import Money
 import Msg
 import Util exposing (class)
+import View.Autocomplete
 
 
 view model =
     column [ spacing 20 ]
         [ balance model
-        , column [paddingXY 0 30, spacing 10]
-            [
-                text "Add transaction:",
-                addTransactionForm model
+        , column [ paddingXY 0 30, spacing 10 ]
+            [ text "Add transaction:"
+            , addTransactionForm model
             ]
         , transactionList model
         ]
@@ -35,12 +35,7 @@ addTransactionForm model =
             , label = Just <| Input.labelAbove [] <| text "Value"
             , currencySymbol = model.settings.currencySymbol
             }
-        , Input.text []
-            { placeholder = Nothing
-            , label = Input.labelAbove [] <| text "Category"
-            , text = model.newTransaction.category
-            , onChange = Msg.AddTransactionNewCategory
-            }
+        , View.Autocomplete.view { rawInput = model.newTransaction.category, label = "Category", availableValues = Model.autocompletedCategories model, focused = model.newTransaction.categoryFocused }
         , Input.text []
             { placeholder = Nothing
             , label = Input.labelAbove [] <| text ("Day in " ++ Date.format "MMMM y" (Model.monthToDate model.currentMonth) ++ ":")
@@ -137,30 +132,32 @@ balance model =
 
         byAccount =
             model.transactions
-                |> List.map (\t -> {t | account = Model.Transactions.mapAccountName (.account t)})
+                |> List.map (\t -> { t | account = Model.Transactions.mapAccountName (.account t) })
                 |> Dict.Extra.groupBy .account
                 |> Dict.map transactionGroup
                 |> Dict.toList
                 |> List.map (\( acc, val ) -> { value = val, text = acc })
 
-        headerStyle = 
-                [paddingXY 5 10, Border.widthEach {
-                    bottom = 1,
-                    left = 0,
-                    right = 0,
-                    top = 0
-                }]
+        headerStyle =
+            [ paddingXY 5 10
+            , Border.widthEach
+                { bottom = 1
+                , left = 0
+                , right = 0
+                , top = 0
+                }
+            ]
     in
-    table [ moveLeft 5]
+    table [ moveLeft 5 ]
         { data = byAccount
         , columns =
-            [ { header = el (Font.alignRight :: headerStyle ) <| text total
+            [ { header = el (Font.alignRight :: headerStyle) <| text total
               , width = shrink
-              , view = \d -> el [Font.alignRight, padding 5] (text d.value)
+              , view = \d -> el [ Font.alignRight, padding 5 ] (text d.value)
               }
-            , { header =  el headerStyle <| text "Total Balance"
+            , { header = el headerStyle <| text "Total Balance"
               , width = px 200
-              , view = \d -> el [padding 5] <| text d.text
+              , view = \d -> el [ padding 5 ] <| text d.text
               }
             ]
         }

@@ -18,9 +18,11 @@ type alias Model =
         , category : CategoryId
         , note : String
         , account : String
+        , categoryFocused : Bool
         }
     , settings : Settings
     }
+
 
 type alias Settings =
     { currencySymbol : String
@@ -57,7 +59,7 @@ type alias Transaction =
     , date : Date.Date
     , category : CategoryId
     , note : String
-    , account: String
+    , account : String
     }
 
 
@@ -72,6 +74,7 @@ type alias BudgetEntryEdit =
     , category : CategoryId
     , month : MonthOfYear
     }
+
 
 getMonthIndex : MonthOfYear -> MonthIndex
 getMonthIndex monthYear =
@@ -143,3 +146,10 @@ compareMonths a b =
 
     else
         LT
+
+
+autocompletedCategories : Model -> List String
+autocompletedCategories model =
+    model.transactions
+        |> List.map .category
+        |> List.filter (String.startsWith model.newTransaction.category)

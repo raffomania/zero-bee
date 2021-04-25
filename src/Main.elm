@@ -36,6 +36,7 @@ init _ =
             , dayOfMonth = "1"
             , note = ""
             , account = ""
+            , categoryFocused = False
             }
       , settings = { currencySymbol = "€", syncAddress = "" }
       }

@@ -5,11 +5,11 @@ import Dict
 import Model exposing (Model)
 import Month
 import Msg exposing (..)
-import StorageInterface
+import Settings
 import Storage
+import StorageInterface
 import Time
 import Util exposing (dictUpsert)
-import Settings
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -57,7 +57,7 @@ update msg ({ newTransaction } as model) =
                 updatedModel =
                     { model
                         | transactions = updatedTransaction :: model.transactions
-                        , newTransaction = { newTransaction | value = 0, note = ""}
+                        , newTransaction = { newTransaction | value = 0, note = "" }
                     }
             in
             ( updatedModel
@@ -78,6 +78,19 @@ update msg ({ newTransaction } as model) =
 
         AddTransactionNewAccount value ->
             ( { model | newTransaction = { newTransaction | account = value } }, Cmd.none )
+
+        AddTransactionFocusCategoryInput isFocused ->
+            let
+                newCategory =
+                    if not isFocused then
+                        Model.autocompletedCategories model
+                            |> List.head
+                            |> Maybe.withDefault model.newTransaction.category
+
+                    else
+                        model.newTransaction.category
+            in
+            ( { model | newTransaction = { newTransaction | categoryFocused = isFocused, category = newCategory } }, Cmd.none )
 
         ChangeBudgetEntry month category value ->
             let
@@ -111,12 +124,14 @@ update msg ({ newTransaction } as model) =
             case Storage.decodeModel value of
                 Ok newModel ->
                     let
-                        firstAccount = newModel.transactions
-                            |> List.head
-                            |> Maybe.map (\t -> t.account)
-                            |> Maybe.withDefault model.newTransaction.account
+                        firstAccount =
+                            newModel.transactions
+                                |> List.head
+                                |> Maybe.map (\t -> t.account)
+                                |> Maybe.withDefault model.newTransaction.account
 
-                        updatedNewTransaction = { newTransaction | account = firstAccount}
+                        updatedNewTransaction =
+                            { newTransaction | account = firstAccount }
 
                         updatedModel =
                             { model | transactions = newModel.transactions, budgetEntries = newModel.budgetEntries, newTransaction = updatedNewTransaction }
@@ -215,6 +230,7 @@ update msg ({ newTransaction } as model) =
 
         Msg.ChangeSettings settingsMsg ->
             let
-                (updatedModel, cmd) = Settings.update settingsMsg model
+                ( updatedModel, cmd ) =
+                    Settings.update settingsMsg model
             in
-            ( updatedModel, Cmd.map Msg.ChangeSettings cmd)
+            ( updatedModel, Cmd.map Msg.ChangeSettings cmd )
