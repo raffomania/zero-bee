@@ -9,7 +9,7 @@ import Util exposing (class)
 
 
 type alias Model =
-    { rawInput : String, label : String, availableValues : List String, focused : Bool }
+    { input : String, label : String, availableValues : List String, focused : Bool }
 
 
 view : Model -> Element Msg.Msg
@@ -45,7 +45,7 @@ view model =
         )
         { placeholder = Nothing
         , label = Input.labelAbove [] <| text label
-        , text = model.rawInput
+        , text = model.input
         , onChange = Msg.AddTransactionNewCategory
         }
 

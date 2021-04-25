@@ -36,7 +36,7 @@ addTransactionForm model =
             , currencySymbol = model.settings.currencySymbol
             }
         , View.Autocomplete.view
-            { rawInput = model.newTransaction.category
+            { input = model.newTransaction.category
             , label = "Category"
             , availableValues = Model.autocompletedCategories model
             , focused = model.newTransaction.categoryFocused
