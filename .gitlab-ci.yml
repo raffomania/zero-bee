@@ -2,9 +2,6 @@ image: node:latest
 stages:
   - pages
 pages:
-  cache:
-    paths:
-      - node_modules/
   stage: pages
   script:
     - npm install
