@@ -8,6 +8,7 @@ pages:
   stage: pages
   script:
     - npm install
+    - npm rebuild
     - npx parcel build -d public --public-url ./ index.html
   artifacts:
     paths:
