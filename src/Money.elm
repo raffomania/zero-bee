@@ -82,14 +82,14 @@ input : List (Element.Attribute msg) -> InputOptions msg -> Element.Element msg
 input attrs options =
     let
         padding =
-            { top = 10, right = 15, bottom = 10, left = 10 }
+            { top = 10, right = 25, bottom = 10, left = 10 }
 
         onChange =
             parse options.value >> options.onChange
 
         currencyLabel =
             Element.onRight <|
-                Element.el [ Element.moveLeft 14, Element.moveDown 9.5 ] <|
+                Element.el [ Element.moveLeft 20, Element.moveDown 9.5 ] <|
                     Element.text options.currencySymbol
 
         mergedAttrs =
@@ -101,7 +101,7 @@ input attrs options =
     Element.Input.text mergedAttrs
         { text = formatOnlyNumber options.value
         , placeholder = Nothing
-        , label = options.label |> Maybe.withDefault (Element.Input.labelHidden "money input")
+        , label = options.label |> Maybe.withDefault (Element.Input.labelHidden "money value")
         , onChange = onChange
         }
 

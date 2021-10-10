@@ -2,6 +2,7 @@ module View exposing (view)
 
 import Date
 import Element exposing (..)
+import Element.Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
@@ -29,19 +30,16 @@ view model =
                 SettingsPage ->
                     [ Element.map Msg.ChangeSettings (Settings.view model.settings) ]
     in
-    layout [ class "fh bm" ]
-        (column [ height fill, width fill, padding 10 ]
-            [ el [ class "bm", width fill ] (navigation model)
+    layout []
+        (column
+            [ height fill
+            , width fill
+            , padding 10
+            , Element.Background.color (Element.rgb 0.98 0.98 0.98)
+            ]
+            [ el [ width fill ] (navigation model)
             , el
-                [ class "bg"
-                , width fill
-                , Border.rounded 4
-                , Border.shadow
-                    { offset = ( 0, 10 )
-                    , size = -5
-                    , blur = 15
-                    , color = rgba 0 0 0 0.3
-                    }
+                [ width fill
                 ]
                 (column [ spacing 20, padding 20, centerX ] page)
             ]
@@ -56,31 +54,22 @@ navigation model =
                 |> Date.format "MMMM y"
 
         activePage =
-            [ class "bg fh"
-            , Border.shadow
-                { offset = ( 0, 8 )
-                , size = 0
-                , blur = 10
-                , color = rgba 0 0 0 0.3
+            [ Border.widthEach
+                { bottom = 2
+                , top = 0
+                , left = 0
+                , right = 0
                 }
             ]
 
         inactivePage =
-            [ Border.shadow
-                { offset = ( 0, 2 )
-                , size = 1
-                , blur = 7
-                , color = rgba 0 0 0 0.15
-                },
-                class "bl"
-            ]
+            [ Font.color (rgb 0.3 0.3 0.3) ]
 
         buttonStyle =
             [ height fill
-            , width fill
+            , width (maximum 200 fill)
             , Font.center
             , paddingEach { top = 20, bottom = 15, left = 15, right = 15 }
-            , Border.roundEach { topLeft = 4, topRight = 4, bottomLeft = 0, bottomRight = 0 }
             ]
 
         buttonStyleForPage page =
@@ -94,24 +83,22 @@ navigation model =
                 )
     in
     row
-        [ spacing 15
+        [ spacing 45
         , width fill
-        , centerX
-        , class "fm"
         , paddingEach { top = 10, bottom = 0, left = 20, right = 20 }
         ]
-        [ row [ width <| fillPortion 2, height fill, class "fh" ]
-            [ Input.button [ width fill, Font.center, height fill ]
+        [ row [ height fill ]
+            [ Input.button [ width (px 70), Font.center, height fill ]
                 { onPress = Just PreviousMonth
                 , label = text "<"
                 }
-            , el [ Font.center, width (px 130) ] (text label)
-            , Input.button [ width fill, Font.center, height fill ]
+            , el [ Font.center, width (px 200) ] (text label)
+            , Input.button [ width (px 70), Font.center, height fill ]
                 { onPress = Just NextMonth
                 , label = text ">"
                 }
             ]
-        , row [ width <| fillPortion 3, height fill, spacing 15 ]
+        , row [ centerX, height fill, spacing 45 ]
             [ Input.button
                 (buttonStyleForPage Budget)
                 { onPress = Just <| ChangePage Budget

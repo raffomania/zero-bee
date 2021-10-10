@@ -1,7 +1,8 @@
 module View.Autocomplete exposing (view)
 
 import Element exposing (..)
-import Element.Border exposing (roundEach)
+import Element.Background
+import Element.Border exposing (rounded)
 import Element.Events
 import Element.Input as Input
 import Msg
@@ -54,10 +55,12 @@ suggestionList : List String -> Element Msg.Msg
 suggestionList values =
     column
         [ class "bl"
-        , paddingXY 20 10
-        , roundEach { topLeft = 0, topRight = 0, bottomLeft = 3, bottomRight = 3 }
+        , paddingXY 20 20
+        , rounded 5
         , width fill
-        , spacing 10
+        , spacing 25
+        , Element.Background.color (rgb 1 1 1)
+        , moveDown 10
         ]
         (values
             |> List.map text

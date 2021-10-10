@@ -7,6 +7,7 @@ import Element exposing (..)
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
+import Html.Attributes
 import Model
 import Model.Transactions
 import Money
@@ -19,7 +20,7 @@ view model =
     column [ spacing 20 ]
         [ balance model
         , column [ paddingXY 0 30, spacing 10 ]
-            [ text "Add transaction:"
+            [ text "Add transaction"
             , addTransactionForm model
             ]
         , transactionList model
@@ -28,24 +29,24 @@ view model =
 
 addTransactionForm : Model.Model -> Element Msg.Msg
 addTransactionForm model =
-    row [ Util.onEnter Msg.AddTransaction, spacing 10 ]
-        [ Money.input []
+    row [ Util.onEnter Msg.AddTransaction, spacing 20 ]
+        [ Money.input [ width (px 150) ]
             { value = model.newTransaction.value
             , onChange = Msg.AddTransactionNewValue
             , label = Just <| Input.labelAbove [] <| text "Value"
             , currencySymbol = model.settings.currencySymbol
-            }
-        , View.Autocomplete.view
-            { input = model.newTransaction.category
-            , label = "Category"
-            , availableValues = Model.autocompletedCategories model
-            , focused = model.newTransaction.categoryFocused
             }
         , Input.text []
             { placeholder = Nothing
             , label = Input.labelAbove [] <| text ("Day in " ++ Date.format "MMMM y" (Model.monthToDate model.currentMonth) ++ ":")
             , text = model.newTransaction.dayOfMonth
             , onChange = Msg.AddTransactionNewDate
+            }
+        , View.Autocomplete.view
+            { input = model.newTransaction.category
+            , label = "Category"
+            , availableValues = Model.autocompletedCategories model
+            , focused = model.newTransaction.categoryFocused
             }
         , Input.text []
             { placeholder = Nothing
@@ -72,34 +73,18 @@ transactionList model =
             else
                 "fh"
     in
-    table [ spacing 10 ]
+    table [ spacingXY 30 30 ]
         { data =
             model.transactions
                 |> List.filter (\t -> Model.dateToMonth t.date == model.currentMonth)
                 |> List.sortWith (\a b -> Date.compare b.date a.date)
         , columns =
-            [ { header = text "Date"
-              , width = fill
-              , view = \t -> el [ class <| color t.date ] (text <| Date.toIsoString t.date)
-              }
-            , { header = text "Account"
-              , width = fill
-              , view = .account >> Model.Transactions.mapAccountName >> text
-              }
-            , { header = text "Category"
-              , width = fill
-              , view = \t -> el [ class <| color t.date ] <| text t.category
-              }
-            , { header = text "Note"
-              , width = fill
-              , view = \t -> el [ class <| color t.date ] <| text t.note
-              }
-            , { header = el [ Font.alignRight ] <| text "Value"
-              , width = fill
+            [ { header = none
+              , width = px 150
               , view =
                     \t ->
                         el [ class <| Money.toColor t.value ]
-                            (Money.input []
+                            (Money.input [ Border.width 0 ]
                                 { onChange = Msg.ChangeTransactionValue t
                                 , value = t.value
                                 , label = Nothing
@@ -108,13 +93,34 @@ transactionList model =
                             )
               }
             , { header = none
-              , width = px 40
+              , width = fill
+              , view = \t -> el [ class <| color t.date, centerY ] (text <| Date.toIsoString t.date)
+              }
+            , { header = none
+              , width = fill
+              , view = \t -> el [ class <| color t.date, centerY ] <| text t.category
+              }
+            , { header = none
+              , width = fill
+              , view = \t -> el [ class <| color t.date, centerY ] <| text t.note
+              }
+            , { header = none
+              , width = fill
               , view =
                     \t ->
-                        Input.button [ height fill, Font.center ]
-                            { onPress = Just <| Msg.RemoveTransaction t
-                            , label = text "x"
-                            }
+                        el
+                            [ centerY
+                            , paddingEach { right = 40, left = 0, top = 0, bottom = 0 }
+                            , onRight <|
+                                Input.button [ height fill, Font.center, moveLeft 20 ]
+                                    { onPress = Just <| Msg.RemoveTransaction t
+                                    , label = text "x"
+                                    }
+                            ]
+                            (t.account
+                                |> Model.Transactions.mapAccountName
+                                |> text
+                            )
               }
             ]
         }

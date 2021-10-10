@@ -1,16 +1,11 @@
 import { Elm } from './Main.elm';
 import RemoteStorage from 'remotestoragejs';
-import Theme from './theme.js';
 
 const remoteStorage = new RemoteStorage({logging: true});
 remoteStorage.access.claim('whynab', 'rw');
 remoteStorage.caching.enable('/whynab/');
 
 window.addEventListener('DOMContentLoaded', () => {
-    const theme = new Theme();
-    theme.install(document.body);
-    theme.start();
-
     remoteStorage.on('ready', () => {
         const client = remoteStorage.scope('/whynab/');
         let app = Elm.Main.init({
