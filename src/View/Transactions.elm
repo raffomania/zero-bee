@@ -83,7 +83,7 @@ transactionList model =
               , width = px 150
               , view =
                     \t ->
-                        el [ class <| Money.toColor t.value ]
+                        el [ Font.color <| Money.toColor t.value ]
                             (Money.input [ Border.width 0 ]
                                 { onChange = Msg.ChangeTransactionValue t
                                 , value = t.value

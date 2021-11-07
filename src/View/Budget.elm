@@ -63,7 +63,7 @@ entryTable model budgetRows =
               }
             , { header = el [ Font.alignRight ] <| text "available"
               , width = fill
-              , view = \r -> el [ Font.alignRight, centerY, Util.class (Money.toColor r.available) ] <| text <| Money.format model.settings.currencySymbol r.available
+              , view = \r -> el [ Font.alignRight, centerY, Font.color (Money.toColor r.available) ] <| text <| Money.format model.settings.currencySymbol r.available
               }
             ]
         }

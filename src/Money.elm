@@ -1,6 +1,7 @@
 module Money exposing (format, formatWithSign, input, toColor)
 
-import Element
+import Colors
+import Element exposing (Color)
 import Element.Input
 import Html.Attributes
 import Model exposing (Money)
@@ -111,13 +112,13 @@ alignInput val =
     Element.htmlAttribute (Html.Attributes.style "text-align" val)
 
 
-toColor : Model.Money -> String
+toColor : Model.Money -> Element.Color
 toColor val =
     if val > 0 then
-        "green"
+        Colors.green
 
     else if val < 0 then
-        "red"
+        Colors.red
 
     else
-        ""
+        Colors.black
