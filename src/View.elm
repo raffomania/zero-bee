@@ -10,7 +10,6 @@ import Html
 import Model exposing (..)
 import Msg exposing (..)
 import Settings
-import Util exposing (class)
 import View.Budget
 import View.Transactions
 
