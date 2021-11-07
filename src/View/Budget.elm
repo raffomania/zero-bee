@@ -40,18 +40,7 @@ entryTable model budgetRows =
               , width = fillPortion 2
               , view =
                     \r ->
-                        let
-                            attrs =
-                                List.append
-                                    [ centerY ]
-                                    (if r.activity == 0 then
-                                        [ Util.class "fl" ]
-
-                                     else
-                                        []
-                                    )
-                        in
-                        el attrs <| text r.category
+                        el [ centerY ] <| text r.category
               }
             , { header = el [ Font.alignRight ] <| text "budgeted"
               , width = fill

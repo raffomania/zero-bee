@@ -16,3 +16,8 @@ red =
 black : Element.Color
 black =
     Element.rgb 0 0 0
+
+
+grey : Element.Color
+grey =
+    Element.rgb255 240 240 240

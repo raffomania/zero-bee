@@ -3,7 +3,6 @@ module Util exposing (..)
 import Dict exposing (Dict)
 import Element
 import Html.Events
-import Html.Attributes
 import Json.Decode as Decode
 
 
@@ -44,8 +43,3 @@ onEnter msg =
                     )
             )
         )
-
-class : String -> Element.Attribute msg
-class name =
-    Html.Attributes.class name
-      |> Element.htmlAttribute

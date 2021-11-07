@@ -1,12 +1,12 @@
 module View.Autocomplete exposing (view)
 
+import Colors
 import Element exposing (..)
 import Element.Background
 import Element.Border exposing (rounded)
 import Element.Events
 import Element.Input as Input
 import Msg
-import Util exposing (class)
 
 
 type alias Model =
@@ -54,12 +54,11 @@ view model =
 suggestionList : List String -> Element Msg.Msg
 suggestionList values =
     column
-        [ class "bl"
-        , paddingXY 20 20
+        [ paddingXY 20 20
         , rounded 5
         , width fill
         , spacing 25
-        , Element.Background.color (rgb 1 1 1)
+        , Element.Background.color Colors.grey
         , moveDown 10
         ]
         (values

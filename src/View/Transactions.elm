@@ -11,7 +11,7 @@ import Model
 import Model.Transactions
 import Money
 import Msg
-import Util exposing (class)
+import Util
 import View.Autocomplete
 
 
@@ -65,14 +65,6 @@ addTransactionForm model =
 
 transactionList : Model.Model -> Element Msg.Msg
 transactionList model =
-    let
-        color date =
-            if Date.compare model.date date == LT then
-                "fl"
-
-            else
-                "fh"
-    in
     table [ spacingXY 30 30 ]
         { data =
             model.transactions
@@ -94,15 +86,15 @@ transactionList model =
               }
             , { header = none
               , width = fill
-              , view = \t -> el [ class <| color t.date, centerY ] (text <| Date.toIsoString t.date)
+              , view = \t -> el [ centerY ] (text <| Date.toIsoString t.date)
               }
             , { header = none
               , width = fill
-              , view = \t -> el [ class <| color t.date, centerY ] <| text t.category
+              , view = \t -> el [ centerY ] <| text t.category
               }
             , { header = none
               , width = fill
-              , view = \t -> el [ class <| color t.date, centerY ] <| text t.note
+              , view = \t -> el [ centerY ] <| text t.note
               }
             , { header = none
               , width = fill

@@ -1,7 +1,7 @@
 module Money exposing (format, formatWithSign, input, toColor)
 
 import Colors
-import Element exposing (Color)
+import Element
 import Element.Input
 import Html.Attributes
 import Model exposing (Money)

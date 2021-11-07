@@ -1,15 +1,23 @@
-module Settings exposing (view, update, Msg)
+module Settings exposing (Msg, update, view)
 
-import Element exposing (column, Element, text, spacing, padding)
+import Colors
+import Element exposing (Element, column, padding, spacing, text)
+import Element.Background
+import Element.Border exposing (rounded)
 import Element.Input as Input
-import Util
-import StorageInterface
 import Model exposing (Model)
+import StorageInterface
+import Util
 
 
-type Msg = ChangeCurrencySymbol String | ChangeSyncAddress String | ConnectRemoteStorage | DownloadBackup
+type Msg
+    = ChangeCurrencySymbol String
+    | ChangeSyncAddress String
+    | ConnectRemoteStorage
+    | DownloadBackup
 
-update : Msg -> Model -> (Model, Cmd Msg)
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ChangeSyncAddress newAddress ->
@@ -17,8 +25,8 @@ update msg model =
                 settings =
                     model.settings
 
-                updatedSettings = { settings | syncAddress = newAddress}
-
+                updatedSettings =
+                    { settings | syncAddress = newAddress }
             in
             ( { model | settings = updatedSettings }, Cmd.none )
 
@@ -37,14 +45,14 @@ update msg model =
                     { model | settings = updatedSettings }
             in
             ( updatedModel, StorageInterface.storeModel updatedModel )
-        DownloadBackup ->
-            (model, StorageInterface.downloadBackup ())
 
+        DownloadBackup ->
+            ( model, StorageInterface.downloadBackup () )
 
 
 view : Model.Settings -> Element Msg
 view model =
-    column [spacing 20]
+    column [ spacing 20 ]
         [ Input.text []
             { placeholder = Nothing
             , label = Input.labelAbove [] <| text "Currency Symbol"
@@ -57,10 +65,8 @@ view model =
             , text = model.syncAddress
             , onChange = ChangeSyncAddress
             }
-
-        , Input.button [Util.class "bh fl", padding 10] {
-            onPress = Just DownloadBackup,
-            label = text "Download a backup of your data"
-        }
+        , Input.button [ Element.Background.color Colors.grey, padding 20, rounded 5 ]
+            { onPress = Just DownloadBackup
+            , label = text "Download a backup of your data"
+            }
         ]
-
