@@ -182,21 +182,6 @@ update msg ({ newTransaction } as model) =
             in
             ( updatedModel, StorageInterface.storeModel updatedModel )
 
-        RemoveBudgetEntry month category ->
-            let
-                updateMonth =
-                    Maybe.map (Dict.remove category)
-
-                updatedEntries =
-                    Dict.update (Model.getMonthIndex month)
-                        updateMonth
-                        model.budgetEntries
-
-                updatedModel =
-                    { model | budgetEntries = updatedEntries }
-            in
-            ( updatedModel, StorageInterface.storeModel updatedModel )
-
         ChangePage page ->
             ( { model | currentPage = page }, Cmd.none )
 

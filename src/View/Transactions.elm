@@ -7,7 +7,6 @@ import Element exposing (..)
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
-import Html.Attributes
 import Model
 import Model.Transactions
 import Money
@@ -16,6 +15,7 @@ import Util exposing (class)
 import View.Autocomplete
 
 
+view : Model.Model -> Element Msg.Msg
 view model =
     column [ spacing 20 ]
         [ balance model
@@ -136,7 +136,7 @@ balance model =
                 |> List.sum
                 |> Money.format model.settings.currencySymbol
 
-        transactionGroup acc ts =
+        transactionGroup _ ts =
             List.map .value ts
                 |> List.sum
                 |> Money.format model.settings.currencySymbol

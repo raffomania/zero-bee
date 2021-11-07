@@ -2,8 +2,8 @@ module Msg exposing (..)
 
 import Json.Decode
 import Model
-import Time
 import Settings
+import Time
 
 
 type Msg
@@ -22,8 +22,7 @@ type Msg
     | NextMonth
     | PreviousMonth
     | RemoveTransaction Model.Transaction
-    | RemoveBudgetEntry Model.MonthOfYear Model.CategoryId
     | ChangePage Model.Page
     | NoOp
     | ChangeEditedBudgetEntry Model.MonthOfYear Model.CategoryId Model.Money
-    | ChangeSettings Settings.Msg 
+    | ChangeSettings Settings.Msg

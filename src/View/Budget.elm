@@ -4,7 +4,6 @@ import Dict exposing (Dict)
 import Element exposing (..)
 import Element.Events as Events
 import Element.Font as Font
-import Element.Input as Input
 import Element.Keyed as Keyed
 import Model exposing (..)
 import Money
@@ -65,19 +64,6 @@ entryTable model budgetRows =
             , { header = el [ Font.alignRight ] <| text "available"
               , width = fill
               , view = \r -> el [ Font.alignRight, centerY, Util.class (Money.toColor r.available) ] <| text <| Money.format model.settings.currencySymbol r.available
-              }
-            , { header = none
-              , width = px 50
-              , view =
-                    \r ->
-                        if r.activity /= 0 then
-                            none
-
-                        else
-                            Input.button [ Font.center, height fill ]
-                                { onPress = Just <| RemoveBudgetEntry model.currentMonth r.category
-                                , label = text "x"
-                                }
               }
             ]
         }
@@ -228,25 +214,25 @@ toBeBudgeted model budgetRows =
                 |> List.filter ((>) 0)
                 |> List.sum
 
-        totalAvailable =
-            budgetRows
-                |> List.map .available
-                |> List.sum
-
-        positiveActivity =
-            model.transactions
-                |> List.filter (Model.isTransactionInMonth model.currentMonth)
-                |> List.map .value
-                |> List.filter ((<) 0)
-                |> List.sum
-
-        negativeActivity =
-            model.transactions
-                |> List.filter (Model.isTransactionInMonth model.currentMonth)
-                |> List.map .value
-                |> List.filter ((>) 0)
-                |> List.sum
-
+        -- totalAvailable =
+        --     budgetRows
+        --         |> List.map .available
+        --         |> List.sum
+        --
+        -- positiveActivity =
+        --     model.transactions
+        --         |> List.filter (Model.isTransactionInMonth model.currentMonth)
+        --         |> List.map .value
+        --         |> List.filter ((<) 0)
+        --         |> List.sum
+        --
+        -- negativeActivity =
+        --     model.transactions
+        --         |> List.filter (Model.isTransactionInMonth model.currentMonth)
+        --         |> List.map .value
+        --         |> List.filter ((>) 0)
+        --         |> List.sum
+        --
         markedInflow =
             budgetRows
                 |> List.map .budgeted
@@ -261,10 +247,11 @@ toBeBudgeted model budgetRows =
 
         data =
             [ -- { value = totalAvailable, text = "total available" }
-            { value = -previouslyBudgeted, text = "from previous month" }
+              { value = -previouslyBudgeted, text = "from previous month" }
+
             -- , { value = inflow, text = "positive activity" }
             -- , { value = outflow, text = "negative activity"}
-            , { value = -markedInflow, text = "marked as inflow"}
+            , { value = -markedInflow, text = "marked as inflow" }
             , { value = -plannedOutflow
               , text = "budgeted this month"
               }
