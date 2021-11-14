@@ -1,4 +1,4 @@
-module Month exposing (increment, decrement)
+module Month exposing (decrement, increment)
 
 import Date
 import Model exposing (MonthOfYear)

@@ -2,8 +2,8 @@ module Model exposing (..)
 
 import Date
 import Dict exposing (Dict)
-import Time
 import Set
+import Time
 
 
 type alias Model =
@@ -60,6 +60,8 @@ type alias Transaction =
     , date : Date.Date
     , category : CategoryId
     , note : String
+
+    -- empty string is the default account
     , account : String
     }
 
