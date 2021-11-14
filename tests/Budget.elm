@@ -9,22 +9,24 @@ import Test.Html.Selector exposing (..)
 import View.Budget
 
 
+defaultModel =
+    Main.init {}
+        |> Tuple.first
+
+
+previousMonth =
+    defaultModel.currentMonth |> Month.decrement |> monthToDate
+
+
 pastActivity : Test
 pastActivity =
     let
-        model =
-            Main.init {}
-                |> Tuple.first
-
-        previousMonth =
-            model.currentMonth |> Month.decrement |> monthToDate
-
         transactions : List Transaction
         transactions =
             [ { value = 10, date = previousMonth, category = "foo", note = "", account = "" } ]
 
         ( activeRows, _ ) =
-            View.Budget.calculateBudgetRows { model | transactions = transactions }
+            View.Budget.calculateBudgetRows { defaultModel | transactions = transactions }
 
         row =
             List.head activeRows
@@ -39,6 +41,67 @@ pastActivity =
                             , budgeted = 0
                             , activity = 0
                             , available = 10
+                            }
+                        )
+            )
+        ]
+
+
+inactiveEntry : Test
+inactiveEntry =
+    let
+        twoMonthsAgo =
+            Month.decrement (Month.decrement defaultModel.currentMonth)
+
+        transactions : List Transaction
+        transactions =
+            [ { value = 10, date = monthToDate twoMonthsAgo, category = "foo", note = "", account = "" }, { value = -10, date = monthToDate twoMonthsAgo, category = "foo", note = "", account = "" } ]
+
+        ( _, inactiveRows ) =
+            View.Budget.calculateBudgetRows { defaultModel | transactions = transactions }
+
+        row =
+            List.head inactiveRows
+    in
+    describe "given transactions two months in the past that sum to zero activity"
+        [ test "The budget entry is displayed as an inactive entry"
+            (\_ ->
+                row
+                    |> Expect.equal
+                        (Just
+                            { category = "foo"
+                            , budgeted = 0
+                            , activity = 0
+                            , available = 0
+                            }
+                        )
+            )
+        ]
+
+
+activeZeroEntry : Test
+activeZeroEntry =
+    let
+        transactions : List Transaction
+        transactions =
+            [ { value = 10, date = previousMonth, category = "foo", note = "", account = "" }, { value = -10, date = previousMonth, category = "foo", note = "", account = "" } ]
+
+        ( activeRows, _ ) =
+            View.Budget.calculateBudgetRows { defaultModel | transactions = transactions }
+
+        row =
+            List.head activeRows
+    in
+    describe "given transactions a month in the past that sum to zero activity"
+        [ test "The budget entry is displayed as an active entry"
+            (\_ ->
+                row
+                    |> Expect.equal
+                        (Just
+                            { category = "foo"
+                            , budgeted = 0
+                            , activity = 0
+                            , available = 0
                             }
                         )
             )

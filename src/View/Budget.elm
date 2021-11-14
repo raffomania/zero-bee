@@ -6,8 +6,11 @@ import Element exposing (..)
 import Element.Events as Events
 import Element.Font as Font
 import Element.Keyed as Keyed
+import List.Extra
+import Maybe.Extra
 import Model exposing (..)
 import Money
+import Month
 import Msg exposing (..)
 import Util exposing (zeroPadding)
 
@@ -115,13 +118,29 @@ calculateBudgetRows model =
                 pastMonths
                 thisMonth
                 Dict.empty
+
+        pastTwoMonthsTransactions =
+            model.transactions
+                |> List.filter (\t -> Model.compareMonths (Model.dateToMonth t.date) (Month.decrement <| Month.decrement model.currentMonth) == GT)
+
+        isRowActive r =
+            r.activity
+                /= 0
+                || r.available
+                /= 0
+                || r.budgeted
+                /= 0
+                || (pastTwoMonthsTransactions
+                        |> List.Extra.find (\t -> t.category == r.category)
+                        |> Maybe.Extra.isJust
+                   )
     in
     model.transactions
         |> List.filter (not << Model.isInFuture model.currentMonth)
         |> List.foldl (applyTransaction model.currentMonth) mergedRows
         |> Dict.values
         |> List.sortBy .category
-        |> List.partition (\r -> r.activity /= 0 || r.available /= 0 || r.budgeted /= 0)
+        |> List.partition isRowActive
 
 
 applyMonthDict : MonthIndex -> Dict MonthIndex BudgetRow -> Dict CategoryId BudgetRow -> Dict CategoryId BudgetRow
