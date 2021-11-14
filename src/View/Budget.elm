@@ -22,12 +22,14 @@ type alias BudgetRow =
 view : Model -> Element Msg
 view model =
     let
-        budgetRows =
+        ( activeBudgetRows, inactiveBudgetRows ) =
             calculateBudgetRows model
     in
     column [ spacing 20 ]
-        [ toBeBudgeted model budgetRows
-        , entryTable model budgetRows
+        [ toBeBudgeted model activeBudgetRows
+        , entryTable model activeBudgetRows
+        , text "Inactive entries"
+        , entryTable model inactiveBudgetRows
         ]
 
 
@@ -87,7 +89,9 @@ budgetInput model r =
         )
 
 
-calculateBudgetRows : Model -> List BudgetRow
+{-| Create a view model for displaying two tables of active and inactive budget entries.
+-}
+calculateBudgetRows : Model -> ( List BudgetRow, List BudgetRow )
 calculateBudgetRows model =
     let
         pastMonths =
@@ -116,6 +120,7 @@ calculateBudgetRows model =
         |> List.foldl (applyTransaction model.currentMonth) mergedRows
         |> Dict.values
         |> List.sortBy .category
+        |> List.partition (\r -> r.activity /= 0 || r.available /= 0 || r.budgeted /= 0)
 
 
 applyMonthDict : MonthIndex -> Dict MonthIndex BudgetRow -> Dict CategoryId BudgetRow -> Dict CategoryId BudgetRow
