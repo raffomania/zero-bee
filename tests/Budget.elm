@@ -1,5 +1,6 @@
 module Budget exposing (..)
 
+import Date
 import Expect
 import Main
 import Model exposing (Transaction, monthToDate)
@@ -9,11 +10,13 @@ import Test.Html.Selector exposing (..)
 import View.Budget
 
 
+defaultModel : Model.Model
 defaultModel =
     Main.init {}
         |> Tuple.first
 
 
+previousMonth : Date.Date
 previousMonth =
     defaultModel.currentMonth |> Month.decrement |> monthToDate
 
