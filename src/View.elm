@@ -1,5 +1,6 @@
 module View exposing (view)
 
+import Colors
 import Date
 import Element exposing (..)
 import Element.Background
@@ -62,7 +63,7 @@ navigation model =
             ]
 
         inactivePage =
-            [ Font.color (rgb 0.3 0.3 0.3) ]
+            [ Font.color Colors.grey ]
 
         buttonStyle =
             [ height fill

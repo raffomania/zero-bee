@@ -1,5 +1,6 @@
 module View.Budget exposing (calculateBudgetRows, view)
 
+import Colors
 import Dict exposing (Dict)
 import Element exposing (..)
 import Element.Events as Events
@@ -8,7 +9,7 @@ import Element.Keyed as Keyed
 import Model exposing (..)
 import Money
 import Msg exposing (..)
-import Util
+import Util exposing (zeroPadding)
 
 
 type alias BudgetRow =
@@ -28,7 +29,7 @@ view model =
     column [ spacing 20 ]
         [ toBeBudgeted model activeBudgetRows
         , entryTable model activeBudgetRows
-        , text "Inactive entries"
+        , el [ Font.color Colors.grey, paddingEach { zeroPadding | top = 30 } ] <| text "Inactive entries"
         , entryTable model inactiveBudgetRows
         ]
 

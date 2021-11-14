@@ -65,7 +65,7 @@ view model =
             , text = model.syncAddress
             , onChange = ChangeSyncAddress
             }
-        , Input.button [ Element.Background.color Colors.grey, padding 20, rounded 5 ]
+        , Input.button [ Element.Background.color Colors.lightGrey, padding 20, rounded 5 ]
             { onPress = Just DownloadBackup
             , label = text "Download a backup of your data"
             }

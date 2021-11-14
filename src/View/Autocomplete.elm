@@ -58,7 +58,7 @@ suggestionList values =
         , rounded 5
         , width fill
         , spacing 25
-        , Element.Background.color Colors.grey
+        , Element.Background.color Colors.lightGrey
         , moveDown 10
         ]
         (values

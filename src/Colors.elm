@@ -18,6 +18,11 @@ black =
     Element.rgb 0 0 0
 
 
+lightGrey : Element.Color
+lightGrey =
+    Element.rgb255 240 240 240
+
+
 grey : Element.Color
 grey =
-    Element.rgb255 240 240 240
+    Element.rgb255 80 80 80

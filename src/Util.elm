@@ -43,3 +43,17 @@ onEnter msg =
                     )
             )
         )
+
+
+zeroPadding :
+    { top : Int
+    , right : Int
+    , bottom : Int
+    , left : Int
+    }
+zeroPadding =
+    { top = 0
+    , right = 0
+    , bottom = 0
+    , left = 0
+    }
