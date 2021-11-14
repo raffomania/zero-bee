@@ -1,4 +1,4 @@
-module Main exposing (main)
+module Main exposing (init, main)
 
 import Browser
 import Date

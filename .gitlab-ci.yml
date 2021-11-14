@@ -1,6 +1,14 @@
 image: node:latest
 stages:
+  - test
   - pages
+
+test:
+  stage: test
+  script:
+    - npm install
+    - npx elm-test
+
 pages:
   stage: pages
   script:
@@ -11,4 +19,3 @@ pages:
       - public
   only:
     - master
-    

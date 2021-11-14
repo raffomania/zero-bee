@@ -1,4 +1,4 @@
-module View.Budget exposing (view)
+module View.Budget exposing (calculateBudgetRows, view)
 
 import Dict exposing (Dict)
 import Element exposing (..)
@@ -150,7 +150,7 @@ applyTransaction currentMonth transaction rows =
         default =
             { category = transaction.category
             , budgeted = 0
-            , activity = transaction.value
+            , activity = activityValue
             , available = transaction.value
             }
     in
