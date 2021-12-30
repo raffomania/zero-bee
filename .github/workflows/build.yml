@@ -1,0 +1,20 @@
+name: deploy
+
+on: [push]
+
+jobs:
+  deploy:
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: install dependencies
+        run: npm install
+      - name: test
+        run: npx elm-test
+      - name: build
+        run: npx parcel build -d public --public-url ./ index.html
+      - name: deploy to pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
