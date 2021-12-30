@@ -1,20 +1,27 @@
-name: deploy
+name: Deploy
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v2
-      - name: install dependencies
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+          cache: "npm"
+      - name: Install dependencies
         run: npm install
-      - name: test
+      - name: Test
         run: npx elm-test
-      - name: build
+      - name: Build
         run: npx parcel build -d public --public-url ./ index.html
-      - name: deploy to pages
+      - name: Deploy to pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
