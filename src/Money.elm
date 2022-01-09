@@ -60,15 +60,24 @@ formatOnlyNumber : Money -> String
 formatOnlyNumber val =
     let
         str =
-            String.fromInt val |> String.padLeft 3 '0'
+            String.fromInt val
+                |> String.replace "-" ""
+                |> String.padLeft 3 '0'
 
         wholes =
             String.slice 0 -2 str
 
         cents =
             String.slice -2 (String.length str) str
+
+        sign =
+            if val < 0 then
+                "- "
+
+            else
+                ""
     in
-    wholes ++ "," ++ cents
+    sign ++ wholes ++ "," ++ cents
 
 
 type alias InputOptions msg =
