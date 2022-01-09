@@ -31,15 +31,15 @@ view model =
 addTransactionForm : Model.Model -> Element Msg.Msg
 addTransactionForm model =
     row [ Util.onEnter Msg.AddTransaction, spacing 20 ]
-        [ Money.input [ width (px 150) ]
+        [ Money.input [ width (px 120) ]
             { value = model.newTransaction.value
             , onChange = Msg.AddTransactionNewValue
             , label = Just <| Input.labelAbove [] <| text "Value"
             , currencySymbol = model.settings.currencySymbol
             }
-        , Input.text []
+        , Input.text [ width (px 200) ]
             { placeholder = Nothing
-            , label = Input.labelAbove [] <| text ("Day in " ++ Date.format "MMMM y" (Model.monthToDate model.currentMonth) ++ ":")
+            , label = Input.labelAbove [] <| text ("Day in " ++ Date.format "MMMM y" (Model.monthToDate model.currentMonth))
             , text = model.newTransaction.dayOfMonth
             , onChange = Msg.AddTransactionNewDate
             }
@@ -82,7 +82,7 @@ transactionList model =
             -- https://github.com/mdgriffith/elm-ui/issues/161
             -- without it, the rows are reversed, breaking tab navigation direction
             [ { header = Element.text ""
-              , width = px 150
+              , width = px 120
               , view =
                     \t ->
                         el [ Font.color <| Money.toColor t.value ]
@@ -95,7 +95,7 @@ transactionList model =
                             )
               }
             , { header = none
-              , width = fill
+              , width = px 200
               , view = \t -> el [ centerY ] (text <| Date.toIsoString t.date)
               }
             , { header = none
@@ -104,6 +104,8 @@ transactionList model =
               }
             , { header = none
               , width = fill
+
+              -- TODO handle overly long notes here
               , view = \t -> el [ centerY ] <| text t.note
               }
             , { header = none
