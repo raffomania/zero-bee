@@ -43,7 +43,7 @@ view model =
             [ height fill
             , width fill
             , padding 10
-            , Element.Background.color (Element.rgb 0.98 0.98 0.98)
+            , Element.Background.color (Element.rgb 0.97 0.97 0.97)
             ]
             [ el [ width fill ] (navigation model)
             , el

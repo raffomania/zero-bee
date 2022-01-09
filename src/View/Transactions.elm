@@ -1,5 +1,6 @@
 module View.Transactions exposing (view)
 
+import Colors
 import Date
 import Dict
 import Dict.Extra
@@ -85,7 +86,7 @@ transactionList model =
               , view =
                     \t ->
                         el [ Font.color <| Money.toColor t.value ]
-                            (Money.input [ Border.width 0 ]
+                            (Money.input [ Border.color Colors.lightGrey ]
                                 { onChange = Msg.ChangeTransactionValue t
                                 , value = t.value
                                 , label = Nothing
