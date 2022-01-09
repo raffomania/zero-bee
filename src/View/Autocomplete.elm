@@ -19,8 +19,9 @@ view model =
         isNew =
             List.isEmpty model.availableValues
 
-        values =
+        suggestionValues =
             model.availableValues
+                |> List.filter (\t -> t /= "")
 
         label =
             if isNew then
@@ -30,8 +31,8 @@ view model =
                 model.label
 
         dropdownElement =
-            if model.focused && not isNew then
-                [ Element.below (suggestionList values) ]
+            if model.focused && not isNew && not (List.isEmpty suggestionValues) then
+                [ Element.below (suggestionList suggestionValues) ]
 
             else
                 []
@@ -56,7 +57,6 @@ suggestionList values =
     column
         [ paddingXY 20 20
         , rounded 5
-        , width fill
         , spacing 25
         , Element.Background.color Colors.lightGrey
         , moveDown 10
