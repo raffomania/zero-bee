@@ -46,7 +46,10 @@ addTransactionForm model =
             { input = model.newTransaction.category
             , label = "Category"
             , availableValues = Model.autocompletedCategories model
-            , focused = model.newTransaction.categoryFocused
+            , focused = model.newTransaction.focus == Just Model.Category
+            , onChange = Msg.AddTransactionNewCategory
+            , onChangeFocus = Msg.AddTransactionFocusCategoryInput
+            , placeholder = Nothing
             }
         , Input.text []
             { placeholder = Nothing
@@ -54,11 +57,14 @@ addTransactionForm model =
             , text = model.newTransaction.note
             , onChange = Msg.AddTransactionNewNote
             }
-        , Input.text []
-            { placeholder = Nothing
-            , label = Input.labelAbove [] <| text "Account"
-            , text = model.newTransaction.account
+        , View.Autocomplete.view
+            { input = model.newTransaction.account
+            , label = "Account"
+            , availableValues = Model.autocompletedAccounts model
+            , focused = model.newTransaction.focus == Just Model.Account
             , onChange = Msg.AddTransactionNewAccount
+            , onChangeFocus = Msg.AddTransactionFocusAccountInput
+            , placeholder = Just <| Input.placeholder [] <| text "default"
             }
         ]
 

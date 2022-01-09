@@ -10,7 +10,7 @@ import Msg
 
 
 type alias Model =
-    { input : String, label : String, availableValues : List String, focused : Bool }
+    { input : String, label : String, availableValues : List String, focused : Bool, onChange : String -> Msg.Msg, onChangeFocus : Bool -> Msg.Msg, placeholder : Maybe (Input.Placeholder Msg.Msg) }
 
 
 view : Model -> Element Msg.Msg
@@ -40,15 +40,15 @@ view model =
     Input.text
         (List.concat
             [ dropdownElement
-            , [ Element.Events.onFocus (Msg.AddTransactionFocusCategoryInput True)
-              , Element.Events.onLoseFocus (Msg.AddTransactionFocusCategoryInput False)
+            , [ Element.Events.onFocus (model.onChangeFocus True)
+              , Element.Events.onLoseFocus (model.onChangeFocus False)
               ]
             ]
         )
-        { placeholder = Nothing
+        { placeholder = model.placeholder
         , label = Input.labelAbove [] <| text label
         , text = model.input
-        , onChange = Msg.AddTransactionNewCategory
+        , onChange = model.onChange
         }
 
 

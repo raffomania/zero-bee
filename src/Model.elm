@@ -19,10 +19,15 @@ type alias Model =
         , category : CategoryId
         , note : String
         , account : String
-        , categoryFocused : Bool
+        , focus : Maybe AddTransactionFocus
         }
     , settings : Settings
     }
+
+
+type AddTransactionFocus
+    = Category
+    | Account
 
 
 type alias Settings =
@@ -157,4 +162,13 @@ autocompletedCategories model =
         |> List.map .category
         |> Set.fromList
         |> Set.filter (String.startsWith model.newTransaction.category)
+        |> Set.toList
+
+
+autocompletedAccounts : Model -> List String
+autocompletedAccounts model =
+    model.transactions
+        |> List.map .account
+        |> Set.fromList
+        |> Set.filter (String.startsWith model.newTransaction.account)
         |> Set.toList

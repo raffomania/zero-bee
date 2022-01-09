@@ -89,8 +89,35 @@ update msg ({ newTransaction } as model) =
 
                     else
                         model.newTransaction.category
+
+                newFocus =
+                    if isFocused then
+                        Just Model.Category
+
+                    else
+                        Nothing
             in
-            ( { model | newTransaction = { newTransaction | categoryFocused = isFocused, category = newCategory } }, Cmd.none )
+            ( { model | newTransaction = { newTransaction | focus = newFocus, category = newCategory } }, Cmd.none )
+
+        AddTransactionFocusAccountInput isFocused ->
+            let
+                newAccount =
+                    if not isFocused then
+                        Model.autocompletedAccounts model
+                            |> List.head
+                            |> Maybe.withDefault model.newTransaction.account
+
+                    else
+                        model.newTransaction.account
+
+                newFocus =
+                    if isFocused then
+                        Just Model.Account
+
+                    else
+                        Nothing
+            in
+            ( { model | newTransaction = { newTransaction | focus = newFocus, account = newAccount } }, Cmd.none )
 
         ChangeBudgetEntry month category value ->
             let

@@ -16,6 +16,7 @@ type Msg
     | AddTransactionNewNote String
     | AddTransactionNewAccount String
     | AddTransactionFocusCategoryInput Bool
+    | AddTransactionFocusAccountInput Bool
     | ChangeTransactionValue Model.Transaction Model.Money
     | ChangeBudgetEntry Model.MonthOfYear Model.CategoryId Model.Money
     | UpdateFromStorage Json.Decode.Value
