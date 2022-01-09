@@ -71,7 +71,10 @@ transactionList model =
                 |> List.filter (\t -> Model.dateToMonth t.date == model.currentMonth)
                 |> List.sortWith (\a b -> Date.compare b.date a.date)
         , columns =
-            [ { header = none
+            -- The empty header works around this bug:
+            -- https://github.com/mdgriffith/elm-ui/issues/161
+            -- without it, the rows are reversed, breaking tab navigation direction
+            [ { header = Element.text ""
               , width = px 150
               , view =
                     \t ->
