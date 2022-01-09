@@ -1,18 +1,16 @@
 {
   "devDependencies": {
-    "@parcel/transformer-elm": "^2.0.0-beta.2",
+    "@parcel/transformer-elm": "^2.1.1",
     "@tauri-apps/cli": "*",
     "elm": "^0.19.1-5",
     "elm-format": "^0.8.3",
     "elm-hot": "^1.1.6",
     "elm-test": "^0.19.1-revision7",
-    "node-elm-compiler": "^5.0.6",
-    "parcel-bundler": "^1.12.4"
+    "parcel": "^2.1.1"
   },
   "name": "bzero",
   "version": "0.1.0",
   "description": "zero-based budgeting",
-  "main": "src/index.js",
   "dependencies": {
     "@tauri-apps/api": "*",
     "remotestoragejs": "^1.2.3"

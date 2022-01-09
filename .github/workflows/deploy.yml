@@ -1,28 +1,28 @@
 name: Deploy
 
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "16"
-          cache: "npm"
-      - name: Install dependencies
-        run: npm install
-      - name: Test
-        run: npx elm-test
-      - name: Build
-        run: npx parcel build -d public --public-url ./ index.html
-      - name: Deploy to pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: "16"
+                  cache: "npm"
+            - name: Install dependencies
+              run: npm install
+            - name: Test
+              run: npx elm-test
+            - name: Build
+              run: npx parcel build --dist-dir public --public-url ./ index.html
+            - name: Deploy to pages
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: ./public
