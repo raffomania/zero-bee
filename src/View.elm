@@ -30,7 +30,15 @@ view model =
                 SettingsPage ->
                     [ Element.map Msg.ChangeSettings (Settings.view model.settings) ]
     in
-    layout []
+    layout
+        [ Font.family
+            [ Font.typeface "Open Sans"
+            , Font.typeface "Helvetica Neue"
+            , Font.typeface "Arial"
+            , Font.sansSerif
+            ]
+        , Font.size 18
+        ]
         (column
             [ height fill
             , width fill
