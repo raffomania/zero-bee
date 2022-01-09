@@ -22,11 +22,12 @@ parse default val =
                     val
                         |> String.replace "-" ""
                         |> String.replace "," ""
+                        |> String.trim
                         |> String.toInt
                         |> Maybe.withDefault default
 
                 minuses =
-                    List.length (String.indices "-" val)
+                    List.length (String.indexes "-" val)
 
                 shouldNegate =
                     modBy 2 minuses == 1
