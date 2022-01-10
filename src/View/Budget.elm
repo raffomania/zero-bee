@@ -81,6 +81,7 @@ budgetInput model r =
     in
     Keyed.el []
         ( r.category
+          -- TODO update this on every keypress as sorting is not based on budgeted amount anymore
         , Money.input
             [ Events.onLoseFocus (Msg.ChangeBudgetEntry model.currentMonth r.category value)
             , Util.onEnter (Msg.ChangeBudgetEntry model.currentMonth r.category value)
