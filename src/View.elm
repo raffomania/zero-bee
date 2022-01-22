@@ -95,7 +95,8 @@ navigation model =
         , width fill
         , paddingEach { top = 10, bottom = 0, left = 20, right = 20 }
         ]
-        [ row [ height fill ]
+        [ el [ centerY, Font.size 26, Font.color Colors.grey, Font.family [ Font.typeface "Input Mono" ], Font.italic ] (text "0🐝")
+        , row [ height fill ]
             [ Input.button [ width (px 70), Font.center, height fill ]
                 { onPress = Just PreviousMonth
                 , label = text "<"
