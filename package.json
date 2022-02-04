@@ -1,7 +1,7 @@
 {
   "devDependencies": {
     "@parcel/transformer-elm": "^2.1.1",
-    "@tauri-apps/cli": "*",
+    "@tauri-apps/cli": "^1.0.0-beta.10",
     "elm": "^0.19.1-5",
     "elm-format": "^0.8.3",
     "elm-hot": "^1.1.6",
@@ -12,7 +12,7 @@
   "version": "0.1.0",
   "description": "zero-based budgeting",
   "dependencies": {
-    "@tauri-apps/api": "*",
+    "@tauri-apps/api": "^1.0.0-beta.8",
     "remotestoragejs": "^1.2.3"
   },
   "scripts": {},
