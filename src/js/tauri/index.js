@@ -1,11 +1,9 @@
-import { Elm } from "./Main.elm";
+import { initElm } from "../elm";
 
 import { save } from "@tauri-apps/api/dialog";
 
 window.addEventListener("DOMContentLoaded", () => {
-    let app = Elm.Main.init({
-        node: document.getElementById("elm"),
-    });
+    let app = initElm();
 
     app.ports.downloadBackup.subscribe(() => {
         var year = new Date().getFullYear();
