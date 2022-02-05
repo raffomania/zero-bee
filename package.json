@@ -30,7 +30,8 @@
   "tauri": "dist/tauri/index.html",
   "targets": {
     "web": {
-      "source": "index_browser.html"
+      "source": "index_browser.html",
+      "publicUrl": "."
     },
     "tauri": {
       "source": "index_tauri.html"
