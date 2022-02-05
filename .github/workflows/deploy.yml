@@ -20,9 +20,9 @@ jobs:
             - name: Test
               run: npx elm-test
             - name: Build
-              run: npx parcel build --dist-dir public --public-url ./ index_browser.html
+              run: npx parcel build --target web
             - name: Deploy to pages
               uses: peaceiris/actions-gh-pages@v3
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: ./public
+                  publish_dir: ./dist/web

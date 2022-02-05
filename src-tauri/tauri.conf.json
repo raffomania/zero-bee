@@ -4,10 +4,10 @@
     "version": "0.1.0"
   },
   "build": {
-    "distDir": "../public",
-    "devPath": "http://localhost:1234",
+    "distDir": "../dist/tauri",
+    "devPath": "http://localhost:1234/tauri",
     "beforeDevCommand": "",
-    "beforeBuildCommand": ""
+    "beforeBuildCommand": "npx parcel build --target tauri"
   },
   "tauri": {
     "bundle": {

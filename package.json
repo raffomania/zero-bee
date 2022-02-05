@@ -18,12 +18,22 @@
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/raffomania/bzero.git"
+    "url": "git+ssh://git@github.com/raffomania/zero-bee.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://gitlab.com/raffomania/bzero/issues"
+    "url": "https://github.com/raffomania/zero-bee/issues"
   },
-  "homepage": "https://gitlab.com/raffomania/bzero#readme"
+  "homepage": "https://github.com/raffomania/zero-bee#readme",
+  "web": "dist/web/index.html",
+  "tauri": "dist/tauri/index.html",
+  "targets": {
+    "web": {
+      "source": "index_browser.html"
+    },
+    "tauri": {
+      "source": "index_tauri.html"
+    }
+  }  
 }
