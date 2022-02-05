@@ -1,17 +1,12 @@
 import { initElm } from "../elm";
-
-import { save } from "@tauri-apps/api/dialog";
+import { initRemoteStorage } from "../remotestorage";
+import download from "./download";
 
 window.addEventListener("DOMContentLoaded", () => {
-    let app = initElm();
-
-    app.ports.downloadBackup.subscribe(() => {
-        var year = new Date().getFullYear();
-        var month = parseInt(new Date().getMonth(), 10) + 1;
-
-        save({
-            defaultPath: `zero_bee_backup_${year}_${month}.json`,
-            filters: [{ name: "JSON Files", extensions: ["json"] }],
-        }).then(console.log);
+    const app = initElm();
+    initRemoteStorage(app).then((client) => {
+        app.ports.downloadBackup.subscribe(() => {
+            client.getFile("db.json").then(download);
+        });
     });
 });
