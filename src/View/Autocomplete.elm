@@ -10,7 +10,14 @@ import Msg
 
 
 type alias Model =
-    { input : String, label : String, availableValues : List String, focused : Bool, onChange : String -> Msg.Msg, onChangeFocus : Bool -> Msg.Msg, placeholder : Maybe (Input.Placeholder Msg.Msg) }
+    { input : String
+    , label : Maybe String
+    , availableValues : List String
+    , focused : Bool
+    , onChange : String -> Msg.Msg
+    , onChangeFocus : Bool -> Msg.Msg
+    , placeholder : Maybe (Input.Placeholder Msg.Msg)
+    }
 
 
 view : Model -> Element Msg.Msg
@@ -25,10 +32,18 @@ view model =
 
         label =
             if isNew then
-                model.label ++ " (new)"
+                Maybe.map (\l -> l ++ " (new)") model.label
 
             else
                 model.label
+
+        labelElement =
+            case label of
+                Just str ->
+                    Input.labelAbove [] <| text str
+
+                Nothing ->
+                    Input.labelHidden "Autocomplete"
 
         dropdownElement =
             if model.focused && not isNew && not (List.isEmpty suggestionValues) then
@@ -46,7 +61,7 @@ view model =
             ]
         )
         { placeholder = model.placeholder
-        , label = Input.labelAbove [] <| text label
+        , label = labelElement
         , text = model.input
         , onChange = model.onChange
         }

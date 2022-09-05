@@ -3,3 +3,4 @@ dist
 .parcel-cache
 *.code-workspace
 src-tauri/target
+elm-stuff

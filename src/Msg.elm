@@ -18,6 +18,8 @@ type Msg
     | AddTransactionFocusCategoryInput Bool
     | AddTransactionFocusAccountInput Bool
     | ChangeTransactionValue Model.Transaction Model.Money
+    | ChangeTransactionCategory Model.Transaction Model.CategoryId
+    | ChangeTransactionFocusCategoryInput Model.Transaction Bool
     | ChangeBudgetEntry Model.MonthOfYear Model.CategoryId Model.Money
     | UpdateFromStorage Json.Decode.Value
     | NextMonth

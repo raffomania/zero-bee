@@ -83,7 +83,7 @@ update msg ({ newTransaction } as model) =
             let
                 newCategory =
                     if not isFocused then
-                        Model.autocompletedCategories model
+                        Model.autocompletedCategories model model.newTransaction.category
                             |> List.head
                             |> Maybe.withDefault model.newTransaction.category
 
@@ -187,6 +187,57 @@ update msg ({ newTransaction } as model) =
 
                 updatedModel =
                     { model | transactions = List.map updateTransaction model.transactions }
+            in
+            ( updatedModel, StorageInterface.storeModel updatedModel )
+
+        ChangeTransactionCategory transaction category ->
+            let
+                updatedEdit =
+                    Just
+                        { transaction = transaction
+                        , input = category
+                        , focus = Model.Category
+                        }
+
+                updatedModel =
+                    { model | editingTransaction = updatedEdit }
+            in
+            ( updatedModel, StorageInterface.storeModel updatedModel )
+
+        ChangeTransactionFocusCategoryInput transaction isFocused ->
+            let
+                input =
+                    model.editingTransaction |> Maybe.map .input |> Maybe.withDefault transaction.category
+
+                newCategory =
+                    if not isFocused then
+                        Model.autocompletedCategories model input
+                            |> List.head
+                            |> Maybe.withDefault input
+
+                    else
+                        transaction.category
+
+                updatedEdit =
+                    if isFocused then
+                        Just
+                            { transaction = transaction
+                            , focus = Model.Category
+                            , input = input
+                            }
+
+                    else
+                        Nothing
+
+                updateTransaction t =
+                    if t == transaction then
+                        { t | category = newCategory }
+
+                    else
+                        t
+
+                updatedModel =
+                    { model | transactions = List.map updateTransaction model.transactions, editingTransaction = updatedEdit }
             in
             ( updatedModel, StorageInterface.storeModel updatedModel )
 

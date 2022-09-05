@@ -11,6 +11,7 @@ type alias Model =
     , currentMonth : MonthOfYear
     , budgetEntries : Dict MonthIndex (Dict CategoryId BudgetEntry)
     , editingBudgetEntry : Maybe BudgetEntryEdit
+    , editingTransaction : Maybe TransactionEdit
     , currentPage : Page
     , date : Date.Date
     , newTransaction :
@@ -19,13 +20,13 @@ type alias Model =
         , category : CategoryId
         , note : String
         , account : String
-        , focus : Maybe AddTransactionFocus
+        , focus : Maybe TransactionFormFocus
         }
     , settings : Settings
     }
 
 
-type AddTransactionFocus
+type TransactionFormFocus
     = Category
     | Account
 
@@ -68,6 +69,13 @@ type alias Transaction =
 
     -- empty string is the default account
     , account : String
+    }
+
+
+type alias TransactionEdit =
+    { input : CategoryId
+    , transaction : Transaction
+    , focus : TransactionFormFocus
     }
 
 
@@ -156,12 +164,12 @@ compareMonths a b =
         LT
 
 
-autocompletedCategories : Model -> List String
-autocompletedCategories model =
+autocompletedCategories : Model -> String -> List String
+autocompletedCategories model input =
     model.transactions
         |> List.map .category
         |> Set.fromList
-        |> Set.filter (String.startsWith model.newTransaction.category)
+        |> Set.filter (String.startsWith input)
         |> Set.toList
 
 

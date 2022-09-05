@@ -8,11 +8,12 @@ import Element exposing (..)
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
+import Html exposing (th)
 import Model
 import Model.Transactions
 import Money
 import Msg
-import Util
+import Util exposing (zeroPadding)
 import View.Autocomplete
 
 
@@ -20,7 +21,7 @@ view : Model.Model -> Element Msg.Msg
 view model =
     column [ spacing 20 ]
         [ balance model
-        , column [ paddingXY 0 30, spacing 10 ]
+        , column [ paddingXY 0 20, spacing 10, Border.color Colors.lightGrey, Border.widthEach { zeroPadding | bottom = 1 }, Border.solid ]
             [ text "Add transaction"
             , addTransactionForm model
             ]
@@ -30,7 +31,7 @@ view model =
 
 addTransactionForm : Model.Model -> Element Msg.Msg
 addTransactionForm model =
-    row [ Util.onEnter Msg.AddTransaction, spacing 20 ]
+    row [ Util.onEnter Msg.AddTransaction, spacing 30 ]
         [ Money.input [ width (px 120) ]
             { value = model.newTransaction.value
             , onChange = Msg.AddTransactionNewValue
@@ -45,8 +46,8 @@ addTransactionForm model =
             }
         , View.Autocomplete.view
             { input = model.newTransaction.category
-            , label = "Category"
-            , availableValues = Model.autocompletedCategories model
+            , label = Just "Category"
+            , availableValues = Model.autocompletedCategories model model.newTransaction.category
             , focused = model.newTransaction.focus == Just Model.Category
             , onChange = Msg.AddTransactionNewCategory
             , onChangeFocus = Msg.AddTransactionFocusCategoryInput
@@ -60,7 +61,7 @@ addTransactionForm model =
             }
         , View.Autocomplete.view
             { input = model.newTransaction.account
-            , label = "Account"
+            , label = Just "Account"
             , availableValues = Model.autocompletedAccounts model
             , focused = model.newTransaction.focus == Just Model.Account
             , onChange = Msg.AddTransactionNewAccount
@@ -100,7 +101,34 @@ transactionList model =
               }
             , { header = none
               , width = fill
-              , view = \t -> el [ centerY ] <| text t.category
+              , view =
+                    \transaction ->
+                        let
+                            isEditing =
+                                (model.editingTransaction |> Maybe.map .transaction) == Just transaction
+
+                            isFocused =
+                                isEditing && (model.editingTransaction |> Maybe.map .focus) == Just Model.Category
+
+                            input =
+                                if isEditing then
+                                    model.editingTransaction
+                                        |> Maybe.map .input
+                                        |> Maybe.withDefault transaction.category
+
+                                else
+                                    transaction.category
+                        in
+                        el [ centerY ] <|
+                            View.Autocomplete.view
+                                { placeholder = Nothing
+                                , label = Nothing
+                                , availableValues = Model.autocompletedCategories model input
+                                , focused = isFocused
+                                , onChangeFocus = Msg.ChangeTransactionFocusCategoryInput transaction
+                                , input = input
+                                , onChange = Msg.ChangeTransactionCategory transaction
+                                }
               }
             , { header = none
               , width = fill
