@@ -190,7 +190,7 @@ update msg ({ newTransaction } as model) =
             in
             ( updatedModel, StorageInterface.storeModel updatedModel )
 
-        ChangeTransactionCategory transaction category ->
+        ChangeEditingTransactionCategory transaction category ->
             let
                 updatedEdit =
                     Just
@@ -204,7 +204,7 @@ update msg ({ newTransaction } as model) =
             in
             ( updatedModel, StorageInterface.storeModel updatedModel )
 
-        ChangeTransactionFocusCategoryInput transaction isFocused ->
+        ChangeEditingTransactionFocus transaction isFocused ->
             let
                 input =
                     model.editingTransaction |> Maybe.map .input |> Maybe.withDefault transaction.category

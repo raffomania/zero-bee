@@ -125,9 +125,9 @@ transactionList model =
                                 , label = Nothing
                                 , availableValues = Model.autocompletedCategories model input
                                 , focused = isFocused
-                                , onChangeFocus = Msg.ChangeTransactionFocusCategoryInput transaction
+                                , onChangeFocus = Msg.ChangeEditingTransactionFocus transaction
                                 , input = input
-                                , onChange = Msg.ChangeTransactionCategory transaction
+                                , onChange = Msg.ChangeEditingTransactionCategory transaction
                                 }
               }
             , { header = none
