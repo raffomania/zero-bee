@@ -30,11 +30,12 @@ view model =
             calculateBudgetRows model
     in
     column [ spacing 20 ]
-        [ toBeBudgeted model activeBudgetRows
-        , entryTable model activeBudgetRows
-        , el [ Font.color Colors.grey, paddingEach { zeroPadding | top = 30 } ] <| text "Inactive entries"
-        , entryTable model inactiveBudgetRows
-        ]
+        (List.append
+            [ toBeBudgeted model activeBudgetRows
+            , entryTable model activeBudgetRows
+            ]
+            (inactiveCategories model inactiveBudgetRows)
+        )
 
 
 entryTable : Model -> List BudgetRow -> Element Msg
@@ -294,3 +295,14 @@ toBeBudgeted model budgetRows =
               }
             ]
         }
+
+
+inactiveCategories : Model -> List BudgetRow -> List (Element Msg)
+inactiveCategories model inactiveBudgetRows =
+    if List.isEmpty inactiveBudgetRows then
+        []
+
+    else
+        [ el [ Font.color Colors.grey, paddingEach { zeroPadding | top = 30 } ] (text "Inactive entries")
+        , entryTable model inactiveBudgetRows
+        ]
